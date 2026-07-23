@@ -159,7 +159,28 @@
         </Style>
 
         <!-- 상태 값 변화에 따른 깜빡임 -->
-        <Style Selector=".blink">
+        <Style Selector="Border.blink">
+            <Style.Animations>
+                <Animation Duration="0:0:1"
+                           IterationCount="INFINITE">
+
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="1.0"/>
+                    </KeyFrame>
+
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Opacity" Value="0.3"/>
+                    </KeyFrame>
+
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1.0"/>
+                    </KeyFrame>
+
+                </Animation>
+            </Style.Animations>
+        </Style>
+
+        <Style Selector="Button.blink">
             <Style.Animations>
                 <Animation Duration="0:0:1"
                            IterationCount="INFINITE">
