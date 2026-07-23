@@ -2304,15 +2304,16 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
 
         AddBitControl(EssControlTableRows, 30002, "BMS1 Manual Enable", "-", 0, 1, "0=Disable, 1=Enable");
         AddBitControl(EssControlTableRows, 30002, "BMS2 Manual Enable", "-", 1, 1, "0=Disable, 1=Enable");
-        AddBitControl(EssControlTableRows, 30002, "ESS Charge N Relay", "-", 2, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "ESS Charge P Relay", "-", 3, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "EV Charge P Relay", "-", 5, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "EV Charge N Relay", "-", 6, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "AC Main Contactor", "-", 7, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "AC Neutral Switch", "-", 8, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "Alarm Lamp", "-", 9, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "Fault Lamp", "-", 10, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "Buzzer", "-", 11, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "DC Quick-Charge HV+ Relay", "-", 2, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "DC Quick-Charge HV- Relay", "-", 3, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "DC Discharge HV+ Relay", "-", 4, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "DC Discharge HV- Relay", "-", 5, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "AC Main Contactor", "-", 6, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "AC Main Contactor N", "-", 7, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "Alarm Lamp", "-", 8, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "Fault Lamp", "-", 9, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "Reserved1", "-", 10, 1, "0=Off, 1=On · 확인 전용 (삭제 검토)", isWriteEnabled: false);
+        AddBitControl(EssControlTableRows, 30002, "Lamp Output", "-", 11, 1, "0=Off, 1=On");
         AddBitControl(EssControlTableRows, 30002, "Reserved2", "-", 12, 1, "0=Off, 1=On · 확인 전용", isWriteEnabled: false);
         AddBitControl(EssControlTableRows, 30002, "Reserved3", "-", 13, 1, "0=Off, 1=On · 확인 전용", isWriteEnabled: false);
         AddBitControl(EssControlTableRows, 30002, "Reserved4", "-", 14, 1, "0=Off, 1=On · 확인 전용", isWriteEnabled: false);
@@ -2328,6 +2329,10 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         AddControl(EssControlTableRows, 30010, "AC Max Charge Power Limit", "kW", "INT16", 0.01, true, 2, "AC 최대 충전 전력");
         AddControl(EssControlTableRows, 30011, "AC Max Discharge Power On Grid", "kW", "INT16", 0.01, true, 2, "계통 방전 최대 전력");
         AddControl(EssControlTableRows, 30012, "AC Max Discharge Power Off Grid", "kW", "INT16", 0.01, true, 2, "외부 출력 최대 전력");
+        AddControl(EssControlTableRows, 30013, "AC Max Output Phase Voltage", "V", "UINT16", 0.01, false, 2, "AC 최대 출력 상전압");
+        AddControl(EssControlTableRows, 30014, "AC Output Phase Voltage", "V", "UINT16", 0.01, false, 2, "AC 출력 상전압");
+        AddControl(EssControlTableRows, 30015, "AC Max Output Frequency", "Hz", "INT16", 0.01, true, 2, "AC 최대 출력 주파수");
+        AddControl(EssControlTableRows, 30016, "AC Output Frequency", "Hz", "INT16", 0.01, true, 2, "AC 출력 주파수");
 
         AddInverterControlSet("INV1", 40000, InverterControlTableRows);
         AddInverterControlSet("INV2", 41000, InverterControlTableRows);
@@ -2480,11 +2485,11 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         AddPair(InverterRows, 7, AddressPair(inverter1Base, inverter2Base, 7), "BC Line voltage", "V", "INT16", 0.1, true, 1, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 8, AddressPair(inverter1Base, inverter2Base, 8), "CA Line voltage", "V", "INT16", 0.1, true, 1, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 9, AddressPair(inverter1Base, inverter2Base, 9), "Phase A active power", "W", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
-        AddPair(InverterRows, 10, AddressPair(inverter1Base, inverter2Base, 10), "Phase A reactive power", "Var", "INT16", 1.0, true, 0, null, "Inverter 1", "Inverter 2");
+        AddPair(InverterRows, 10, AddressPair(inverter1Base, inverter2Base, 10), "Phase A reactive power", "Var", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 11, AddressPair(inverter1Base, inverter2Base, 11), "Phase B active power", "W", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
-        AddPair(InverterRows, 12, AddressPair(inverter1Base, inverter2Base, 12), "Phase B reactive power", "Var", "INT16", 1.0, true, 0, null, "Inverter 1", "Inverter 2");
+        AddPair(InverterRows, 12, AddressPair(inverter1Base, inverter2Base, 12), "Phase B reactive power", "Var", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 13, AddressPair(inverter1Base, inverter2Base, 13), "Phase C active power", "W", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
-        AddPair(InverterRows, 14, AddressPair(inverter1Base, inverter2Base, 14), "Phase C reactive power", "Var", "INT16", 1.0, true, 0, null, "Inverter 1", "Inverter 2");
+        AddPair(InverterRows, 14, AddressPair(inverter1Base, inverter2Base, 14), "Phase C reactive power", "Var", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 15, AddressPair(inverter1Base, inverter2Base, 15), "AC frequency", "Hz", "INT16", 0.01, true, 2, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 16, AddressPair(inverter1Base, inverter2Base, 16), "module panel (ambient) temperature", "°C", "INT16", 0.1, true, 1, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 17, AddressPair(inverter1Base, inverter2Base, 17), "total active power", "kW", "INT16", 0.01, true, 2, null, "Inverter 1", "Inverter 2");
