@@ -8,11 +8,11 @@
         WindowState="Maximized"
         Title="Mobile ESS Control System">
 
-    <Grid RowDefinitions="64,*"
+    <Grid RowDefinitions="*,64"
           Background="#F1F5F9">
 
-        <!-- 상단 공통 헤더 -->
-        <Border Grid.Row="0"
+        <!-- 하단 공통 헤더 -->
+        <Border Grid.Row="1"
                 Background="#0F172A"
                 Padding="22,0">
 
@@ -242,7 +242,7 @@
         </Border>
 
         <!-- 페이지 영역 -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="0">
 
             <Border Padding="22"
                     Background="#F1F5F9">
