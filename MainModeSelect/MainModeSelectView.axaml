@@ -1,7 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:MobileEssControl.ViewModels.MainModeSelect"
-             xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Avalonia.Svg.Skia"
              x:DataType="vm:MainModeSelectViewModel"
              x:Class="MobileEssControl.Views.MainModeSelect.MainModeSelectView">
 
@@ -42,10 +41,10 @@
                     Spacing="40">
 
             <!-- 회사 로고 (EVKMC) -->
-            <svg:Svg Path="avares://MobileEssControl/Assets/evkmc-logo.svg"
-                     Width="260"
-                     Stretch="Uniform"
-                     HorizontalAlignment="Center"/>
+            <Image Source="avares://MobileEssControl/Assets/evkmc-logo.png"
+                   Width="260"
+                   Stretch="Uniform"
+                   HorizontalAlignment="Center"/>
 
             <!-- 운전 모드 3개를 한 줄로 배치 -->
             <StackPanel Orientation="Horizontal"
