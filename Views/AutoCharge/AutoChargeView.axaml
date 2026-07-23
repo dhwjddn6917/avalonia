@@ -794,7 +794,7 @@
                                                    VerticalAlignment="Top"/>
                                     </Grid>
 
-                                    <TextBlock Text="시간 →"
+                                    <TextBlock Text="t"
                                                Foreground="#94A3B8"
                                                FontSize="10"
                                                FontWeight="Bold"
@@ -995,7 +995,7 @@
                                                VerticalAlignment="Top"/>
                                 </Grid>
 
-                                <TextBlock Text="시간 →"
+                                <TextBlock Text="t"
                                            Foreground="#94A3B8"
                                            FontSize="10"
                                            FontWeight="Bold"
