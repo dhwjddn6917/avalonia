@@ -360,18 +360,22 @@
 
                     <Button.Flyout>
                         <Flyout Placement="BottomEdgeAlignedRight">
-                            <Border Padding="26"
-                                    MinWidth="520"
-                                    MaxWidth="620">
-                                <StackPanel Spacing="16">
+                            <Border Padding="32"
+                                    MinWidth="1300"
+                                    MaxWidth="1360">
+                                <StackPanel Spacing="20">
 
                                     <TextBlock Text="출력 설정"
-                                               FontSize="22"
+                                               FontSize="26"
                                                FontWeight="Bold"
                                                Foreground="#0F172A"/>
 
+                                    <Grid ColumnDefinitions="*,*"
+                                          ColumnSpacing="20">
+
                                     <!-- 최저 SOC -->
-                                    <Border IsEnabled="{Binding CanEditSettings}"
+                                    <Border Grid.Column="0"
+                                            IsEnabled="{Binding CanEditSettings}"
                                             Background="#F8FAFC"
                                             BorderBrush="#E2E8F0"
                                             BorderThickness="1"
@@ -443,7 +447,8 @@
                                     </Border>
 
                                     <!-- 출력 제한전력 -->
-                                    <Border IsEnabled="{Binding CanEditSettings}"
+                                    <Border Grid.Column="1"
+                                            IsEnabled="{Binding CanEditSettings}"
                                             Background="#F8FAFC"
                                             BorderBrush="#E2E8F0"
                                             BorderThickness="1"
@@ -513,10 +518,11 @@
                                             </Grid>
                                         </StackPanel>
                                     </Border>
+                                    </Grid>
 
                                     <!-- 상전압 / 주파수 -->
                                     <Grid ColumnDefinitions="*,*"
-                                          ColumnSpacing="10">
+                                          ColumnSpacing="20">
 
                                         <Border Grid.Column="0"
                                                 IsEnabled="{Binding CanEditSettings}"

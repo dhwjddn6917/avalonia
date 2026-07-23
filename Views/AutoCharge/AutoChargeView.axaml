@@ -378,18 +378,22 @@
 
                     <Button.Flyout>
                         <Flyout Placement="BottomEdgeAlignedRight">
-                            <Border Padding="26"
-                                    MinWidth="520"
-                                    MaxWidth="620">
-                                <StackPanel Spacing="16">
+                            <Border Padding="32"
+                                    MinWidth="1300"
+                                    MaxWidth="1360">
+                                <StackPanel Spacing="20">
 
                                     <TextBlock Text="충전 설정"
-                                               FontSize="22"
+                                               FontSize="26"
                                                FontWeight="Bold"
                                                Foreground="#0F172A"/>
 
+                                    <Grid ColumnDefinitions="*,*"
+                                          ColumnSpacing="20">
+
                                     <!-- 목표 SOC -->
-                                    <Border IsEnabled="{Binding CanEditSettings}"
+                                    <Border Grid.Column="0"
+                                            IsEnabled="{Binding CanEditSettings}"
                                             Background="#F8FAFC"
                                             BorderBrush="#E2E8F0"
                                             BorderThickness="1"
@@ -464,7 +468,8 @@
                                     </Border>
 
                                     <!-- 충전 전류 -->
-                                    <Border IsEnabled="{Binding CanEditSettings}"
+                                    <Border Grid.Column="1"
+                                            IsEnabled="{Binding CanEditSettings}"
                                             Background="#F8FAFC"
                                             BorderBrush="#E2E8F0"
                                             BorderThickness="1"
@@ -537,6 +542,7 @@
                                             </Grid>
                                         </StackPanel>
                                     </Border>
+                                    </Grid>
 
                                     <!-- 시작/정지 -->
                                     <Grid ColumnDefinitions="2*,1*"
