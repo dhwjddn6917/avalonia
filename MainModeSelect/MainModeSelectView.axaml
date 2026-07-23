@@ -6,7 +6,20 @@
 
     <UserControl.Styles>
 
-        <!-- 모든 운전 모드 버튼 공통 : 셀을 꽉 채우고, 그림자/눌림으로 버튼감을 줍니다 -->
+        <!--
+            Button에는 BoxShadow 속성이 없어서(Border 전용), 그림자는 바깥쪽
+            Border(mode-shadow)가 지고 안쪽 Button(mode-card)이 실제 색상/내용을 담당합니다.
+        -->
+        <Style Selector="Border.mode-shadow">
+            <Setter Property="CornerRadius" Value="30"/>
+            <Setter Property="Margin" Value="16,0"/>
+            <Setter Property="BoxShadow" Value="0 10 26 -2 #3A000000"/>
+        </Style>
+        <Style Selector="Border.mode-shadow:pointerover">
+            <Setter Property="BoxShadow" Value="0 14 30 -2 #4D000000"/>
+        </Style>
+
+        <!-- 모든 운전 모드 버튼 공통 : 셀을 꽉 채우고, 눌림 효과로 버튼감을 줍니다 -->
         <Style Selector="Button.mode-card">
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="CornerRadius" Value="30"/>
@@ -15,13 +28,8 @@
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-            <Setter Property="BoxShadow" Value="0 10 26 -2 #3A000000"/>
-        </Style>
-        <Style Selector="Button.mode-card:pointerover">
-            <Setter Property="BoxShadow" Value="0 14 30 -2 #4D000000"/>
         </Style>
         <Style Selector="Button.mode-card:pressed">
-            <Setter Property="BoxShadow" Value="0 3 8 0 #33000000"/>
             <Setter Property="RenderTransform" Value="scale(0.97)"/>
         </Style>
 
@@ -122,12 +130,11 @@
               ColumnDefinitions="*,*,*">
 
             <!-- 배터리 충전 : 계통 -> 인버터 -> 배터리 -->
-            <Button Grid.Column="0"
-                    Classes="mode-card"
+            <Border Grid.Column="0" Classes="mode-shadow">
+            <Button Classes="mode-card"
                     Command="{Binding ShowAutoChargeCommand}"
                     Background="#ECFDF5"
-                    BorderBrush="#86EFAC"
-                    Margin="16,0">
+                    BorderBrush="#86EFAC">
 
                 <Viewbox Stretch="Uniform">
                     <Grid Width="560" Height="420">
@@ -178,14 +185,14 @@
                     </Grid>
                 </Viewbox>
             </Button>
+            </Border>
 
             <!-- 인버터 출력 : 배터리 -> 인버터 -> 출력 -->
-            <Button Grid.Column="1"
-                    Classes="mode-card"
+            <Border Grid.Column="1" Classes="mode-shadow">
+            <Button Classes="mode-card"
                     Command="{Binding ShowExternalOutputCommand}"
                     Background="#EFF6FF"
-                    BorderBrush="#93C5FD"
-                    Margin="16,0">
+                    BorderBrush="#93C5FD">
 
                 <Viewbox Stretch="Uniform">
                     <Grid Width="560" Height="420">
@@ -236,14 +243,14 @@
                     </Grid>
                 </Viewbox>
             </Button>
+            </Border>
 
             <!-- 인버터 출력(계통) : 배터리 -> 인버터 -> 계통(송전탑) -->
-            <Button Grid.Column="2"
-                    Classes="mode-card"
+            <Border Grid.Column="2" Classes="mode-shadow">
+            <Button Classes="mode-card"
                     Command="{Binding ShowGridDischargeCommand}"
                     Background="#FFF7ED"
-                    BorderBrush="#FDBA74"
-                    Margin="16,0">
+                    BorderBrush="#FDBA74">
 
                 <Viewbox Stretch="Uniform">
                     <Grid Width="560" Height="420">
@@ -294,6 +301,7 @@
                     </Grid>
                 </Viewbox>
             </Button>
+            </Border>
 
         </Grid>
     </Grid>
