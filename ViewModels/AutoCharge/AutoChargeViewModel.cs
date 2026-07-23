@@ -175,6 +175,15 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private string estimatedRemainingText = "-- ";
 
+    [ObservableProperty]
+    private string cumulativeOutputText = "0.00 kWh";
+
+    [ObservableProperty]
+    private string voltageMaxText = "--";
+
+    [ObservableProperty]
+    private string voltageMinText = "--";
+
     private bool IsChargeFlowActive =>
         ChargeState == ChargeFlowState.Starting ||
         ChargeState == ChargeFlowState.Charging;
@@ -728,6 +737,7 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             _lastGraphSampleUtc = now;
             AppendGraphSample(_cumulativeChargeEnergyKwh);
             AppendVoltageGraphSample(_currentAbVoltage, _currentBcVoltage, _currentCaVoltage);
+            CumulativeOutputText = $"{_cumulativeChargeEnergyKwh:0.00} kWh";
         }
     }
 
@@ -749,6 +759,9 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
 
         ChargeElapsedText = "--:--:--";
         EstimatedRemainingText = "-- ";
+        CumulativeOutputText = "0.00 kWh";
+        VoltageMaxText = "--";
+        VoltageMinText = "--";
     }
 
     private string BuildEstimatedRemainingText()
@@ -916,6 +929,8 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
 
         if (count < 2)
         {
+            VoltageMaxText = "--";
+            VoltageMinText = "--";
             return;
         }
 
@@ -937,6 +952,9 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
                 }
             }
         }
+
+        VoltageMaxText = $"최고 {max:0.0} V";
+        VoltageMinText = $"최저 {min:0.0} V";
 
         double range = max - min;
 

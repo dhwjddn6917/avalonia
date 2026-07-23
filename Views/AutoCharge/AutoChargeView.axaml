@@ -751,10 +751,10 @@
                                     BorderThickness="1"
                                     CornerRadius="18"
                                     Padding="14">
-                                <StackPanel Spacing="8">
+                                <StackPanel Spacing="4">
                                     <Grid ColumnDefinitions="*,Auto">
                                         <TextBlock Grid.Column="0"
-                                                   Text="누적 출력량 추이"
+                                                   Text="총 출력 전력량"
                                                    Foreground="#64748B"
                                                    FontSize="13"
                                                    FontWeight="SemiBold"/>
@@ -765,18 +765,40 @@
                                                    FontWeight="Bold"/>
                                     </Grid>
 
-                                    <Viewbox Height="70"
-                                             Stretch="Fill"
-                                             HorizontalAlignment="Stretch">
-                                        <Canvas Width="280"
-                                                Height="70">
-                                            <Polyline Points="{Binding ChargeOutputGraphPoints}"
-                                                      Stroke="{Binding ChargeFlowBatteryBrush}"
-                                                      StrokeThickness="3"
-                                                      StrokeLineCap="Round"
-                                                      StrokeJoin="Round"/>
-                                        </Canvas>
-                                    </Viewbox>
+                                    <Grid>
+                                        <Viewbox Height="70"
+                                                 Stretch="Fill"
+                                                 HorizontalAlignment="Stretch">
+                                            <Canvas Width="280"
+                                                    Height="70">
+                                                <Polyline Points="{Binding ChargeOutputGraphPoints}"
+                                                          Stroke="{Binding ChargeFlowBatteryBrush}"
+                                                          StrokeThickness="3"
+                                                          StrokeLineCap="Round"
+                                                          StrokeJoin="Round"/>
+                                            </Canvas>
+                                        </Viewbox>
+
+                                        <TextBlock Text="kW"
+                                                   Foreground="#94A3B8"
+                                                   FontSize="10"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Top"/>
+
+                                        <TextBlock Text="{Binding CumulativeOutputText}"
+                                                   Foreground="{Binding ChargeFlowBatteryBrush}"
+                                                   FontSize="13"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Top"/>
+                                    </Grid>
+
+                                    <TextBlock Text="시간 →"
+                                               Foreground="#94A3B8"
+                                               FontSize="10"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Right"/>
                                 </StackPanel>
                             </Border>
 
@@ -905,16 +927,16 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- 3상 선간전압 추이 -->
+                        <!-- 3상 선간전압 -->
                         <Border Background="#F8FAFC"
                                 BorderBrush="#E2E8F0"
                                 BorderThickness="1"
                                 CornerRadius="18"
                                 Padding="14">
-                            <StackPanel Spacing="8">
+                            <StackPanel Spacing="4">
                                 <Grid ColumnDefinitions="*,Auto,Auto">
                                     <TextBlock Grid.Column="0"
-                                               Text="3상 선간전압 추이 (AB/BC/CA)"
+                                               Text="3상 선간전압 (AB/BC/CA)"
                                                Foreground="#64748B"
                                                FontSize="13"
                                                FontWeight="SemiBold"
@@ -926,36 +948,58 @@
                                                FontWeight="Bold"
                                                Margin="0,0,10,0"
                                                VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2"
-                                               Text="{Binding ThreePhaseVoltageText}"
-                                               Foreground="#0F172A"
-                                               FontSize="14"
-                                               FontWeight="Bold"
-                                               VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="2"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding VoltageMaxText}"
+                                                   Foreground="#EA580C"
+                                                   FontSize="12"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Right"/>
+                                        <TextBlock Text="{Binding VoltageMinText}"
+                                                   Foreground="#0284C7"
+                                                   FontSize="12"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Right"/>
+                                    </StackPanel>
                                 </Grid>
 
-                                <Viewbox Height="70"
-                                         Stretch="Fill"
-                                         HorizontalAlignment="Stretch">
-                                    <Canvas Width="280"
-                                            Height="70">
-                                        <Polyline Points="{Binding AbVoltageGraphPoints}"
-                                                  Stroke="#7E22CE"
-                                                  StrokeThickness="3"
-                                                  StrokeLineCap="Round"
-                                                  StrokeJoin="Round"/>
-                                        <Polyline Points="{Binding BcVoltageGraphPoints}"
-                                                  Stroke="#0EA5E9"
-                                                  StrokeThickness="3"
-                                                  StrokeLineCap="Round"
-                                                  StrokeJoin="Round"/>
-                                        <Polyline Points="{Binding CaVoltageGraphPoints}"
-                                                  Stroke="#F59E0B"
-                                                  StrokeThickness="3"
-                                                  StrokeLineCap="Round"
-                                                  StrokeJoin="Round"/>
-                                    </Canvas>
-                                </Viewbox>
+                                <Grid>
+                                    <Viewbox Height="70"
+                                             Stretch="Fill"
+                                             HorizontalAlignment="Stretch">
+                                        <Canvas Width="280"
+                                                Height="70">
+                                            <Polyline Points="{Binding AbVoltageGraphPoints}"
+                                                      Stroke="#7E22CE"
+                                                      StrokeThickness="3"
+                                                      StrokeLineCap="Round"
+                                                      StrokeJoin="Round"/>
+                                            <Polyline Points="{Binding BcVoltageGraphPoints}"
+                                                      Stroke="#0EA5E9"
+                                                      StrokeThickness="3"
+                                                      StrokeLineCap="Round"
+                                                      StrokeJoin="Round"/>
+                                            <Polyline Points="{Binding CaVoltageGraphPoints}"
+                                                      Stroke="#F59E0B"
+                                                      StrokeThickness="3"
+                                                      StrokeLineCap="Round"
+                                                      StrokeJoin="Round"/>
+                                        </Canvas>
+                                    </Viewbox>
+
+                                    <TextBlock Text="V"
+                                               Foreground="#94A3B8"
+                                               FontSize="10"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Top"/>
+                                </Grid>
+
+                                <TextBlock Text="시간 →"
+                                           Foreground="#94A3B8"
+                                           FontSize="10"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Right"/>
 
                                 <StackPanel Orientation="Horizontal"
                                             Spacing="16">
