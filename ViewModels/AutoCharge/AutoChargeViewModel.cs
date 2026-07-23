@@ -408,12 +408,12 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         OperatingModeText != "미연결" &&
         OperatingModeText != "읽기 실패";
 
-    public bool IsStartStopBlinking =>
-        ChargeState == ChargeFlowState.Starting;
+    public bool IsChargeTransitionActive =>
+        ChargeState == ChargeFlowState.Starting ||
+        ChargeState == ChargeFlowState.Stopping;
 
     public bool IsFaultBlinking =>
-        FaultLevelText != "정상" &&
-        FaultLevelText != "확인 불가";
+        FaultLevelText != "정상";
 
     public bool IsCommunicationBlinking =>
         CommunicationStatusText != "정상";
@@ -565,7 +565,7 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(StopButtonText));
         OnPropertyChanged(nameof(CanEditSettings));
         OnPropertyChanged(nameof(IsChargingActive));
-        OnPropertyChanged(nameof(IsStartStopBlinking));
+        OnPropertyChanged(nameof(IsChargeTransitionActive));
 
         NotifyChargeFlowVisualChanged();
     }
