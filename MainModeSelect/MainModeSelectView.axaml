@@ -9,15 +9,15 @@
         <!-- 모든 운전 모드 버튼 공통 (한 줄 배치용 고정 크기) -->
         <Style Selector="Button.mode-card">
             <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="CornerRadius" Value="28"/>
-            <Setter Property="Padding" Value="28"/>
-            <Setter Property="Width" Value="440"/>
-            <Setter Property="Height" Value="270"/>
+            <Setter Property="CornerRadius" Value="30"/>
+            <Setter Property="Padding" Value="36"/>
+            <Setter Property="Width" Value="580"/>
+            <Setter Property="Height" Value="480"/>
         </Style>
 
         <!-- 버튼 제목 공통 -->
         <Style Selector="TextBlock.mode-title">
-            <Setter Property="FontSize" Value="38"/>
+            <Setter Property="FontSize" Value="54"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -33,9 +33,9 @@
 
         <!-- 전력 흐름 아이콘 배경 칩 (레인 색상별) -->
         <Style Selector="Border.icon-chip">
-            <Setter Property="Width" Value="64"/>
-            <Setter Property="Height" Value="64"/>
-            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Width" Value="96"/>
+            <Setter Property="Height" Value="96"/>
+            <Setter Property="CornerRadius" Value="22"/>
         </Style>
         <Style Selector="Border.icon-chip.charge">
             <Setter Property="Background" Value="#D1FAE5"/>
@@ -50,22 +50,22 @@
         <!-- 흐름 화살표 배경 트랙 (연한 고정선) -->
         <Style Selector="Line.arrow-track">
             <Setter Property="Stroke" Value="#CBD5E1"/>
-            <Setter Property="StrokeThickness" Value="3"/>
+            <Setter Property="StrokeThickness" Value="4"/>
             <Setter Property="StrokeLineCap" Value="Round"/>
         </Style>
 
         <!-- 흐름 화살표 (점선이 흐르는 애니메이션, 레인 색상별) -->
         <Style Selector="Line.arrow-flow">
-            <Setter Property="StrokeThickness" Value="3"/>
+            <Setter Property="StrokeThickness" Value="4"/>
             <Setter Property="StrokeLineCap" Value="Round"/>
-            <Setter Property="StrokeDashArray" Value="6,6"/>
+            <Setter Property="StrokeDashArray" Value="7,7"/>
             <Style.Animations>
                 <Animation Duration="0:0:0.9" IterationCount="INFINITE">
                     <KeyFrame Cue="0%">
                         <Setter Property="StrokeDashOffset" Value="0"/>
                     </KeyFrame>
                     <KeyFrame Cue="100%">
-                        <Setter Property="StrokeDashOffset" Value="-24"/>
+                        <Setter Property="StrokeDashOffset" Value="-28"/>
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
@@ -81,7 +81,7 @@
         </Style>
 
         <Style Selector="Polygon.arrow-head">
-            <Setter Property="Points" Value="0,0 9,5 0,10"/>
+            <Setter Property="Points" Value="0,0 13,7 0,14"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
@@ -99,20 +99,21 @@
 
     <Grid Background="#F1F5F9">
 
-        <!-- 회사 로고 + 운전 모드 3개를 화면 중앙에 세로로 배치 -->
+        <!-- 회사 로고 + 운전 모드 3개를 화면 중앙에 세로로 배치 (전체적으로 살짝 위로) -->
         <StackPanel HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Spacing="64">
+                    Margin="0,0,0,140"
+                    Spacing="72">
 
             <!-- 회사 로고 (EVKMC) -->
             <Image Source="avares://MobileEssControl/Assets/evkmc-logo.png"
-                   Width="420"
+                   Width="560"
                    Stretch="Uniform"
                    HorizontalAlignment="Center"/>
 
             <!-- 운전 모드 3개를 한 줄로 배치 -->
             <StackPanel Orientation="Horizontal"
-                        Spacing="40"
+                        Spacing="32"
                         HorizontalAlignment="Center">
 
                 <!-- 배터리 충전 : AC 콘센트 -> 인버터 -> 배터리 -->
@@ -121,7 +122,7 @@
                         Background="#ECFDF5"
                         BorderBrush="#86EFAC">
 
-                    <StackPanel Spacing="18"
+                    <StackPanel Spacing="26"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
 
@@ -129,13 +130,13 @@
                                    Text="배터리 충전"
                                    Foreground="#15803D"/>
 
-                        <Grid ColumnDefinitions="64,*,64,*,64"
-                              Width="360"
+                        <Grid ColumnDefinitions="96,*,96,*,96"
+                              Width="520"
                               HorizontalAlignment="Center">
 
                             <!-- AC 콘센트 -->
                             <Border Grid.Column="0" Classes="icon-chip charge">
-                                <Viewbox Margin="16">
+                                <Viewbox Margin="24">
                                     <Canvas Width="24" Height="24">
                                         <Rectangle Canvas.Left="5" Canvas.Top="9" Width="14" Height="12" RadiusX="2.5" RadiusY="2.5" Stroke="#15803D" StrokeThickness="1.8"/>
                                         <Ellipse Canvas.Left="8.1" Canvas.Top="13.9" Width="2.2" Height="2.2" Fill="#15803D"/>
@@ -146,15 +147,15 @@
                                 </Viewbox>
                             </Border>
 
-                            <Grid Grid.Column="1" Height="24">
-                                <Line Classes="arrow-track" StartPoint="4,12" EndPoint="74,12"/>
-                                <Line Classes="arrow-flow charge" StartPoint="4,12" EndPoint="74,12"/>
+                            <Grid Grid.Column="1" Height="32">
+                                <Line Classes="arrow-track" StartPoint="6,16" EndPoint="100,16"/>
+                                <Line Classes="arrow-flow charge" StartPoint="6,16" EndPoint="100,16"/>
                                 <Polygon Classes="arrow-head charge"/>
                             </Grid>
 
                             <!-- 인버터 -->
                             <Border Grid.Column="2" Classes="icon-chip charge">
-                                <Viewbox Margin="14">
+                                <Viewbox Margin="20">
                                     <Canvas Width="40" Height="24">
                                         <Rectangle Canvas.Left="1" Canvas.Top="1" Width="38" Height="22" RadiusX="6" RadiusY="6" Stroke="#15803D" StrokeThickness="1.7"/>
                                         <Path Data="M6,15 Q9,7 12,15 T18,15" Stroke="#15803D" StrokeThickness="1.7" StrokeLineCap="Round"/>
@@ -165,15 +166,15 @@
                                 </Viewbox>
                             </Border>
 
-                            <Grid Grid.Column="3" Height="24">
-                                <Line Classes="arrow-track" StartPoint="4,12" EndPoint="74,12"/>
-                                <Line Classes="arrow-flow charge" StartPoint="4,12" EndPoint="74,12"/>
+                            <Grid Grid.Column="3" Height="32">
+                                <Line Classes="arrow-track" StartPoint="6,16" EndPoint="100,16"/>
+                                <Line Classes="arrow-flow charge" StartPoint="6,16" EndPoint="100,16"/>
                                 <Polygon Classes="arrow-head charge"/>
                             </Grid>
 
                             <!-- 배터리 -->
                             <Border Grid.Column="4" Classes="icon-chip charge">
-                                <Viewbox Margin="16">
+                                <Viewbox Margin="24">
                                     <Canvas Width="32" Height="22">
                                         <Rectangle Canvas.Left="1" Canvas.Top="2" Width="26" Height="18" RadiusX="3" RadiusY="3" Stroke="#15803D" StrokeThickness="1.8"/>
                                         <Rectangle Canvas.Left="28.5" Canvas.Top="8" Width="3" Height="6" RadiusX="1" RadiusY="1" Fill="#15803D"/>
@@ -192,7 +193,7 @@
                         Background="#EFF6FF"
                         BorderBrush="#93C5FD">
 
-                    <StackPanel Spacing="18"
+                    <StackPanel Spacing="26"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
 
@@ -200,13 +201,13 @@
                                    Text="외부 출력"
                                    Foreground="#1D4ED8"/>
 
-                        <Grid ColumnDefinitions="64,*,64,*,64"
-                              Width="360"
+                        <Grid ColumnDefinitions="96,*,96,*,96"
+                              Width="520"
                               HorizontalAlignment="Center">
 
                             <!-- 배터리 -->
                             <Border Grid.Column="0" Classes="icon-chip output">
-                                <Viewbox Margin="16">
+                                <Viewbox Margin="24">
                                     <Canvas Width="32" Height="22">
                                         <Rectangle Canvas.Left="1" Canvas.Top="2" Width="26" Height="18" RadiusX="3" RadiusY="3" Stroke="#1D4ED8" StrokeThickness="1.8"/>
                                         <Rectangle Canvas.Left="28.5" Canvas.Top="8" Width="3" Height="6" RadiusX="1" RadiusY="1" Fill="#1D4ED8"/>
@@ -215,15 +216,15 @@
                                 </Viewbox>
                             </Border>
 
-                            <Grid Grid.Column="1" Height="24">
-                                <Line Classes="arrow-track" StartPoint="4,12" EndPoint="74,12"/>
-                                <Line Classes="arrow-flow output" StartPoint="4,12" EndPoint="74,12"/>
+                            <Grid Grid.Column="1" Height="32">
+                                <Line Classes="arrow-track" StartPoint="6,16" EndPoint="100,16"/>
+                                <Line Classes="arrow-flow output" StartPoint="6,16" EndPoint="100,16"/>
                                 <Polygon Classes="arrow-head output"/>
                             </Grid>
 
                             <!-- 인버터 -->
                             <Border Grid.Column="2" Classes="icon-chip output">
-                                <Viewbox Margin="14">
+                                <Viewbox Margin="20">
                                     <Canvas Width="40" Height="24">
                                         <Rectangle Canvas.Left="1" Canvas.Top="1" Width="38" Height="22" RadiusX="6" RadiusY="6" Stroke="#1D4ED8" StrokeThickness="1.7"/>
                                         <Path Data="M6,15 Q9,7 12,15 T18,15" Stroke="#1D4ED8" StrokeThickness="1.7" StrokeLineCap="Round"/>
@@ -234,15 +235,15 @@
                                 </Viewbox>
                             </Border>
 
-                            <Grid Grid.Column="3" Height="24">
-                                <Line Classes="arrow-track" StartPoint="4,12" EndPoint="74,12"/>
-                                <Line Classes="arrow-flow output" StartPoint="4,12" EndPoint="74,12"/>
+                            <Grid Grid.Column="3" Height="32">
+                                <Line Classes="arrow-track" StartPoint="6,16" EndPoint="100,16"/>
+                                <Line Classes="arrow-flow output" StartPoint="6,16" EndPoint="100,16"/>
                                 <Polygon Classes="arrow-head output"/>
                             </Grid>
 
                             <!-- 출력 콘센트 -->
                             <Border Grid.Column="4" Classes="icon-chip output">
-                                <Viewbox Margin="16">
+                                <Viewbox Margin="24">
                                     <Canvas Width="24" Height="24">
                                         <Rectangle Canvas.Left="5" Canvas.Top="9" Width="14" Height="12" RadiusX="2.5" RadiusY="2.5" Stroke="#1D4ED8" StrokeThickness="1.8"/>
                                         <Ellipse Canvas.Left="8.1" Canvas.Top="13.9" Width="2.2" Height="2.2" Fill="#1D4ED8"/>
@@ -263,7 +264,7 @@
                         Background="#FFF7ED"
                         BorderBrush="#FDBA74">
 
-                    <StackPanel Spacing="18"
+                    <StackPanel Spacing="26"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
 
@@ -271,13 +272,13 @@
                                    Text="계통 방전"
                                    Foreground="#C2410C"/>
 
-                        <Grid ColumnDefinitions="64,*,64,*,64"
-                              Width="360"
+                        <Grid ColumnDefinitions="96,*,96,*,96"
+                              Width="520"
                               HorizontalAlignment="Center">
 
                             <!-- 배터리 -->
                             <Border Grid.Column="0" Classes="icon-chip discharge">
-                                <Viewbox Margin="16">
+                                <Viewbox Margin="24">
                                     <Canvas Width="32" Height="22">
                                         <Rectangle Canvas.Left="1" Canvas.Top="2" Width="26" Height="18" RadiusX="3" RadiusY="3" Stroke="#C2410C" StrokeThickness="1.8"/>
                                         <Rectangle Canvas.Left="28.5" Canvas.Top="8" Width="3" Height="6" RadiusX="1" RadiusY="1" Fill="#C2410C"/>
@@ -286,15 +287,15 @@
                                 </Viewbox>
                             </Border>
 
-                            <Grid Grid.Column="1" Height="24">
-                                <Line Classes="arrow-track" StartPoint="4,12" EndPoint="74,12"/>
-                                <Line Classes="arrow-flow discharge" StartPoint="4,12" EndPoint="74,12"/>
+                            <Grid Grid.Column="1" Height="32">
+                                <Line Classes="arrow-track" StartPoint="6,16" EndPoint="100,16"/>
+                                <Line Classes="arrow-flow discharge" StartPoint="6,16" EndPoint="100,16"/>
                                 <Polygon Classes="arrow-head discharge"/>
                             </Grid>
 
                             <!-- 인버터 -->
                             <Border Grid.Column="2" Classes="icon-chip discharge">
-                                <Viewbox Margin="14">
+                                <Viewbox Margin="20">
                                     <Canvas Width="40" Height="24">
                                         <Rectangle Canvas.Left="1" Canvas.Top="1" Width="38" Height="22" RadiusX="6" RadiusY="6" Stroke="#C2410C" StrokeThickness="1.7"/>
                                         <Path Data="M6,15 Q9,7 12,15 T18,15" Stroke="#C2410C" StrokeThickness="1.7" StrokeLineCap="Round"/>
@@ -305,15 +306,15 @@
                                 </Viewbox>
                             </Border>
 
-                            <Grid Grid.Column="3" Height="24">
-                                <Line Classes="arrow-track" StartPoint="4,12" EndPoint="74,12"/>
-                                <Line Classes="arrow-flow discharge" StartPoint="4,12" EndPoint="74,12"/>
+                            <Grid Grid.Column="3" Height="32">
+                                <Line Classes="arrow-track" StartPoint="6,16" EndPoint="100,16"/>
+                                <Line Classes="arrow-flow discharge" StartPoint="6,16" EndPoint="100,16"/>
                                 <Polygon Classes="arrow-head discharge"/>
                             </Grid>
 
                             <!-- 계통 (송전탑) -->
                             <Border Grid.Column="4" Classes="icon-chip discharge">
-                                <Viewbox Margin="16">
+                                <Viewbox Margin="24">
                                     <Canvas Width="24" Height="28">
                                         <Line StartPoint="12,2" EndPoint="4,10" Stroke="#C2410C" StrokeThickness="1.6" StrokeLineCap="Round"/>
                                         <Line StartPoint="12,2" EndPoint="20,10" Stroke="#C2410C" StrokeThickness="1.6" StrokeLineCap="Round"/>
