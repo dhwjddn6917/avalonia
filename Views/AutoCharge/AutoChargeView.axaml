@@ -158,25 +158,25 @@
             <Setter Property="RenderTransform" Value="scale(0.95)"/>
         </Style>
 
-        <!-- 헤더 미니 아이콘 흐름 -->
+        <!-- 헤더 아이콘 흐름 (빈 공간을 채우도록 크게) -->
         <Style Selector="Border.headerFlowChip">
-            <Setter Property="Width" Value="38"/>
-            <Setter Property="Height" Value="38"/>
-            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Width" Value="76"/>
+            <Setter Property="Height" Value="76"/>
+            <Setter Property="CornerRadius" Value="18"/>
             <Setter Property="Background" Value="#D1FAE5"/>
         </Style>
 
         <Style Selector="Line.headerArrowTrack">
             <Setter Property="Stroke" Value="#CBD5E1"/>
-            <Setter Property="StrokeThickness" Value="3"/>
+            <Setter Property="StrokeThickness" Value="6"/>
             <Setter Property="StrokeLineCap" Value="Round"/>
         </Style>
 
         <Style Selector="Line.headerArrowFlow">
             <Setter Property="Stroke" Value="#15803D"/>
-            <Setter Property="StrokeThickness" Value="3"/>
+            <Setter Property="StrokeThickness" Value="6"/>
             <Setter Property="StrokeLineCap" Value="Round"/>
-            <Setter Property="StrokeDashArray" Value="5,5"/>
+            <Setter Property="StrokeDashArray" Value="8,8"/>
 
             <Style.Animations>
                 <Animation Duration="0:0:0.9"
@@ -187,7 +187,7 @@
                     </KeyFrame>
 
                     <KeyFrame Cue="100%">
-                        <Setter Property="StrokeDashOffset" Value="-20"/>
+                        <Setter Property="StrokeDashOffset" Value="-32"/>
                     </KeyFrame>
 
                 </Animation>
@@ -195,7 +195,7 @@
         </Style>
 
         <Style Selector="Polygon.headerArrowHead">
-            <Setter Property="Points" Value="0,0 10,5 0,10"/>
+            <Setter Property="Points" Value="0,0 18,9 0,18"/>
             <Setter Property="Fill" Value="#15803D"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -251,66 +251,67 @@
         <StackPanel Spacing="14">
 
             <!-- 화면 제목 + 상태 칩 + 충전 설정 버튼 -->
-            <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto,Auto">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto">
 
-                <!-- 메인화면 배터리 충전 버튼과 동일한 계통→인버터→배터리 아이콘 흐름 (축소판) -->
-                <StackPanel Grid.Column="0"
-                            Orientation="Horizontal"
-                            VerticalAlignment="Center"
-                            Margin="0,0,14,0">
-
-                    <Border Classes="headerFlowChip">
-                        <Image Source="avares://MobileEssControl/Assets/free-pylon-power-14863517.png"
-                               Margin="6"
-                               Stretch="Uniform"/>
-                    </Border>
-
-                    <Grid Width="24"
-                          Height="38"
-                          VerticalAlignment="Center">
-                        <Line Classes="headerArrowTrack"
-                              StartPoint="2,19"
-                              EndPoint="18,19"/>
-                        <Line Classes="headerArrowFlow"
-                              StartPoint="2,19"
-                              EndPoint="18,19"/>
-                        <Polygon Classes="headerArrowHead"/>
-                    </Grid>
-
-                    <Border Classes="headerFlowChip">
-                        <Image Source="avares://MobileEssControl/Assets/free-icon-inverter-11622748.png"
-                               Margin="5"
-                               Stretch="Uniform"/>
-                    </Border>
-
-                    <Grid Width="24"
-                          Height="38"
-                          VerticalAlignment="Center">
-                        <Line Classes="headerArrowTrack"
-                              StartPoint="2,19"
-                              EndPoint="18,19"/>
-                        <Line Classes="headerArrowFlow"
-                              StartPoint="2,19"
-                              EndPoint="18,19"/>
-                        <Polygon Classes="headerArrowHead"/>
-                    </Grid>
-
-                    <Border Classes="headerFlowChip">
-                        <Image Source="avares://MobileEssControl/Assets/free-icon-full-battery-664886.png"
-                               Margin="7"
-                               Stretch="Uniform"/>
-                    </Border>
-                </StackPanel>
-
-                <TextBlock Grid.Column="1"
+                <TextBlock Grid.Column="0"
                            Text="배터리 충전"
                            Foreground="#0F172A"
                            FontSize="30"
                            FontWeight="Bold"
                            VerticalAlignment="Center"/>
 
+                <!-- 메인화면 배터리 충전 버튼과 동일한 계통→인버터→배터리 아이콘 흐름. 빈 공간을 채우도록 크게 -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="24,0">
+
+                    <Border Classes="headerFlowChip">
+                        <Image Source="avares://MobileEssControl/Assets/free-pylon-power-14863517.png"
+                               Margin="12"
+                               Stretch="Uniform"/>
+                    </Border>
+
+                    <Grid Width="44"
+                          Height="76"
+                          VerticalAlignment="Center">
+                        <Line Classes="headerArrowTrack"
+                              StartPoint="4,38"
+                              EndPoint="36,38"/>
+                        <Line Classes="headerArrowFlow"
+                              StartPoint="4,38"
+                              EndPoint="36,38"/>
+                        <Polygon Classes="headerArrowHead"/>
+                    </Grid>
+
+                    <Border Classes="headerFlowChip">
+                        <Image Source="avares://MobileEssControl/Assets/free-icon-inverter-11622748.png"
+                               Margin="10"
+                               Stretch="Uniform"/>
+                    </Border>
+
+                    <Grid Width="44"
+                          Height="76"
+                          VerticalAlignment="Center">
+                        <Line Classes="headerArrowTrack"
+                              StartPoint="4,38"
+                              EndPoint="36,38"/>
+                        <Line Classes="headerArrowFlow"
+                              StartPoint="4,38"
+                              EndPoint="36,38"/>
+                        <Polygon Classes="headerArrowHead"/>
+                    </Grid>
+
+                    <Border Classes="headerFlowChip">
+                        <Image Source="avares://MobileEssControl/Assets/free-icon-full-battery-664886.png"
+                               Margin="14"
+                               Stretch="Uniform"/>
+                    </Border>
+                </StackPanel>
+
                 <!-- 운전 모드 (값이 있을 때만 표시) -->
-                <Border Grid.Column="3"
+                <Border Grid.Column="2"
                         Classes="statusChip blink"
                         IsVisible="{Binding IsOperatingModeBlinking}"
                         Margin="0,0,8,0">
@@ -322,7 +323,7 @@
                 </Border>
 
                 <!-- 시작/정지 진행 중 (전환 중일 때만 표시) -->
-                <Border Grid.Column="4"
+                <Border Grid.Column="3"
                         Classes="statusChip blink"
                         IsVisible="{Binding IsChargeTransitionActive}"
                         Margin="0,0,8,0">
@@ -333,8 +334,8 @@
                                VerticalAlignment="Center"/>
                 </Border>
 
-                <!-- 이상 상태 (이상 있을 때만 표시, 클릭하면 상세 표시) -->
-                <Button Grid.Column="5"
+                <!-- 이상 상태 (이상 있을 때만 표시, 클릭하면 상세 표시. EMS 미연결 등 통신 이상도 여기로 반영됨) -->
+                <Button Grid.Column="4"
                         Classes="statusChipButton blink"
                         IsVisible="{Binding IsFaultBlinking}"
                         Command="{Binding ShowFaultDetailCommand}"
@@ -344,7 +345,7 @@
                         Padding="0"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
-                        Margin="0,0,8,0"
+                        Margin="0,0,12,0"
                         ToolTip.Tip="클릭하면 상세 내용을 볼 수 있습니다">
                     <TextBlock Text="!"
                                Foreground="White"
@@ -352,19 +353,7 @@
                                FontWeight="Bold"/>
                 </Button>
 
-                <!-- 통신 상태 (정상이 아닐 때만 표시) -->
-                <Border Grid.Column="6"
-                        Classes="statusChip blink"
-                        IsVisible="{Binding IsCommunicationBlinking}"
-                        Margin="0,0,12,0">
-                    <TextBlock Text="{Binding CommunicationStatusText}"
-                               Foreground="White"
-                               FontSize="13"
-                               FontWeight="Bold"
-                               VerticalAlignment="Center"/>
-                </Border>
-
-                <Button Grid.Column="7"
+                <Button Grid.Column="5"
                         Classes="settingsGearButton"
                         ToolTip.Tip="충전 설정">
 
@@ -652,12 +641,11 @@
                     <Grid>
 
                         <Image Source="avares://MobileEssControl/Assets/free-icon-full-battery-664886.png"
-                               Opacity="0.06"
+                               Opacity="0.07"
                                Stretch="Uniform"
-                               Width="260"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Bottom"
-                               Margin="0,0,-24,-24"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"
+                               Margin="10"
                                IsHitTestVisible="False"/>
 
                         <StackPanel Spacing="14">
@@ -684,9 +672,8 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- 충전 중에만 표시: 누적 출력량 그래프 / 예상 시간 / 경과 시간 -->
-                        <StackPanel Spacing="14"
-                                    IsVisible="{Binding IsChargingActive}">
+                        <!-- 누적 출력량 그래프 / 예상 시간 / 경과 시간 -->
+                        <StackPanel Spacing="14">
 
                             <Border Background="{Binding ChargeFlowBatteryBackground}"
                                     BorderBrush="{Binding ChargeFlowBatteryBorderBrush}"
@@ -769,12 +756,11 @@
                     <Grid>
 
                         <Image Source="avares://MobileEssControl/Assets/free-icon-inverter-11622748.png"
-                               Opacity="0.06"
+                               Opacity="0.05"
                                Stretch="Uniform"
-                               Width="260"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Bottom"
-                               Margin="0,0,-24,-24"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"
+                               Margin="10"
                                IsHitTestVisible="False"/>
 
                         <StackPanel Spacing="14">
