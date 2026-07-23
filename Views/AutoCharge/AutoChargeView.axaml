@@ -158,6 +158,25 @@
             <Setter Property="RenderTransform" Value="scale(0.95)"/>
         </Style>
 
+        <!-- 그래프 표시 구간 토글 버튼 -->
+        <Style Selector="Button.graphWindowButton">
+            <Setter Property="Padding" Value="0,10"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Foreground" Value="#334155"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.graphWindowButton.active">
+            <Setter Property="Background" Value="#0F172A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#0F172A"/>
+        </Style>
+
         <!-- 헤더 아이콘 흐름 (빈 공간을 채우도록 크게) -->
         <Style Selector="Border.headerFlowChip">
             <Setter Property="Width" Value="76"/>
@@ -543,6 +562,58 @@
                                                 FontWeight="Bold"/>
                                     </Grid>
 
+                                    <!-- 그래프 표시 구간 -->
+                                    <Border Background="#F8FAFC"
+                                            BorderBrush="#E2E8F0"
+                                            BorderThickness="1"
+                                            CornerRadius="18"
+                                            Padding="14">
+                                        <StackPanel Spacing="10">
+                                            <TextBlock Text="그래프 표시 구간"
+                                                       FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#64748B"/>
+
+                                            <Grid ColumnDefinitions="*,*,*,*,*"
+                                                  ColumnSpacing="6">
+                                                <Button Grid.Column="0"
+                                                        Classes="graphWindowButton"
+                                                        Classes.active="{Binding IsGraphWindow15Selected}"
+                                                        Content="15분"
+                                                        Command="{Binding SetGraphWindowCommand}"
+                                                        CommandParameter="15"/>
+
+                                                <Button Grid.Column="1"
+                                                        Classes="graphWindowButton"
+                                                        Classes.active="{Binding IsGraphWindow30Selected}"
+                                                        Content="30분"
+                                                        Command="{Binding SetGraphWindowCommand}"
+                                                        CommandParameter="30"/>
+
+                                                <Button Grid.Column="2"
+                                                        Classes="graphWindowButton"
+                                                        Classes.active="{Binding IsGraphWindow1hSelected}"
+                                                        Content="1시간"
+                                                        Command="{Binding SetGraphWindowCommand}"
+                                                        CommandParameter="60"/>
+
+                                                <Button Grid.Column="3"
+                                                        Classes="graphWindowButton"
+                                                        Classes.active="{Binding IsGraphWindow3hSelected}"
+                                                        Content="3시간"
+                                                        Command="{Binding SetGraphWindowCommand}"
+                                                        CommandParameter="180"/>
+
+                                                <Button Grid.Column="4"
+                                                        Classes="graphWindowButton"
+                                                        Classes.active="{Binding IsGraphWindowFullSelected}"
+                                                        Content="전체"
+                                                        Command="{Binding SetGraphWindowCommand}"
+                                                        CommandParameter="full"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+
                                     <!-- 상태 설명 -->
                                     <Border Background="#EEF6FF"
                                             BorderBrush="#BFDBFE"
@@ -681,10 +752,18 @@
                                     CornerRadius="18"
                                     Padding="14">
                                 <StackPanel Spacing="8">
-                                    <TextBlock Text="누적 출력량 추이"
-                                               Foreground="#64748B"
-                                               FontSize="13"
-                                               FontWeight="SemiBold"/>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="누적 출력량 추이"
+                                                   Foreground="#64748B"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding GraphWindowOptionText}"
+                                                   Foreground="#94A3B8"
+                                                   FontSize="11"
+                                                   FontWeight="Bold"/>
+                                    </Grid>
 
                                     <Viewbox Height="70"
                                              Stretch="Fill"
@@ -833,7 +912,7 @@
                                 CornerRadius="18"
                                 Padding="14">
                             <StackPanel Spacing="8">
-                                <Grid ColumnDefinitions="*,Auto">
+                                <Grid ColumnDefinitions="*,Auto,Auto">
                                     <TextBlock Grid.Column="0"
                                                Text="3상 선간전압 추이 (AB/BC/CA)"
                                                Foreground="#64748B"
@@ -841,6 +920,13 @@
                                                FontWeight="SemiBold"
                                                VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1"
+                                               Text="{Binding GraphWindowOptionText}"
+                                               Foreground="#94A3B8"
+                                               FontSize="11"
+                                               FontWeight="Bold"
+                                               Margin="0,0,10,0"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2"
                                                Text="{Binding ThreePhaseVoltageText}"
                                                Foreground="#0F172A"
                                                FontSize="14"

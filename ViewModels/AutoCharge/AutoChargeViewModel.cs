@@ -23,11 +23,19 @@ public enum ChargeFlowState
     Disconnected
 }
 
+public enum GraphWindowOption
+{
+    Minutes15,
+    Minutes30,
+    Hours1,
+    Hours3,
+    Full
+}
+
 public partial class AutoChargeViewModel : ViewModelBase, IDisposable
 {
     private const double BatteryCapacityKwh = 77.4;
     private const int GraphSampleIntervalSeconds = 5;
-    private const int GraphMaxSamples = 180;
     private const double GraphWidth = 280;
     private const double GraphHeight = 70;
 
@@ -76,6 +84,9 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private ChargeFlowState chargeState = ChargeFlowState.Ready;
+
+    [ObservableProperty]
+    private GraphWindowOption selectedGraphWindowOption = GraphWindowOption.Minutes15;
 
     [ObservableProperty]
     private double targetSoc = 90;
@@ -421,6 +432,32 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
     public bool IsFaultBlinking =>
         FaultLevelText != "정상";
 
+    public string GraphWindowOptionText =>
+        SelectedGraphWindowOption switch
+        {
+            GraphWindowOption.Minutes15 => "최근 15분",
+            GraphWindowOption.Minutes30 => "최근 30분",
+            GraphWindowOption.Hours1 => "최근 1시간",
+            GraphWindowOption.Hours3 => "최근 3시간",
+            GraphWindowOption.Full => "전체 세션",
+            _ => "최근 15분"
+        };
+
+    public bool IsGraphWindow15Selected =>
+        SelectedGraphWindowOption == GraphWindowOption.Minutes15;
+
+    public bool IsGraphWindow30Selected =>
+        SelectedGraphWindowOption == GraphWindowOption.Minutes30;
+
+    public bool IsGraphWindow1hSelected =>
+        SelectedGraphWindowOption == GraphWindowOption.Hours1;
+
+    public bool IsGraphWindow3hSelected =>
+        SelectedGraphWindowOption == GraphWindowOption.Hours3;
+
+    public bool IsGraphWindowFullSelected =>
+        SelectedGraphWindowOption == GraphWindowOption.Full;
+
     public string CurrentSocText =>
         CurrentSoc.HasValue
             ? $"{CurrentSoc.Value:0.0}%"
@@ -587,6 +624,34 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(IsFaultBlinking));
     }
 
+    partial void OnSelectedGraphWindowOptionChanged(GraphWindowOption value)
+    {
+        OnPropertyChanged(nameof(GraphWindowOptionText));
+        OnPropertyChanged(nameof(IsGraphWindow15Selected));
+        OnPropertyChanged(nameof(IsGraphWindow30Selected));
+        OnPropertyChanged(nameof(IsGraphWindow1hSelected));
+        OnPropertyChanged(nameof(IsGraphWindow3hSelected));
+        OnPropertyChanged(nameof(IsGraphWindowFullSelected));
+
+        TrimGraphHistoriesToWindow();
+        RebuildGraphPoints();
+        RebuildVoltageGraphPoints();
+    }
+
+    [RelayCommand]
+    private void SetGraphWindow(string option)
+    {
+        SelectedGraphWindowOption = option switch
+        {
+            "15" => GraphWindowOption.Minutes15,
+            "30" => GraphWindowOption.Minutes30,
+            "60" => GraphWindowOption.Hours1,
+            "180" => GraphWindowOption.Hours3,
+            "full" => GraphWindowOption.Full,
+            _ => SelectedGraphWindowOption
+        };
+    }
+
     private void ClearInverterPanelValues()
     {
         Inverter1PowerKw = null;
@@ -722,11 +787,53 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             : $"약 {minutes}분";
     }
 
+    private int GetGraphMaxSamples()
+    {
+        int windowSeconds = SelectedGraphWindowOption switch
+        {
+            GraphWindowOption.Minutes15 => 15 * 60,
+            GraphWindowOption.Minutes30 => 30 * 60,
+            GraphWindowOption.Hours1 => 60 * 60,
+            GraphWindowOption.Hours3 => 3 * 60 * 60,
+            GraphWindowOption.Full => int.MaxValue,
+            _ => 15 * 60
+        };
+
+        return windowSeconds == int.MaxValue
+            ? int.MaxValue
+            : Math.Max(2, windowSeconds / GraphSampleIntervalSeconds);
+    }
+
+    private void TrimGraphHistoriesToWindow()
+    {
+        int maxSamples = GetGraphMaxSamples();
+
+        if (maxSamples == int.MaxValue)
+        {
+            return;
+        }
+
+        TrimListToMax(_outputHistoryKwh, maxSamples);
+        TrimListToMax(_abVoltageHistory, maxSamples);
+        TrimListToMax(_bcVoltageHistory, maxSamples);
+        TrimListToMax(_caVoltageHistory, maxSamples);
+    }
+
+    private static void TrimListToMax(List<double> list, int maxSamples)
+    {
+        while (list.Count > maxSamples)
+        {
+            list.RemoveAt(0);
+        }
+    }
+
     private void AppendGraphSample(double cumulativeKwh)
     {
         _outputHistoryKwh.Add(cumulativeKwh);
 
-        if (_outputHistoryKwh.Count > GraphMaxSamples)
+        int maxSamples = GetGraphMaxSamples();
+
+        if (maxSamples != int.MaxValue && _outputHistoryKwh.Count > maxSamples)
         {
             _outputHistoryKwh.RemoveAt(0);
         }
@@ -787,7 +894,9 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         _bcVoltageHistory.Add(bcVoltage);
         _caVoltageHistory.Add(caVoltage);
 
-        if (_abVoltageHistory.Count > GraphMaxSamples)
+        int maxSamples = GetGraphMaxSamples();
+
+        if (maxSamples != int.MaxValue && _abVoltageHistory.Count > maxSamples)
         {
             _abVoltageHistory.RemoveAt(0);
             _bcVoltageHistory.RemoveAt(0);
