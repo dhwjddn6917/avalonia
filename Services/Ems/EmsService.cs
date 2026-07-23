@@ -1576,6 +1576,8 @@ public class EmsService
     public async Task StartExternalOutputAsync(
         double totalOutputPowerKw,
         double minimumSoc,
+        double phaseVoltage = 220,
+        double frequencyHz = 60,
         CancellationToken cancellationToken = default)
     {
         bool operationSequenceStarted = false;
@@ -1617,6 +1619,26 @@ public class EmsService
                         "최저 SOC는 10 ~ 90% 범위여야 합니다.");
                 }
 
+                if (double.IsNaN(phaseVoltage) ||
+                    double.IsInfinity(phaseVoltage) ||
+                    phaseVoltage < 200 ||
+                    phaseVoltage > 240)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(phaseVoltage),
+                        "외부 출력 상전압은 200 ~ 240 V 범위여야 합니다.");
+                }
+
+                if (double.IsNaN(frequencyHz) ||
+                    double.IsInfinity(frequencyHz) ||
+                    frequencyHz < 45 ||
+                    frequencyHz > 65)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(frequencyHz),
+                        "외부 출력 주파수는 45 ~ 65 Hz 범위여야 합니다.");
+                }
+
                 await CheckCanStartOperationAsync(
                     requiredMode:
                         EmsOperationMode.ExternalOutput,
@@ -1647,7 +1669,7 @@ public class EmsService
                 externalOutputModeApplied = true;
 
                 WriteLog(
-                    $"외부출력 시퀀스 1/5 · " +
+                    $"외부출력 시퀀스 1/7 · " +
                     $"Mode=ExternalOutput · SystemRun OFF · " +
                     $"다른 30001 비트 유지 · " +
                     $"30001=0x{appliedCommand:X4}");
@@ -1659,7 +1681,7 @@ public class EmsService
                     cancellationToken);
 
                 WriteLog(
-                    $"외부출력 시퀀스 2/5 · " +
+                    $"외부출력 시퀀스 2/7 · " +
                     $"Run 전 선간전압 0V 확인 완료 · " +
                     $"기준≤{ExternalOutputZeroVoltageMaximumV:0.0}V");
 
@@ -1675,7 +1697,7 @@ public class EmsService
                     cancellationToken);
 
                 WriteLog(
-                    $"외부출력 시퀀스 3/5 · " +
+                    $"외부출력 시퀀스 3/7 · " +
                     $"30009 최저 SOC={minimumSocRaw} " +
                     $"({minimumSoc:0.0}%)");
 
@@ -1695,9 +1717,49 @@ public class EmsService
                     cancellationToken);
 
                 WriteLog(
-                    $"외부출력 시퀀스 4/5 · " +
+                    $"외부출력 시퀀스 4/7 · " +
                     $"30012 출력전력={outputPowerRaw} " +
                     $"({totalOutputPowerKw:0.00}kW)");
+
+                await Task.Delay(
+                    commandDelayMilliseconds,
+                    cancellationToken);
+
+                // 5단계: 사용자가 설정한 출력 상전압을 30014에 씁니다.
+                ushort phaseVoltageRaw =
+                    (ushort)Math.Round(
+                        phaseVoltage * 100.0);
+
+                await WriteAndConfirmOperationSettingAsync(
+                    EmsControlAddresses.AcOutputPhaseVoltage,
+                    phaseVoltageRaw,
+                    "외부출력 상전압",
+                    cancellationToken);
+
+                WriteLog(
+                    $"외부출력 시퀀스 5/7 · " +
+                    $"30014 상전압={phaseVoltageRaw} " +
+                    $"({phaseVoltage:0.0}V)");
+
+                await Task.Delay(
+                    commandDelayMilliseconds,
+                    cancellationToken);
+
+                // 6단계: 사용자가 설정한 출력 주파수를 30016에 씁니다.
+                ushort frequencyRaw =
+                    (ushort)Math.Round(
+                        frequencyHz * 100.0);
+
+                await WriteAndConfirmOperationSettingAsync(
+                    EmsControlAddresses.AcOutputFrequency,
+                    frequencyRaw,
+                    "외부출력 주파수",
+                    cancellationToken);
+
+                WriteLog(
+                    $"외부출력 시퀀스 6/7 · " +
+                    $"30016 주파수={frequencyRaw} " +
+                    $"({frequencyHz:0.00}Hz)");
 
                 await Task.Delay(
                     commandDelayMilliseconds,
@@ -1722,7 +1784,7 @@ public class EmsService
                         $"31023=0x{beforeRunStatus.SystemStatus2:X4}");
                 }
 
-                // 5단계: SystemRun만 ON
+                // 7단계: SystemRun만 ON
                 appliedCommand =
                     await AddControlWord1BitsAsync(
                         EmsControlWord1.SystemRun,
@@ -1740,7 +1802,7 @@ public class EmsService
                 }
 
                 WriteLog(
-                    $"외부출력 시퀀스 5/5 · " +
+                    $"외부출력 시퀀스 7/7 · " +
                     $"SystemRun ON · EMS 내부 시퀀스 시작 요청 · " +
                     $"30001=0x{appliedCommand:X4}");
 

@@ -107,6 +107,12 @@ public partial class ExternalOutputViewModel : ViewModelBase, IDisposable
     private double minSoc = 20;
 
     [ObservableProperty]
+    private double phaseVoltage = 220;
+
+    [ObservableProperty]
+    private double frequencyHz = 60;
+
+    [ObservableProperty]
     private string modeStatus = "외부 출력 대기";
 
     [ObservableProperty]
@@ -190,6 +196,12 @@ public partial class ExternalOutputViewModel : ViewModelBase, IDisposable
 
     public string MinSocText =>
         $"{MinSoc:0}%";
+
+    public string PhaseVoltageText =>
+        $"{PhaseVoltage:0} V";
+
+    public string FrequencyHzText =>
+        $"{FrequencyHz:0.0} Hz";
 
     public string CurrentSocText =>
         CurrentSoc.HasValue
@@ -521,6 +533,40 @@ public partial class ExternalOutputViewModel : ViewModelBase, IDisposable
         }
 
         OnPropertyChanged(nameof(MinSocText));
+    }
+
+    partial void OnPhaseVoltageChanged(double value)
+    {
+        if (value < 200)
+        {
+            PhaseVoltage = 200;
+            return;
+        }
+
+        if (value > 240)
+        {
+            PhaseVoltage = 240;
+            return;
+        }
+
+        OnPropertyChanged(nameof(PhaseVoltageText));
+    }
+
+    partial void OnFrequencyHzChanged(double value)
+    {
+        if (value < 45)
+        {
+            FrequencyHz = 45;
+            return;
+        }
+
+        if (value > 65)
+        {
+            FrequencyHz = 65;
+            return;
+        }
+
+        OnPropertyChanged(nameof(FrequencyHzText));
     }
 
     partial void OnCurrentSocChanged(double? value)
@@ -1581,6 +1627,62 @@ public partial class ExternalOutputViewModel : ViewModelBase, IDisposable
     }
 
     [RelayCommand]
+    private void DecreasePhaseVoltage()
+    {
+        if (!CanEditSettings)
+        {
+            return;
+        }
+
+        if (PhaseVoltage > 200)
+        {
+            PhaseVoltage -= 1;
+        }
+    }
+
+    [RelayCommand]
+    private void IncreasePhaseVoltage()
+    {
+        if (!CanEditSettings)
+        {
+            return;
+        }
+
+        if (PhaseVoltage < 240)
+        {
+            PhaseVoltage += 1;
+        }
+    }
+
+    [RelayCommand]
+    private void DecreaseFrequency()
+    {
+        if (!CanEditSettings)
+        {
+            return;
+        }
+
+        if (FrequencyHz > 45)
+        {
+            FrequencyHz -= 0.5;
+        }
+    }
+
+    [RelayCommand]
+    private void IncreaseFrequency()
+    {
+        if (!CanEditSettings)
+        {
+            return;
+        }
+
+        if (FrequencyHz < 65)
+        {
+            FrequencyHz += 0.5;
+        }
+    }
+
+    [RelayCommand]
     private async Task StartOutput()
     {
         if (_emsService is null)
@@ -1715,7 +1817,9 @@ public partial class ExternalOutputViewModel : ViewModelBase, IDisposable
                 "외부 전원 출력 시작",
                 $"현재 설정으로 외부 전원 출력을 시작하시겠습니까?\n\n" +
                 $"출력 제한 : {OutputLimitKw:0} kW\n" +
-                $"최저 SOC : {MinSoc:0}%\n\n" +
+                $"최저 SOC : {MinSoc:0}%\n" +
+                $"상전압 : {PhaseVoltage:0} V\n" +
+                $"주파수 : {FrequencyHz:0.0} Hz\n\n" +
                 "Off-Grid AC 출력이 활성화됩니다.",
                 confirmText: "외부 출력 시작",
                 cancelText: "취소");
@@ -1746,11 +1850,14 @@ public partial class ExternalOutputViewModel : ViewModelBase, IDisposable
             ModeStatus = "외부 출력 시작 중";
 
             RequestStatus =
-                $"외부 출력 명령 전송 중 · 출력 제한 {OutputLimitKw:0}kW · 최저 SOC {MinSoc:0}%";
+                $"외부 출력 명령 전송 중 · 출력 제한 {OutputLimitKw:0}kW · " +
+                $"최저 SOC {MinSoc:0}% · 상전압 {PhaseVoltage:0}V · 주파수 {FrequencyHz:0.0}Hz";
 
             await _emsService.StartExternalOutputAsync(
                 OutputLimitKw,
-                MinSoc);
+                MinSoc,
+                PhaseVoltage,
+                FrequencyHz);
 
             IsRunning = true;
 

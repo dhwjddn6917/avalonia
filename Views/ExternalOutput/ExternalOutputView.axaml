@@ -55,6 +55,25 @@
             <Setter Property="BorderBrush" Value="#F97316"/>
         </Style>
 
+        <!-- 상전압/주파수 + 버튼 -->
+        <Style Selector="Button.accentPlusButton">
+            <Setter Property="Background" Value="#EFF6FF"/>
+            <Setter Property="Foreground" Value="#1D4ED8"/>
+            <Setter Property="BorderBrush" Value="#BFDBFE"/>
+        </Style>
+
+        <Style Selector="Button.accentPlusButton:pointerover">
+            <Setter Property="Background" Value="#BFDBFE"/>
+            <Setter Property="Foreground" Value="#1E40AF"/>
+            <Setter Property="BorderBrush" Value="#60A5FA"/>
+        </Style>
+
+        <Style Selector="Button.accentPlusButton:pressed">
+            <Setter Property="Background" Value="#93C5FD"/>
+            <Setter Property="Foreground" Value="#1E3A8A"/>
+            <Setter Property="BorderBrush" Value="#3B82F6"/>
+        </Style>
+
         <!-- SOC + 버튼 -->
         <Style Selector="Button.socPlusButton">
             <Setter Property="Background" Value="#ECFDF5"/>
@@ -494,6 +513,151 @@
                                             </Grid>
                                         </StackPanel>
                                     </Border>
+
+                                    <!-- 상전압 / 주파수 -->
+                                    <Grid ColumnDefinitions="*,*"
+                                          ColumnSpacing="10">
+
+                                        <Border Grid.Column="0"
+                                                IsEnabled="{Binding CanEditSettings}"
+                                                Background="#F8FAFC"
+                                                BorderBrush="#E2E8F0"
+                                                BorderThickness="1"
+                                                CornerRadius="18"
+                                                Padding="12">
+                                            <StackPanel Spacing="8">
+
+                                                <TextBlock Text="상전압"
+                                                           FontSize="13"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#64748B"
+                                                           HorizontalAlignment="Center"/>
+
+                                                <Border Background="#EFF6FF"
+                                                        BorderBrush="#BFDBFE"
+                                                        BorderThickness="1"
+                                                        CornerRadius="16"
+                                                        Padding="8">
+                                                    <TextBlock Text="{Binding PhaseVoltageText}"
+                                                               FontSize="26"
+                                                               FontWeight="Bold"
+                                                               Foreground="#1D4ED8"
+                                                               HorizontalAlignment="Center"/>
+                                                </Border>
+
+                                                <Slider Minimum="200"
+                                                        Maximum="240"
+                                                        Value="{Binding PhaseVoltage, Mode=TwoWay}"
+                                                        Height="38"
+                                                        MinHeight="38"
+                                                        TickFrequency="5"
+                                                        IsSnapToTickEnabled="True"
+                                                        HorizontalAlignment="Stretch"/>
+
+                                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="200V"
+                                                               Foreground="#94A3B8"
+                                                               FontSize="11"
+                                                               FontWeight="Bold"/>
+
+                                                    <TextBlock Grid.Column="2"
+                                                               Text="240V"
+                                                               Foreground="#94A3B8"
+                                                               FontSize="11"
+                                                               FontWeight="Bold"/>
+                                                </Grid>
+
+                                                <Grid ColumnDefinitions="*,*"
+                                                      ColumnSpacing="8">
+                                                    <Button Grid.Column="0"
+                                                            Classes="stepButton minusButton"
+                                                            Content="−"
+                                                            Command="{Binding DecreasePhaseVoltageCommand}"/>
+
+                                                    <Button Grid.Column="1"
+                                                            Classes="stepButton accentPlusButton"
+                                                            Content="+"
+                                                            Command="{Binding IncreasePhaseVoltageCommand}"/>
+                                                </Grid>
+
+                                                <TextBlock Text="EMS 30014"
+                                                           FontSize="10"
+                                                           Foreground="#CBD5E1"
+                                                           HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Grid.Column="1"
+                                                IsEnabled="{Binding CanEditSettings}"
+                                                Background="#F8FAFC"
+                                                BorderBrush="#E2E8F0"
+                                                BorderThickness="1"
+                                                CornerRadius="18"
+                                                Padding="12">
+                                            <StackPanel Spacing="8">
+
+                                                <TextBlock Text="주파수"
+                                                           FontSize="13"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#64748B"
+                                                           HorizontalAlignment="Center"/>
+
+                                                <Border Background="#EFF6FF"
+                                                        BorderBrush="#BFDBFE"
+                                                        BorderThickness="1"
+                                                        CornerRadius="16"
+                                                        Padding="8">
+                                                    <TextBlock Text="{Binding FrequencyHzText}"
+                                                               FontSize="26"
+                                                               FontWeight="Bold"
+                                                               Foreground="#1D4ED8"
+                                                               HorizontalAlignment="Center"/>
+                                                </Border>
+
+                                                <Slider Minimum="45"
+                                                        Maximum="65"
+                                                        Value="{Binding FrequencyHz, Mode=TwoWay}"
+                                                        Height="38"
+                                                        MinHeight="38"
+                                                        TickFrequency="0.5"
+                                                        IsSnapToTickEnabled="True"
+                                                        HorizontalAlignment="Stretch"/>
+
+                                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="45Hz"
+                                                               Foreground="#94A3B8"
+                                                               FontSize="11"
+                                                               FontWeight="Bold"/>
+
+                                                    <TextBlock Grid.Column="2"
+                                                               Text="65Hz"
+                                                               Foreground="#94A3B8"
+                                                               FontSize="11"
+                                                               FontWeight="Bold"/>
+                                                </Grid>
+
+                                                <Grid ColumnDefinitions="*,*"
+                                                      ColumnSpacing="8">
+                                                    <Button Grid.Column="0"
+                                                            Classes="stepButton minusButton"
+                                                            Content="−"
+                                                            Command="{Binding DecreaseFrequencyCommand}"/>
+
+                                                    <Button Grid.Column="1"
+                                                            Classes="stepButton accentPlusButton"
+                                                            Content="+"
+                                                            Command="{Binding IncreaseFrequencyCommand}"/>
+                                                </Grid>
+
+                                                <TextBlock Text="EMS 30016"
+                                                           FontSize="10"
+                                                           Foreground="#CBD5E1"
+                                                           HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
 
                                     <!-- 시작/정지 -->
                                     <Grid ColumnDefinitions="2*,1*"

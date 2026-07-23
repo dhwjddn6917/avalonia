@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MobileEssControl.Constants;
 
 /// <summary>
-/// EMS Slave 1의 Control ESS 영역(30001~30012) 주소입니다.
+/// EMS Slave 1의 Control ESS 영역(30001~30016) 주소입니다.
 /// 현재 ModbusService는 주소맵의 Absolute Address를 그대로 사용합니다.
 /// </summary>
 public static class EmsControlAddresses
@@ -56,6 +56,18 @@ public static class EmsControlAddresses
 
     // 30012 : 오프그리드 방전 최대 전력, 단위 0.01 kW
     public const ushort AcMaxDischargePowerOffGrid = 30012;
+
+    // 30013 : 오프그리드 출력 최대 상전압, 단위 0.01 V
+    public const ushort AcMaxOutputPhaseVoltage = 30013;
+
+    // 30014 : 오프그리드 출력 상전압, 단위 0.01 V
+    public const ushort AcOutputPhaseVoltage = 30014;
+
+    // 30015 : 오프그리드 출력 최대 주파수, 단위 0.01 Hz
+    public const ushort AcMaxOutputFrequency = 30015;
+
+    // 30016 : 오프그리드 출력 주파수, 단위 0.01 Hz
+    public const ushort AcOutputFrequency = 30016;
 }
 
 /// <summary>
