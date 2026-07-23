@@ -228,7 +228,7 @@
                                    ToolTip.Tip="{Binding ConnectionStatus}"/>
                     </Border>
 
-                    <Button Content="오퍼레이션 모드"
+                    <Button Content="메인화면"
                             Command="{Binding ShowModeSelectCommand}"
                             IsEnabled="{Binding IsModeSelectNavigationEnabled}"
                             MinWidth="150"

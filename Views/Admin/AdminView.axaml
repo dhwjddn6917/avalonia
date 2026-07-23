@@ -340,7 +340,7 @@
                     </StackPanel>
 
                     <Button Grid.Column="1"
-                            Content="← 오퍼레이션 모드"
+                            Content="← 메인화면"
                             Command="{ReflectionBinding ExitAdminCommand}"
                             Padding="16,8"
                             Background="#E2E8F0"
