@@ -17,10 +17,12 @@
 
         <!-- 버튼 제목 공통 -->
         <Style Selector="TextBlock.mode-title">
-            <Setter Property="FontSize" Value="54"/>
+            <Setter Property="FontSize" Value="46"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Width" Value="520"/>
         </Style>
 
         <!-- 버튼 설명 공통 -->
@@ -187,7 +189,7 @@
                     </StackPanel>
                 </Button>
 
-                <!-- 외부 출력 : 배터리 -> 인버터 -> 출력 콘센트 -->
+                <!-- 인버터 출력 : 배터리 -> 인버터 -> 출력 콘센트 -->
                 <Button Classes="mode-card"
                         Command="{Binding ShowExternalOutputCommand}"
                         Background="#EFF6FF"
@@ -198,7 +200,7 @@
                                 VerticalAlignment="Center">
 
                         <TextBlock Classes="mode-title"
-                                   Text="외부 출력"
+                                   Text="인버터 출력"
                                    Foreground="#1D4ED8"/>
 
                         <Grid ColumnDefinitions="96,*,96,*,96"
@@ -258,7 +260,7 @@
                     </StackPanel>
                 </Button>
 
-                <!-- 계통 방전 : 배터리 -> 인버터 -> 계통(송전탑) -->
+                <!-- 인버터 출력(계통) : 배터리 -> 인버터 -> 계통(송전탑) -->
                 <Button Classes="mode-card"
                         Command="{Binding ShowGridDischargeCommand}"
                         Background="#FFF7ED"
@@ -269,7 +271,7 @@
                                 VerticalAlignment="Center">
 
                         <TextBlock Classes="mode-title"
-                                   Text="계통 방전"
+                                   Text="인버터 출력(계통)"
                                    Foreground="#C2410C"/>
 
                         <Grid ColumnDefinitions="96,*,96,*,96"

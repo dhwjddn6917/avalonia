@@ -233,9 +233,11 @@
                     <Button Content="메인화면"
                             Command="{Binding ShowModeSelectCommand}"
                             IsEnabled="{Binding IsModeSelectNavigationEnabled}"
-                            MinWidth="190"
                             Height="66"
+                            Padding="28,0"
                             FontSize="19"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
                             Background="#2563EB"
                             Foreground="White"
                             BorderBrush="#1D4ED8"/>
