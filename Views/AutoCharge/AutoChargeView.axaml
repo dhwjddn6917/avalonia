@@ -378,7 +378,8 @@
                         Click="OnSettingsButtonClick">
 
                     <Button.Flyout>
-                        <Flyout Placement="BottomEdgeAlignedRight">
+                        <Flyout x:Name="SettingsFlyout"
+                                Placement="Bottom">
                             <Border x:Name="SettingsFlyoutRoot"
                                     Padding="24"
                                     MinWidth="640"
