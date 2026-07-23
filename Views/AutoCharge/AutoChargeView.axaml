@@ -10,7 +10,6 @@
     <UserControl.Resources>
 
         <conv:PowerSegmentBrushConverter x:Key="PowerSegmentBrushConverter"/>
-        <conv:WidthFractionConverter x:Key="WidthFractionConverter"/>
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -375,12 +374,13 @@
 
                 <Button Grid.Column="5"
                         Classes="settingsGearButton"
-                        ToolTip.Tip="충전 설정">
+                        ToolTip.Tip="충전 설정"
+                        Click="OnSettingsButtonClick">
 
                     <Button.Flyout>
                         <Flyout Placement="BottomEdgeAlignedRight">
-                            <Border Padding="24"
-                                    Width="{Binding $parent[Window].Bounds.Width, Converter={StaticResource WidthFractionConverter}, ConverterParameter=0.7}"
+                            <Border x:Name="SettingsFlyoutRoot"
+                                    Padding="24"
                                     MinWidth="640"
                                     MaxWidth="1360">
                                 <StackPanel Spacing="12">
