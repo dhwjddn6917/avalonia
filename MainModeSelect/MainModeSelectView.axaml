@@ -138,16 +138,11 @@
                               HorizontalAlignment="Center"
                               VerticalAlignment="Center">
 
-                            <!-- AC 콘센트 -->
+                            <!-- 충전 -->
                             <Border Grid.Column="0" Classes="icon-chip charge">
-                                <Viewbox Margin="20">
-                                    <Canvas Width="24" Height="24">
-                                        <Line StartPoint="9,2.5" EndPoint="9,8" Stroke="#15803D" StrokeThickness="2.4" StrokeLineCap="Round"/>
-                                        <Line StartPoint="15,2.5" EndPoint="15,8" Stroke="#15803D" StrokeThickness="2.4" StrokeLineCap="Round"/>
-                                        <Rectangle Canvas.Left="6" Canvas.Top="8" Width="12" Height="9" RadiusX="3" RadiusY="3" Stroke="#15803D" StrokeThickness="2.4"/>
-                                        <Path Data="M13.6,10.3 L10.4,14.5 L12.8,14.5 L11.2,18.2 L15.2,13.2 L12.6,13.2 Z" Fill="#15803D"/>
-                                    </Canvas>
-                                </Viewbox>
+                                <Image Source="avares://MobileEssControl/Assets/free-icon-charging-8259923.png"
+                                       Margin="20"
+                                       Stretch="Uniform"/>
                             </Border>
 
                             <Grid Grid.Column="1" Height="32">
@@ -158,16 +153,9 @@
 
                             <!-- 인버터 -->
                             <Border Grid.Column="2" Classes="icon-chip charge">
-                                <Viewbox Margin="18">
-                                    <Canvas Width="40" Height="40">
-                                        <Rectangle Canvas.Left="2" Canvas.Top="2" Width="36" Height="36" RadiusX="10" RadiusY="10" Stroke="#15803D" StrokeThickness="2.4"/>
-                                        <Path Data="M6.5,13 Q10.5,7 14.5,13 Q18.5,19 22.5,13" Stroke="#15803D" StrokeThickness="2.4" StrokeLineCap="Round"/>
-                                        <Line StartPoint="33,7" EndPoint="7,33" Stroke="#15803D" StrokeThickness="2.4" StrokeLineCap="Round"/>
-                                        <Line StartPoint="22,27" EndPoint="34,27" Stroke="#15803D" StrokeThickness="3" StrokeLineCap="Round"/>
-                                        <Line StartPoint="22,32" EndPoint="27,32" Stroke="#15803D" StrokeThickness="3" StrokeLineCap="Round"/>
-                                        <Line StartPoint="29,32" EndPoint="34,32" Stroke="#15803D" StrokeThickness="3" StrokeLineCap="Round"/>
-                                    </Canvas>
-                                </Viewbox>
+                                <Image Source="avares://MobileEssControl/Assets/free-icon-inverter-11622748.png"
+                                       Margin="18"
+                                       Stretch="Uniform"/>
                             </Border>
 
                             <Grid Grid.Column="3" Height="32">
@@ -178,13 +166,9 @@
 
                             <!-- 배터리 -->
                             <Border Grid.Column="4" Classes="icon-chip charge">
-                                <Viewbox Margin="20">
-                                    <Canvas Width="24" Height="28">
-                                        <Rectangle Canvas.Left="7" Canvas.Top="2" Width="10" Height="4" RadiusX="1.5" RadiusY="1.5" Fill="#15803D"/>
-                                        <Rectangle Canvas.Left="3" Canvas.Top="6" Width="18" Height="20" RadiusX="4" RadiusY="4" Fill="#15803D"/>
-                                        <Rectangle Canvas.Left="6" Canvas.Top="9" Width="12" Height="14" RadiusX="2" RadiusY="2" Fill="#D1FAE5"/>
-                                    </Canvas>
-                                </Viewbox>
+                                <Image Source="avares://MobileEssControl/Assets/free-icon-full-battery-664886.png"
+                                       Margin="24"
+                                       Stretch="Uniform"/>
                             </Border>
 
                         </Grid>
@@ -210,13 +194,9 @@
 
                             <!-- 배터리 -->
                             <Border Grid.Column="0" Classes="icon-chip output">
-                                <Viewbox Margin="20">
-                                    <Canvas Width="24" Height="28">
-                                        <Rectangle Canvas.Left="7" Canvas.Top="2" Width="10" Height="4" RadiusX="1.5" RadiusY="1.5" Fill="#1D4ED8"/>
-                                        <Rectangle Canvas.Left="3" Canvas.Top="6" Width="18" Height="20" RadiusX="4" RadiusY="4" Fill="#1D4ED8"/>
-                                        <Rectangle Canvas.Left="6" Canvas.Top="9" Width="12" Height="14" RadiusX="2" RadiusY="2" Fill="#DBEAFE"/>
-                                    </Canvas>
-                                </Viewbox>
+                                <Image Source="avares://MobileEssControl/Assets/free-icon-full-battery-664886.png"
+                                       Margin="24"
+                                       Stretch="Uniform"/>
                             </Border>
 
                             <Grid Grid.Column="1" Height="32">
@@ -227,16 +207,9 @@
 
                             <!-- 인버터 -->
                             <Border Grid.Column="2" Classes="icon-chip output">
-                                <Viewbox Margin="18">
-                                    <Canvas Width="40" Height="40">
-                                        <Rectangle Canvas.Left="2" Canvas.Top="2" Width="36" Height="36" RadiusX="10" RadiusY="10" Stroke="#1D4ED8" StrokeThickness="2.4"/>
-                                        <Path Data="M6.5,13 Q10.5,7 14.5,13 Q18.5,19 22.5,13" Stroke="#1D4ED8" StrokeThickness="2.4" StrokeLineCap="Round"/>
-                                        <Line StartPoint="33,7" EndPoint="7,33" Stroke="#1D4ED8" StrokeThickness="2.4" StrokeLineCap="Round"/>
-                                        <Line StartPoint="22,27" EndPoint="34,27" Stroke="#1D4ED8" StrokeThickness="3" StrokeLineCap="Round"/>
-                                        <Line StartPoint="22,32" EndPoint="27,32" Stroke="#1D4ED8" StrokeThickness="3" StrokeLineCap="Round"/>
-                                        <Line StartPoint="29,32" EndPoint="34,32" Stroke="#1D4ED8" StrokeThickness="3" StrokeLineCap="Round"/>
-                                    </Canvas>
-                                </Viewbox>
+                                <Image Source="avares://MobileEssControl/Assets/free-icon-inverter-11622748.png"
+                                       Margin="18"
+                                       Stretch="Uniform"/>
                             </Border>
 
                             <Grid Grid.Column="3" Height="32">
@@ -245,16 +218,11 @@
                                 <Polygon Classes="arrow-head output"/>
                             </Grid>
 
-                            <!-- 출력 콘센트 -->
+                            <!-- 출력 -->
                             <Border Grid.Column="4" Classes="icon-chip output">
-                                <Viewbox Margin="20">
-                                    <Canvas Width="24" Height="24">
-                                        <Line StartPoint="9,2.5" EndPoint="9,8" Stroke="#1D4ED8" StrokeThickness="2.4" StrokeLineCap="Round"/>
-                                        <Line StartPoint="15,2.5" EndPoint="15,8" Stroke="#1D4ED8" StrokeThickness="2.4" StrokeLineCap="Round"/>
-                                        <Rectangle Canvas.Left="6" Canvas.Top="8" Width="12" Height="9" RadiusX="3" RadiusY="3" Stroke="#1D4ED8" StrokeThickness="2.4"/>
-                                        <Path Data="M13.6,10.3 L10.4,14.5 L12.8,14.5 L11.2,18.2 L15.2,13.2 L12.6,13.2 Z" Fill="#1D4ED8"/>
-                                    </Canvas>
-                                </Viewbox>
+                                <Image Source="avares://MobileEssControl/Assets/free-icon-charging-8259923.png"
+                                       Margin="20"
+                                       Stretch="Uniform"/>
                             </Border>
 
                         </Grid>
@@ -280,13 +248,9 @@
 
                             <!-- 배터리 -->
                             <Border Grid.Column="0" Classes="icon-chip discharge">
-                                <Viewbox Margin="20">
-                                    <Canvas Width="24" Height="28">
-                                        <Rectangle Canvas.Left="7" Canvas.Top="2" Width="10" Height="4" RadiusX="1.5" RadiusY="1.5" Fill="#C2410C"/>
-                                        <Rectangle Canvas.Left="3" Canvas.Top="6" Width="18" Height="20" RadiusX="4" RadiusY="4" Fill="#C2410C"/>
-                                        <Rectangle Canvas.Left="6" Canvas.Top="9" Width="12" Height="14" RadiusX="2" RadiusY="2" Fill="#FFEDD5"/>
-                                    </Canvas>
-                                </Viewbox>
+                                <Image Source="avares://MobileEssControl/Assets/free-icon-full-battery-664886.png"
+                                       Margin="24"
+                                       Stretch="Uniform"/>
                             </Border>
 
                             <Grid Grid.Column="1" Height="32">
@@ -297,16 +261,9 @@
 
                             <!-- 인버터 -->
                             <Border Grid.Column="2" Classes="icon-chip discharge">
-                                <Viewbox Margin="18">
-                                    <Canvas Width="40" Height="40">
-                                        <Rectangle Canvas.Left="2" Canvas.Top="2" Width="36" Height="36" RadiusX="10" RadiusY="10" Stroke="#C2410C" StrokeThickness="2.4"/>
-                                        <Path Data="M6.5,13 Q10.5,7 14.5,13 Q18.5,19 22.5,13" Stroke="#C2410C" StrokeThickness="2.4" StrokeLineCap="Round"/>
-                                        <Line StartPoint="33,7" EndPoint="7,33" Stroke="#C2410C" StrokeThickness="2.4" StrokeLineCap="Round"/>
-                                        <Line StartPoint="22,27" EndPoint="34,27" Stroke="#C2410C" StrokeThickness="3" StrokeLineCap="Round"/>
-                                        <Line StartPoint="22,32" EndPoint="27,32" Stroke="#C2410C" StrokeThickness="3" StrokeLineCap="Round"/>
-                                        <Line StartPoint="29,32" EndPoint="34,32" Stroke="#C2410C" StrokeThickness="3" StrokeLineCap="Round"/>
-                                    </Canvas>
-                                </Viewbox>
+                                <Image Source="avares://MobileEssControl/Assets/free-icon-inverter-11622748.png"
+                                       Margin="18"
+                                       Stretch="Uniform"/>
                             </Border>
 
                             <Grid Grid.Column="3" Height="32">
@@ -317,25 +274,9 @@
 
                             <!-- 계통 (송전탑) -->
                             <Border Grid.Column="4" Classes="icon-chip discharge">
-                                <Viewbox Margin="20">
-                                    <Canvas Width="32" Height="40">
-                                        <Line StartPoint="16,3" EndPoint="6,15" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
-                                        <Line StartPoint="16,3" EndPoint="26,15" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
-                                        <Line StartPoint="6,15" EndPoint="26,15" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
-                                        <Line StartPoint="6,15" EndPoint="3,26" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
-                                        <Line StartPoint="26,15" EndPoint="29,26" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
-                                        <Line StartPoint="3,26" EndPoint="29,26" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
-                                        <Line StartPoint="6,15" EndPoint="29,26" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
-                                        <Line StartPoint="26,15" EndPoint="3,26" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
-                                        <Line StartPoint="3,26" EndPoint="2,36" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
-                                        <Line StartPoint="29,26" EndPoint="30,36" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
-                                        <Rectangle Canvas.Left="1" Canvas.Top="36" Width="30" Height="3" RadiusX="1" RadiusY="1" Fill="#C2410C"/>
-                                        <Rectangle Canvas.Left="4" Canvas.Top="13.5" Width="4" Height="3" Fill="#C2410C"/>
-                                        <Rectangle Canvas.Left="24" Canvas.Top="13.5" Width="4" Height="3" Fill="#C2410C"/>
-                                        <Rectangle Canvas.Left="1" Canvas.Top="24.5" Width="4" Height="3" Fill="#C2410C"/>
-                                        <Rectangle Canvas.Left="27" Canvas.Top="24.5" Width="4" Height="3" Fill="#C2410C"/>
-                                    </Canvas>
-                                </Viewbox>
+                                <Image Source="avares://MobileEssControl/Assets/free-pylon-power-14863517.png"
+                                       Margin="20"
+                                       Stretch="Uniform"/>
                             </Border>
 
                         </Grid>
