@@ -8,30 +8,30 @@
         WindowState="Maximized"
         Title="Mobile ESS Control System">
 
-    <Grid RowDefinitions="*,64"
+    <Grid RowDefinitions="*,92"
           Background="#F1F5F9">
 
         <!-- 하단 공통 헤더 -->
         <Border Grid.Row="1"
                 Background="#0F172A"
-                Padding="22,0">
+                Padding="30,0">
 
             <Grid ColumnDefinitions="*,Auto">
 
                 <!-- 로고 / 시스템명 -->
                 <StackPanel Orientation="Horizontal"
                             VerticalAlignment="Center"
-                            Spacing="12">
+                            Spacing="16">
 
                     <!--
                         관리자 진입용 숨김 터치 영역입니다.
                         일반 관리자 버튼은 표시하지 않고 ESS 로고를 터치하면
                         숫자 비밀번호 입력창이 열립니다.
                     -->
-                    <Button Width="38"
-                            Height="38"
+                    <Button Width="52"
+                            Height="52"
                             Padding="0"
-                            CornerRadius="10"
+                            CornerRadius="14"
                             Background="#2563EB"
                             BorderBrush="#2563EB"
                             Command="{Binding ShowAdminCommand}"
@@ -39,7 +39,7 @@
 
                         <TextBlock Text="ESS"
                                    Foreground="White"
-                                   FontSize="13"
+                                   FontSize="17"
                                    FontWeight="Bold"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"/>
@@ -49,12 +49,12 @@
 
                         <TextBlock Text="Mobile ESS Control System"
                                    Foreground="White"
-                                   FontSize="22"
+                                   FontSize="28"
                                    FontWeight="Bold"/>
 
                         <TextBlock Text="77.4kWh / 44kW Mobile Energy Control"
                                    Foreground="#94A3B8"
-                                   FontSize="12"/>
+                                   FontSize="15"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -62,7 +62,7 @@
                 <StackPanel Grid.Column="1"
                             Orientation="Horizontal"
                             VerticalAlignment="Center"
-                            Spacing="12">
+                            Spacing="16">
 
                     <!--
                         실제 패널 표시등 매핑
@@ -75,134 +75,134 @@
                     <Border Background="#111827"
                             BorderBrush="#334155"
                             BorderThickness="2"
-                            CornerRadius="12"
-                            Padding="10,5">
+                            CornerRadius="16"
+                            Padding="14,8">
 
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center"
-                                    Spacing="10">
+                                    Spacing="14">
 
                             <!-- P/W -->
-                            <StackPanel Width="42"
-                                        Spacing="2"
+                            <StackPanel Width="56"
+                                        Spacing="3"
                                         ToolTip.Tip="{Binding PowerLedStateText}">
 
-                                <Border Width="34"
-                                        Height="34"
-                                        CornerRadius="11"
+                                <Border Width="46"
+                                        Height="46"
+                                        CornerRadius="15"
                                         Background="#020617"
                                         BorderBrush="#64748B"
                                         BorderThickness="1"
-                                        Padding="2"
+                                        Padding="3"
                                         HorizontalAlignment="Center">
 
-                                    <Border CornerRadius="8"
+                                    <Border CornerRadius="11"
                                             Background="{Binding PowerLedBrush}"/>
                                 </Border>
 
                                 <TextBlock Text="P/W"
                                            Foreground="#E2E8F0"
-                                           FontSize="12"
+                                           FontSize="14"
                                            FontWeight="Bold"
                                            HorizontalAlignment="Center"/>
                             </StackPanel>
 
                             <!-- 입/출력 -->
-                            <StackPanel Width="48"
-                                        Spacing="2"
+                            <StackPanel Width="64"
+                                        Spacing="3"
                                         ToolTip.Tip="{Binding OutputLedStateText}">
 
-                                <Border Width="34"
-                                        Height="34"
-                                        CornerRadius="11"
+                                <Border Width="46"
+                                        Height="46"
+                                        CornerRadius="15"
                                         Background="#020617"
                                         BorderBrush="#64748B"
                                         BorderThickness="1"
-                                        Padding="2"
+                                        Padding="3"
                                         HorizontalAlignment="Center">
 
-                                    <Border CornerRadius="8"
+                                    <Border CornerRadius="11"
                                             Background="{Binding OutputLedBrush}"/>
                                 </Border>
 
                                 <TextBlock Text="입/출력"
                                            Foreground="#E2E8F0"
-                                           FontSize="12"
+                                           FontSize="14"
                                            FontWeight="Bold"
                                            HorizontalAlignment="Center"/>
                             </StackPanel>
 
                             <!-- 알람 -->
-                            <StackPanel Width="42"
-                                        Spacing="2"
+                            <StackPanel Width="56"
+                                        Spacing="3"
                                         ToolTip.Tip="{Binding AlarmLedStateText}">
 
-                                <Border Width="34"
-                                        Height="34"
-                                        CornerRadius="11"
+                                <Border Width="46"
+                                        Height="46"
+                                        CornerRadius="15"
                                         Background="#020617"
                                         BorderBrush="#64748B"
                                         BorderThickness="1"
-                                        Padding="2"
+                                        Padding="3"
                                         HorizontalAlignment="Center">
 
-                                    <Border CornerRadius="8"
+                                    <Border CornerRadius="11"
                                             Background="{Binding AlarmLedBrush}"/>
                                 </Border>
 
                                 <TextBlock Text="알람"
                                            Foreground="#E2E8F0"
-                                           FontSize="12"
+                                           FontSize="14"
                                            FontWeight="Bold"
                                            HorizontalAlignment="Center"/>
                             </StackPanel>
 
                             <!-- 고장 -->
-                            <StackPanel Width="42"
-                                        Spacing="2"
+                            <StackPanel Width="56"
+                                        Spacing="3"
                                         ToolTip.Tip="{Binding FaultLedStateText}">
 
-                                <Border Width="34"
-                                        Height="34"
-                                        CornerRadius="11"
+                                <Border Width="46"
+                                        Height="46"
+                                        CornerRadius="15"
                                         Background="#020617"
                                         BorderBrush="#64748B"
                                         BorderThickness="1"
-                                        Padding="2"
+                                        Padding="3"
                                         HorizontalAlignment="Center">
 
-                                    <Border CornerRadius="8"
+                                    <Border CornerRadius="11"
                                             Background="{Binding FaultLedBrush}"/>
                                 </Border>
 
                                 <TextBlock Text="고장"
                                            Foreground="#E2E8F0"
-                                           FontSize="12"
+                                           FontSize="14"
                                            FontWeight="Bold"
                                            HorizontalAlignment="Center"/>
                             </StackPanel>
 
                             <!-- 비상정지 -->
-                            <StackPanel Width="58"
-                                        Spacing="2"
+                            <StackPanel Width="78"
+                                        Spacing="3"
                                         ToolTip.Tip="{Binding EmergencyStopStateText}">
 
-                                <Border Width="34"
-                                        Height="34"
-                                        CornerRadius="17"
+                                <Border Width="46"
+                                        Height="46"
+                                        CornerRadius="23"
                                         Background="#020617"
                                         BorderBrush="#64748B"
                                         BorderThickness="1"
-                                        Padding="2"
+                                        Padding="3"
                                         HorizontalAlignment="Center">
 
-                                    <Border CornerRadius="14"
+                                    <Border CornerRadius="19"
                                             Background="{Binding EmergencyStopLedBrush}"/>
                                 </Border>
 
                                 <TextBlock Text="비상정지"
                                            Foreground="#E2E8F0"
-                                           FontSize="11"
+                                           FontSize="13"
                                            FontWeight="Bold"
                                            HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -213,14 +213,14 @@
                     <Border Background="#1E293B"
                             BorderBrush="#334155"
                             BorderThickness="1"
-                            CornerRadius="12"
-                            Padding="14,8"
-                            MinWidth="340"
-                            MaxWidth="500">
+                            CornerRadius="16"
+                            Padding="18,10"
+                            MinWidth="440"
+                            MaxWidth="620">
 
                         <TextBlock Text="{Binding ConnectionStatus}"
                                    Foreground="{Binding ConnectionStatusBrush}"
-                                   FontSize="15"
+                                   FontSize="18"
                                    FontWeight="Bold"
                                    TextAlignment="Center"
                                    TextTrimming="CharacterEllipsis"
@@ -231,8 +231,9 @@
                     <Button Content="오퍼레이션 모드"
                             Command="{Binding ShowModeSelectCommand}"
                             IsEnabled="{Binding IsModeSelectNavigationEnabled}"
-                            MinWidth="118"
-                            Height="40"
+                            MinWidth="150"
+                            Height="52"
+                            FontSize="16"
                             Background="#2563EB"
                             Foreground="White"
                             BorderBrush="#1D4ED8"/>

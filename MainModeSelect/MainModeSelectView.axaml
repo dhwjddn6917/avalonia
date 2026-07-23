@@ -8,16 +8,16 @@
 
         <!-- 모든 운전 모드 버튼 공통 (한 줄 배치용 고정 크기) -->
         <Style Selector="Button.mode-card">
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="22"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Width" Value="320"/>
-            <Setter Property="Height" Value="190"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="28"/>
+            <Setter Property="Padding" Value="28"/>
+            <Setter Property="Width" Value="440"/>
+            <Setter Property="Height" Value="270"/>
         </Style>
 
         <!-- 버튼 제목 공통 -->
         <Style Selector="TextBlock.mode-title">
-            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontSize" Value="42"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -38,17 +38,17 @@
         <!-- 회사 로고 + 운전 모드 3개를 화면 중앙에 세로로 배치 -->
         <StackPanel HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Spacing="40">
+                    Spacing="64">
 
             <!-- 회사 로고 (EVKMC) -->
             <Image Source="avares://MobileEssControl/Assets/evkmc-logo.png"
-                   Width="260"
+                   Width="420"
                    Stretch="Uniform"
                    HorizontalAlignment="Center"/>
 
             <!-- 운전 모드 3개를 한 줄로 배치 -->
             <StackPanel Orientation="Horizontal"
-                        Spacing="28"
+                        Spacing="40"
                         HorizontalAlignment="Center">
 
                 <!-- 배터리 충전 -->
