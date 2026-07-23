@@ -1,0 +1,255 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MobileEssControl.ViewModels"
+        x:DataType="vm:MainWindowViewModel"
+        x:Class="MobileEssControl.Views.MainWindow"
+
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Title="Mobile ESS Control System">
+
+    <Grid RowDefinitions="64,*"
+          Background="#F1F5F9">
+
+        <!-- 상단 공통 헤더 -->
+        <Border Grid.Row="0"
+                Background="#0F172A"
+                Padding="22,0">
+
+            <Grid ColumnDefinitions="*,Auto">
+
+                <!-- 로고 / 시스템명 -->
+                <StackPanel Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Spacing="12">
+
+                    <!--
+                        관리자 진입용 숨김 터치 영역입니다.
+                        일반 관리자 버튼은 표시하지 않고 ESS 로고를 터치하면
+                        숫자 비밀번호 입력창이 열립니다.
+                    -->
+                    <Button Width="38"
+                            Height="38"
+                            Padding="0"
+                            CornerRadius="10"
+                            Background="#2563EB"
+                            BorderBrush="#2563EB"
+                            Command="{Binding ShowAdminCommand}"
+                            IsEnabled="{Binding IsAdminMenuEnabled}">
+
+                        <TextBlock Text="ESS"
+                                   Foreground="White"
+                                   FontSize="13"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Button>
+
+                    <StackPanel VerticalAlignment="Center">
+
+                        <TextBlock Text="Mobile ESS Control System"
+                                   Foreground="White"
+                                   FontSize="22"
+                                   FontWeight="Bold"/>
+
+                        <TextBlock Text="77.4kWh / 44kW Mobile Energy Control"
+                                   Foreground="#94A3B8"
+                                   FontSize="12"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- 실제 조작 패널 LED / 연결 / 메뉴 -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Spacing="12">
+
+                    <!--
+                        실제 패널 표시등 매핑
+                        P/W      : 31023 Bit11 PowerSwitchSts
+                        입/출력   : 31022 Bit14 LampOutput
+                        알람      : 31022 Bit12 LampAlarm
+                        고장      : 31022 Bit13 LampFault
+                        비상정지  : 31023 Bit10 EmStopSwitchSts
+                    -->
+                    <Border Background="#111827"
+                            BorderBrush="#334155"
+                            BorderThickness="2"
+                            CornerRadius="12"
+                            Padding="10,5">
+
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    Spacing="10">
+
+                            <!-- P/W -->
+                            <StackPanel Width="42"
+                                        Spacing="2"
+                                        ToolTip.Tip="{Binding PowerLedStateText}">
+
+                                <Border Width="34"
+                                        Height="34"
+                                        CornerRadius="11"
+                                        Background="#020617"
+                                        BorderBrush="#64748B"
+                                        BorderThickness="1"
+                                        Padding="2"
+                                        HorizontalAlignment="Center">
+
+                                    <Border CornerRadius="8"
+                                            Background="{Binding PowerLedBrush}"/>
+                                </Border>
+
+                                <TextBlock Text="P/W"
+                                           Foreground="#E2E8F0"
+                                           FontSize="12"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- 입/출력 -->
+                            <StackPanel Width="48"
+                                        Spacing="2"
+                                        ToolTip.Tip="{Binding OutputLedStateText}">
+
+                                <Border Width="34"
+                                        Height="34"
+                                        CornerRadius="11"
+                                        Background="#020617"
+                                        BorderBrush="#64748B"
+                                        BorderThickness="1"
+                                        Padding="2"
+                                        HorizontalAlignment="Center">
+
+                                    <Border CornerRadius="8"
+                                            Background="{Binding OutputLedBrush}"/>
+                                </Border>
+
+                                <TextBlock Text="입/출력"
+                                           Foreground="#E2E8F0"
+                                           FontSize="12"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- 알람 -->
+                            <StackPanel Width="42"
+                                        Spacing="2"
+                                        ToolTip.Tip="{Binding AlarmLedStateText}">
+
+                                <Border Width="34"
+                                        Height="34"
+                                        CornerRadius="11"
+                                        Background="#020617"
+                                        BorderBrush="#64748B"
+                                        BorderThickness="1"
+                                        Padding="2"
+                                        HorizontalAlignment="Center">
+
+                                    <Border CornerRadius="8"
+                                            Background="{Binding AlarmLedBrush}"/>
+                                </Border>
+
+                                <TextBlock Text="알람"
+                                           Foreground="#E2E8F0"
+                                           FontSize="12"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- 고장 -->
+                            <StackPanel Width="42"
+                                        Spacing="2"
+                                        ToolTip.Tip="{Binding FaultLedStateText}">
+
+                                <Border Width="34"
+                                        Height="34"
+                                        CornerRadius="11"
+                                        Background="#020617"
+                                        BorderBrush="#64748B"
+                                        BorderThickness="1"
+                                        Padding="2"
+                                        HorizontalAlignment="Center">
+
+                                    <Border CornerRadius="8"
+                                            Background="{Binding FaultLedBrush}"/>
+                                </Border>
+
+                                <TextBlock Text="고장"
+                                           Foreground="#E2E8F0"
+                                           FontSize="12"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- 비상정지 -->
+                            <StackPanel Width="58"
+                                        Spacing="2"
+                                        ToolTip.Tip="{Binding EmergencyStopStateText}">
+
+                                <Border Width="34"
+                                        Height="34"
+                                        CornerRadius="17"
+                                        Background="#020617"
+                                        BorderBrush="#64748B"
+                                        BorderThickness="1"
+                                        Padding="2"
+                                        HorizontalAlignment="Center">
+
+                                    <Border CornerRadius="14"
+                                            Background="{Binding EmergencyStopLedBrush}"/>
+                                </Border>
+
+                                <TextBlock Text="비상정지"
+                                           Foreground="#E2E8F0"
+                                           FontSize="11"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- EMS 연결 + 전체 운전 상태 공통 표시 -->
+                    <Border Background="#1E293B"
+                            BorderBrush="#334155"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="14,8"
+                            MinWidth="340"
+                            MaxWidth="500">
+
+                        <TextBlock Text="{Binding ConnectionStatus}"
+                                   Foreground="{Binding ConnectionStatusBrush}"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   TextAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center"
+                                   ToolTip.Tip="{Binding ConnectionStatus}"/>
+                    </Border>
+
+                    <Button Content="오퍼레이션 모드"
+                            Command="{Binding ShowModeSelectCommand}"
+                            IsEnabled="{Binding IsModeSelectNavigationEnabled}"
+                            MinWidth="118"
+                            Height="40"
+                            Background="#2563EB"
+                            Foreground="White"
+                            BorderBrush="#1D4ED8"/>
+
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 페이지 영역 -->
+        <Grid Grid.Row="1">
+
+            <Border Padding="22"
+                    Background="#F1F5F9">
+
+                <ContentControl Content="{ReflectionBinding CurrentPage}"/>
+            </Border>
+        </Grid>
+
+    </Grid>
+</Window>

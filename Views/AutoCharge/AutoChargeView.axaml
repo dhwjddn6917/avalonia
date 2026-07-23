@@ -1,0 +1,617 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MobileEssControl.ViewModels.AutoCharge"
+
+             xmlns:conv="using:MobileEssControl.Converters"
+             x:DataType="vm:AutoChargeViewModel"
+             x:Class="MobileEssControl.Views.AutoCharge.AutoChargeView">
+
+
+    <UserControl.Resources>
+
+        <conv:PowerSegmentBrushConverter x:Key="PowerSegmentBrushConverter"/>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+
+        <!-- 공통 큰 +/- 버튼 -->
+        <Style Selector="Button.stepButton">
+            <Setter Property="Width" Value="72"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="FontSize" Value="23"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- SOC - 버튼: 기본 -->
+        <Style Selector="Button.socMinusButton">
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+        </Style>
+
+        <!-- SOC - 버튼: 마우스 올림 -->
+        <Style Selector="Button.socMinusButton:pointerover">
+            <Setter Property="Background" Value="#DDE7F3"/>
+            <Setter Property="Foreground" Value="#020617"/>
+            <Setter Property="BorderBrush" Value="#94A3B8"/>
+        </Style>
+
+        <!-- SOC - 버튼: 터치/클릭 중 -->
+        <Style Selector="Button.socMinusButton:pressed">
+            <Setter Property="Background" Value="#CBD5E1"/>
+            <Setter Property="Foreground" Value="#020617"/>
+            <Setter Property="BorderBrush" Value="#64748B"/>
+        </Style>
+
+        <!-- SOC + 버튼: 기본 -->
+        <Style Selector="Button.socPlusButton">
+            <Setter Property="Background" Value="#ECFDF5"/>
+            <Setter Property="Foreground" Value="#15803D"/>
+            <Setter Property="BorderBrush" Value="#BBF7D0"/>
+        </Style>
+
+        <!-- SOC + 버튼: 마우스 올림 -->
+        <Style Selector="Button.socPlusButton:pointerover">
+            <Setter Property="Background" Value="#BBF7D0"/>
+            <Setter Property="Foreground" Value="#166534"/>
+            <Setter Property="BorderBrush" Value="#4ADE80"/>
+        </Style>
+
+        <!-- SOC + 버튼: 터치/클릭 중 -->
+        <Style Selector="Button.socPlusButton:pressed">
+            <Setter Property="Background" Value="#86EFAC"/>
+            <Setter Property="Foreground" Value="#14532D"/>
+            <Setter Property="BorderBrush" Value="#22C55E"/>
+        </Style>
+
+        <!-- 전력 - 버튼: 기본 -->
+        <Style Selector="Button.powerMinusButton">
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+        </Style>
+
+        <!-- 전력 - 버튼: 마우스 올림 -->
+        <Style Selector="Button.powerMinusButton:pointerover">
+            <Setter Property="Background" Value="#DDE7F3"/>
+            <Setter Property="Foreground" Value="#020617"/>
+            <Setter Property="BorderBrush" Value="#94A3B8"/>
+        </Style>
+
+        <!-- 전력 - 버튼: 터치/클릭 중 -->
+        <Style Selector="Button.powerMinusButton:pressed">
+            <Setter Property="Background" Value="#CBD5E1"/>
+            <Setter Property="Foreground" Value="#020617"/>
+            <Setter Property="BorderBrush" Value="#64748B"/>
+        </Style>
+
+        <!-- 전력 + 버튼: 기본 -->
+        <Style Selector="Button.powerPlusButton">
+            <Setter Property="Background" Value="#EFF6FF"/>
+            <Setter Property="Foreground" Value="#1D4ED8"/>
+            <Setter Property="BorderBrush" Value="#BFDBFE"/>
+        </Style>
+
+        <!-- 전력 + 버튼: 마우스 올림 -->
+        <Style Selector="Button.powerPlusButton:pointerover">
+            <Setter Property="Background" Value="#BFDBFE"/>
+            <Setter Property="Foreground" Value="#1E40AF"/>
+            <Setter Property="BorderBrush" Value="#60A5FA"/>
+        </Style>
+
+        <!-- 전력 + 버튼: 터치/클릭 중 -->
+        <Style Selector="Button.powerPlusButton:pressed">
+            <Setter Property="Background" Value="#93C5FD"/>
+            <Setter Property="Foreground" Value="#1E3A8A"/>
+            <Setter Property="BorderBrush" Value="#3B82F6"/>
+
+        </Style>
+
+    </UserControl.Styles>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="10">
+
+            <!-- 화면 제목 -->
+            <TextBlock Text="배터리 충전"
+                       Foreground="#0F172A"
+                       FontSize="30"
+                       FontWeight="Bold"/>
+
+            <!-- Summary cards. These are UI placeholders only. EMS binding will be connected step by step later. -->
+            <Grid ColumnDefinitions="*,*,*"
+                  ColumnSpacing="14">
+                <Border Grid.Column="0"
+                        Background="White"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="18">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="현재 SOC"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="{Binding CurrentSocText}"
+                                   Foreground="#16A34A"
+                                   FontSize="30"
+                                   FontWeight="Bold"/>
+                        
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1"
+                        Background="White"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="18">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="현재 충전전력"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="{Binding CurrentChargePowerText}"
+                                   Foreground="#2563EB"
+                                   FontSize="30"
+                                   FontWeight="Bold"/>
+                  
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2"
+                        Background="White"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="18">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="시스템 전압 / 전류"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="{Binding SystemVoltageCurrentText}"
+                                   Foreground="#7E22CE"
+                                   FontSize="30"
+                                   FontWeight="Bold"/>
+                       
+                    </StackPanel>
+                </Border>
+
+
+            </Grid>
+
+            <Grid  ColumnDefinitions="1.15*,1*"
+                  ColumnSpacing="16">
+
+               <!-- Charge flow -->
+<Border Grid.Column="0"
+        Background="White"
+        BorderBrush="#E2E8F0"
+        BorderThickness="1"
+        CornerRadius="18"
+        Padding="18">
+    <StackPanel Spacing="12">
+
+        <!-- 흐름 제목 -->
+        <TextBlock Text="충전 흐름"
+                   Foreground="#0F172A"
+                   FontSize="21"
+                   FontWeight="Bold"/>
+
+        <!-- 단순 흐름 이미지 -->
+        <Border Background="#F8FAFC"
+                BorderBrush="#E2E8F0"
+                BorderThickness="1"
+                CornerRadius="18"
+                Padding="14">
+            <Grid ColumnDefinitions="*,90,*,90,*"
+                  ColumnSpacing="10"
+                  VerticalAlignment="Center">
+
+                <!-- 계통 -->
+                <Border Grid.Column="0"
+                        Background="{Binding ChargeFlowGridBackground}"
+BorderBrush="{Binding ChargeFlowGridBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="22"
+                        Padding="12"
+                        MinHeight="135">
+                    <StackPanel Spacing="12"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+
+                        <Border Width="74"
+                                Height="74"
+                                CornerRadius="37"
+                                Background="White"
+                                BorderBrush="{Binding ChargeFlowGridBorderBrush}"
+                                BorderThickness="2">
+                            <TextBlock Text="AC"
+                                       Foreground="{Binding ChargeFlowGridBrush}"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+
+                        <TextBlock Text="계통"
+                                   Foreground="#0F172A"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+
+                        <TextBlock Text="AC 입력"
+                                   Foreground="#64748B"
+                                   FontSize="13"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- AC 흐름선 -->
+               <Grid Grid.Column="1"
+      Opacity="{Binding ChargeFlowAcArrowOpacity}"
+      VerticalAlignment="Center">
+    <Line StartPoint="4,0"
+          EndPoint="74,0"
+          Stroke="{Binding ChargeFlowGridBrush}"
+          StrokeThickness="5"/>
+    <Path Data="M 78 0 L 60 -13 L 60 13 Z"
+          Fill="{Binding ChargeFlowGridBrush}"/>
+    <TextBlock Text="AC"
+               Foreground="{Binding ChargeFlowGridBrush}"
+                               FontSize="12"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,18,0,0"/>
+                </Grid>
+
+                <!-- 인버터 -->
+                <Border Grid.Column="2"
+                     Background="{Binding ChargeFlowInverterBackground}"
+BorderBrush="{Binding ChargeFlowInverterBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="22"
+                        Padding="12"
+                        MinHeight="135">
+                    <StackPanel Spacing="12"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+
+                        <Border Width="74"
+                                Height="74"
+                                CornerRadius="20"
+                                Background="White"
+                                BorderBrush="{Binding ChargeFlowInverterBorderBrush}"
+                                BorderThickness="2">
+                            <TextBlock Text="INV"
+                                       Foreground="{Binding ChargeFlowInverterBrush}"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+
+                        <TextBlock Text="인버터"
+                                   Foreground="#0F172A"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+
+                        <TextBlock Text="{Binding CurrentChargePowerText}"
+                                  Foreground="{Binding ChargeFlowInverterBrush}"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- DC 흐름선 -->
+            <Grid Grid.Column="3"
+      Opacity="{Binding ChargeFlowDcArrowOpacity}"
+      VerticalAlignment="Center">
+                    <Line StartPoint="4,0"
+                          EndPoint="74,0"
+                          Stroke="{Binding ChargeFlowBatteryBrush}"
+                          StrokeThickness="5"/>
+                    <Path Data="M 78 0 L 60 -13 L 60 13 Z"
+                          Fill="{Binding ChargeFlowBatteryBrush}"/>
+                    <TextBlock Text="DC"
+                               Foreground="{Binding ChargeFlowBatteryBrush}"
+                               FontSize="12"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,18,0,0"/>
+                </Grid>
+
+                <!-- 배터리 -->
+                <Border Grid.Column="4"
+                        Background="{Binding ChargeFlowBatteryBackground}"
+                        BorderBrush="{Binding ChargeFlowBatteryBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="22"
+                        Padding="12"
+                        MinHeight="135">
+                    <StackPanel Spacing="12"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+
+                        <Border Width="92"
+                                Height="58"
+                                CornerRadius="14"
+                                Background="White"
+                                BorderBrush="{Binding ChargeFlowBatteryBorderBrush}"
+                                BorderThickness="2">
+                            <Grid ColumnDefinitions="*,Auto"
+                                  Margin="8,8,4,8">
+                                <Border Grid.Column="0"
+                                        Background="{Binding ChargeFlowBatteryBrush}"
+                                        CornerRadius="8"/>
+
+                                <Border Grid.Column="1"
+                                        Width="8"
+                                        Height="22"
+                                        CornerRadius="4"
+                                        Background="{Binding ChargeFlowBatteryBrush}"
+                                        VerticalAlignment="Center"
+                                        Margin="4,0,0,0"/>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock Text="배터리"
+                                   Foreground="#0F172A"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+
+                        <TextBlock Text="{Binding CurrentSocText}"
+                                   Foreground="{Binding ChargeFlowBatteryBrush}"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- 설명 -->
+        <Border Background="#EEF6FF"
+                BorderBrush="#BFDBFE"
+                BorderThickness="1"
+                CornerRadius="16"
+                Padding="16">
+            <TextBlock Text="계통 AC 전원을 인버터에서 DC로 변환하여 배터리를 충전합니다."
+                       Foreground="#1E3A8A"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       TextWrapping="Wrap"/>
+        </Border>
+
+    </StackPanel>
+</Border>
+
+                <!-- Tesla-like Charge Settings -->
+                <Border Grid.Column="1"
+                        Background="White"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        CornerRadius="22"
+                        Padding="18">
+                    <StackPanel Spacing="14">
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="충전 설정"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       Foreground="#0F172A"/>
+                   
+                        </StackPanel>
+
+                        <!-- 목표 SOC -->
+                        <Border IsEnabled="{Binding CanEditSettings}"
+                                Background="#F8FAFC"
+                                BorderBrush="#E2E8F0"
+                                BorderThickness="1"
+                                CornerRadius="18"
+                                Padding="14">
+                            <StackPanel Spacing="10">
+
+                                <TextBlock Text="목표 SOC"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="#64748B"
+                                           HorizontalAlignment="Center"/>
+
+                                <StackPanel Spacing="8">
+
+                                    <Border Background="#ECFDF5"
+                                            BorderBrush="#BBF7D0"
+                                            BorderThickness="1"
+                                            CornerRadius="18"
+                                            Padding="10">
+                                        <StackPanel Spacing="6"
+                                                    HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding TargetSocText}"
+                                                       FontSize="44"
+                                                       FontWeight="Bold"
+                                                       Foreground="#16A34A"
+                                                       HorizontalAlignment="Center"/>
+
+                                  
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Grid RowDefinitions="Auto,Auto,Auto"
+                                          RowSpacing="8">
+
+                                        <Slider Grid.Row="0"
+                                                Minimum="10"
+                                                Maximum="100"
+                                                Value="{Binding TargetSoc, Mode=TwoWay}"
+                                                Height="42"
+                                                MinHeight="42"
+                                                TickFrequency="5"
+                                                IsSnapToTickEnabled="True"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"/>
+
+                                        <Grid Grid.Row="1"
+                                              ColumnDefinitions="Auto,*,Auto">
+                                            <TextBlock Grid.Column="0"
+                                                       Text="10%"
+                                                       Foreground="#94A3B8"
+                                                       FontSize="12"
+                                                       FontWeight="Bold"/>
+
+                                            <TextBlock Grid.Column="2"
+                                                       Text="100%"
+                                                       Foreground="#94A3B8"
+                                                       FontSize="12"
+                                                       FontWeight="Bold"/>
+                                        </Grid>
+
+                                       
+                                    </Grid>
+                                </StackPanel>
+
+                                <Grid ColumnDefinitions="*,*"
+                                      ColumnSpacing="22">
+                                    <Button Grid.Column="0"
+                                            Classes="stepButton socMinusButton"
+                                            Content="−"
+                                            Command="{Binding DecreaseTargetSocCommand}"/>
+
+                                    <Button Grid.Column="1"
+                                            Classes="stepButton socPlusButton"
+                                            Content="+"
+                                            Command="{Binding IncreaseTargetSocCommand}"/>
+                                </Grid>
+
+                        
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 충전 전류 -->
+                        <Border IsEnabled="{Binding CanEditSettings}"
+                                Background="#F8FAFC"
+                                BorderBrush="#E2E8F0"
+                                BorderThickness="1"
+                                CornerRadius="18"
+                                Padding="14">
+                            <StackPanel Spacing="10">
+
+                                <TextBlock Text="충전 전류"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="#64748B"
+                                           HorizontalAlignment="Center"/>
+
+                                <StackPanel Spacing="8">
+
+                                    <Border Background="#EFF6FF"
+                                            BorderBrush="#BFDBFE"
+                                            BorderThickness="1"
+                                            CornerRadius="18"
+                                            Padding="10">
+                                        <StackPanel Spacing="6"
+                                                    HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding ChargeCurrentText}"
+                                                       FontSize="42"
+                                                       FontWeight="Bold"
+                                                       Foreground="#2563EB"
+                                                       HorizontalAlignment="Center"/>
+
+                                        </StackPanel>
+                                    </Border>
+
+                                   
+                                    <!-- 터치 조절 게이지 -->
+                                    <Grid RowDefinitions="Auto,Auto,Auto"
+                                          RowSpacing="8">
+
+                                        <Slider Grid.Row="0"
+                                                Minimum="0"
+                                                Maximum="120"
+                                                Value="{Binding ChargeCurrentA, Mode=TwoWay}"
+                                                Height="42"
+                                                MinHeight="42"
+                                                TickFrequency="1"
+                                                IsSnapToTickEnabled="True"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"/>
+
+                                        <Grid Grid.Row="1"
+                                              ColumnDefinitions="Auto,*,Auto">
+                                            <TextBlock Grid.Column="0"
+                                                       Text="0 A"
+                                                       Foreground="#94A3B8"
+                                                       FontSize="12"
+                                                       FontWeight="Bold"/>
+
+                                            <TextBlock Grid.Column="2"
+                                                       Text="120 A"
+                                                       Foreground="#94A3B8"
+                                                       FontSize="12"
+                                                       FontWeight="Bold"/>
+                                        </Grid>
+
+                                      
+                                    </Grid>
+
+                                </StackPanel>
+
+                                <Grid ColumnDefinitions="*,*"
+                                      ColumnSpacing="14">
+                                    <Button Grid.Column="0"
+                                            Classes="stepButton powerMinusButton"
+                                            Content="−"
+                                            Command="{Binding DecreaseChargeCurrentCommand}"/>
+
+                                    <Button Grid.Column="1"
+                                            Classes="stepButton powerPlusButton"
+                                            Content="+"
+                                            Command="{Binding IncreaseChargeCurrentCommand}"/>
+                                </Grid>
+
+                               
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 시작/정지 -->
+                        <Grid ColumnDefinitions="2*,1*"
+                              ColumnSpacing="14">
+                            <Button Grid.Column="0"
+                                    Content="충전 시작"
+                                    Command="{Binding StartChargeCommand}"
+                                    Height="50"
+                                    Background="#16A34A"
+                                    Foreground="White"
+                                    BorderBrush="#16A34A"
+                                    FontSize="18"
+                                    FontWeight="Bold"/>
+
+                            <Button Grid.Column="1"
+                                    Content="정지"
+                                    Command="{Binding StopChargeCommand}"
+                                    Height="50"
+                                    Background="#111827"
+                                    Foreground="White"
+                                    BorderBrush="#111827"
+                                    FontSize="18"
+                                    FontWeight="Bold"/>
+                        </Grid>
+
+
+                    </StackPanel>
+                </Border>
+
+              
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

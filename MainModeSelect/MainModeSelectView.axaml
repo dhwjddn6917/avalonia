@@ -1,0 +1,107 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MobileEssControl.ViewModels.MainModeSelect"
+             x:DataType="vm:MainModeSelectViewModel"
+             x:Class="MobileEssControl.Views.MainModeSelect.MainModeSelectView">
+
+    <UserControl.Styles>
+
+        <!-- 모든 운전 모드 버튼 공통 -->
+        <Style Selector="Button.mode-card">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="22"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="MinHeight" Value="190"/>
+        </Style>
+
+        <!-- 버튼 제목 공통 -->
+        <Style Selector="TextBlock.mode-title">
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- 버튼 설명 공통 -->
+        <Style Selector="TextBlock.mode-description">
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+    </UserControl.Styles>
+
+    <Grid Background="#F1F5F9">
+
+        <!-- 메인 화면을 제거하고 4개 운전 모드를 2 x 2로 배치 -->
+       <Grid ColumnDefinitions="*,*"
+      RowDefinitions="*,*"
+      ColumnSpacing="28"
+      RowSpacing="28"
+      Margin="70,45"
+      MinHeight="420"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch">
+
+            <!-- 배터리 충전 -->
+            <Button Grid.Row="0"
+                    Grid.Column="0"
+                    Classes="mode-card"
+                    Command="{Binding ShowAutoChargeCommand}"
+                    Background="#ECFDF5"
+                    BorderBrush="#86EFAC">
+
+                <StackPanel Spacing="8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <TextBlock Classes="mode-title"
+                               Text="배터리 충전"
+                               Foreground="#15803D"/>
+                </StackPanel>
+            </Button>
+
+            <!-- 외부 출력 -->
+            <Button Grid.Row="0"
+                    Grid.Column="1"
+                    Classes="mode-card"
+                    Command="{Binding ShowExternalOutputCommand}"
+                    Background="#EFF6FF"
+                    BorderBrush="#93C5FD">
+
+                <StackPanel Spacing="8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <TextBlock Classes="mode-title"
+                               Text="외부 출력"
+                               Foreground="#1D4ED8"/>
+                </StackPanel>
+            </Button>
+
+            <!-- 계통 방전 -->
+            <Button Grid.Row="1"
+                    Grid.Column="0"
+                    Classes="mode-card"
+                    Command="{Binding ShowGridDischargeCommand}"
+                    Background="#FFF7ED"
+                    BorderBrush="#FDBA74">
+
+                <StackPanel Spacing="8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <TextBlock Classes="mode-title"
+                               Text="계통 방전"
+                               Foreground="#C2410C"/>
+                </StackPanel>
+            </Button>
+
+ 
+
+        </Grid>
+    </Grid>
+</UserControl>

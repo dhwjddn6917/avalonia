@@ -1,0 +1,257 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MobileEssControl.ViewModels.Dashboard"
+             x:DataType="vm:DashboardViewModel"
+             x:Class="MobileEssControl.Views.Dashboard.DashboardView">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="18">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel>
+                    <TextBlock Text="메인 화면"
+                               Foreground="#0F172A"
+                               FontSize="30"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="Mobile ESS 전체 운전 상태 요약"
+                               Foreground="#64748B"
+                               FontSize="15"
+                               Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <Border Grid.Column="1"
+                        Background="#E0F2FE"
+                        BorderBrush="#7DD3FC"
+                        BorderThickness="1"
+                        CornerRadius="14"
+                        Padding="16,10"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CommunicationStatus}"
+                               Foreground="#0369A1"
+                               FontSize="14"
+                               FontWeight="Bold"/>
+                </Border>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*,*,*"
+                  ColumnSpacing="16">
+                <Border Grid.Column="0"
+                        Background="White"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="22">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="SOC"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="{Binding SocText}"
+                                   Foreground="#16A34A"
+                                   FontSize="34"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="배터리 충전 상태"
+                                   Foreground="#94A3B8"
+                                   FontSize="13"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1"
+                        Background="White"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="22">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="현재 출력"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="{Binding PowerText}"
+                                   Foreground="#2563EB"
+                                   FontSize="34"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="충전 + / 방전 -"
+                                   Foreground="#94A3B8"
+                                   FontSize="13"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2"
+                        Background="White"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="22">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="DC 전압"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="{Binding VoltageText}"
+                                   Foreground="#9333EA"
+                                   FontSize="34"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="배터리 시스템 전압"
+                                   Foreground="#94A3B8"
+                                   FontSize="13"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="3"
+                        Background="White"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="22">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="AC 주파수"
+                                   Foreground="#64748B"
+                                   FontSize="14"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="{Binding FrequencyText}"
+                                   Foreground="#EA580C"
+                                   FontSize="34"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="인버터 AC 상태"
+                                   Foreground="#94A3B8"
+                                   FontSize="13"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid ColumnDefinitions="1.3*,1*"
+                  ColumnSpacing="16">
+                <Border Grid.Column="0"
+                        Background="White"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="24">
+                    <StackPanel Spacing="18">
+                        <TextBlock Text="운전 흐름"
+                                   Foreground="#0F172A"
+                                   FontSize="20"
+                                   FontWeight="Bold"/>
+
+                        <Grid ColumnDefinitions="*,Auto,*,Auto,*"
+                              VerticalAlignment="Center">
+                            <Border Grid.Column="0"
+                                    Background="#DBEAFE"
+                                    CornerRadius="16"
+                                    Padding="18">
+                                <StackPanel>
+                                    <TextBlock Text="계통"
+                                               Foreground="#1D4ED8"
+                                               FontSize="18"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="AC 380V"
+                                               Foreground="#64748B"
+                                               FontSize="13"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock Grid.Column="1"
+                                       Text="↔"
+                                       Foreground="#94A3B8"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       Margin="14,0"/>
+
+                            <Border Grid.Column="2"
+                                    Background="#F3E8FF"
+                                    CornerRadius="16"
+                                    Padding="18">
+                                <StackPanel>
+                                    <TextBlock Text="인버터"
+                                               Foreground="#7E22CE"
+                                               FontSize="18"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="22kW x 2"
+                                               Foreground="#64748B"
+                                               FontSize="13"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock Grid.Column="3"
+                                       Text="↔"
+                                       Foreground="#94A3B8"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       Margin="14,0"/>
+
+                            <Border Grid.Column="4"
+                                    Background="#DCFCE7"
+                                    CornerRadius="16"
+                                    Padding="18">
+                                <StackPanel>
+                                    <TextBlock Text="배터리"
+                                               Foreground="#15803D"
+                                               FontSize="18"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="77.4kWh"
+                                               Foreground="#64748B"
+                                               FontSize="13"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1"
+                        Background="White"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        CornerRadius="18"
+                        Padding="24">
+                    <StackPanel Spacing="14">
+                        <TextBlock Text="현재 운전 상태"
+                                   Foreground="#0F172A"
+                                   FontSize="20"
+                                   FontWeight="Bold"/>
+
+                        <Grid ColumnDefinitions="120,*"
+                              RowDefinitions="Auto,Auto,Auto"
+                              RowSpacing="12">
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="모드"
+                                       Foreground="#64748B"
+                                       FontSize="14"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                       Text="{Binding CurrentMode}"
+                                       Foreground="#0F172A"
+                                       FontSize="16"
+                                       FontWeight="Bold"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                       Text="운전"
+                                       Foreground="#64748B"
+                                       FontSize="14"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                       Text="{Binding RunStatus}"
+                                       Foreground="#0F172A"
+                                       FontSize="16"
+                                       FontWeight="Bold"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                       Text="알람"
+                                       Foreground="#64748B"
+                                       FontSize="14"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1"
+                                       Text="{Binding AlarmStatus}"
+                                       Foreground="#DC2626"
+                                       FontSize="16"
+                                       FontWeight="Bold"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

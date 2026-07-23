@@ -1,0 +1,75 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MobileEssControl.App"
+             xmlns:local="using:MobileEssControl"
+             RequestedThemeVariant="Light">
+
+    <!--
+        프로그램 화면은 전체적으로 밝은 카드형 테마를 사용합니다.
+        Default는 Windows의 다크/라이트 설정을 따라가므로,
+        다른 노트북의 다크 테마에서 기본 CheckBox / Button / ComboBox가
+        흰 카드 위에 흐리거나 보이지 않을 수 있습니다.
+        Light로 고정하여 모든 PC에서 같은 기본 컨트롤 테마를 사용합니다.
+    -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <!-- 전체 공통 버튼: 개별 XAML의 Background/Foreground는 우선 적용됩니다. -->
+        <Style Selector="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="12,7"/>
+            <Setter Property="Background" Value="#E2E8F0"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="#DBEAFE"/>
+            <Setter Property="Foreground" Value="#1D4ED8"/>
+            <Setter Property="BorderBrush" Value="#60A5FA"/>
+        </Style>
+
+        <Style Selector="Button:pressed">
+            <Setter Property="Background" Value="#BFDBFE"/>
+            <Setter Property="BorderBrush" Value="#3B82F6"/>
+        </Style>
+
+        <Style Selector="Button:disabled">
+            <Setter Property="Opacity" Value="0.55"/>
+        </Style>
+
+        <!-- 기본 테마를 따르던 체크박스도 모든 노트북에서 같은 글자색으로 표시합니다. -->
+        <Style Selector="CheckBox">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+
+        <Style Selector="CheckBox:disabled">
+            <Setter Property="Opacity" Value="0.55"/>
+        </Style>
+
+        <!-- 입력 컨트롤 기본 색상 통일 -->
+        <Style Selector="ComboBox">
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#94A3B8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#94A3B8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Application.Styles>
+</Application>
