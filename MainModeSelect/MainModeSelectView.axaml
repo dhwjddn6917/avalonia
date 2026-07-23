@@ -140,11 +140,10 @@
                             <Border Grid.Column="0" Classes="icon-chip charge">
                                 <Viewbox Margin="24">
                                     <Canvas Width="24" Height="24">
-                                        <Rectangle Canvas.Left="5" Canvas.Top="9" Width="14" Height="12" RadiusX="2.5" RadiusY="2.5" Stroke="#15803D" StrokeThickness="1.8"/>
-                                        <Ellipse Canvas.Left="8.1" Canvas.Top="13.9" Width="2.2" Height="2.2" Fill="#15803D"/>
-                                        <Ellipse Canvas.Left="13.7" Canvas.Top="13.9" Width="2.2" Height="2.2" Fill="#15803D"/>
-                                        <Line StartPoint="9,4" EndPoint="9,9" Stroke="#15803D" StrokeThickness="1.8" StrokeLineCap="Round"/>
-                                        <Line StartPoint="15,4" EndPoint="15,9" Stroke="#15803D" StrokeThickness="1.8" StrokeLineCap="Round"/>
+                                        <Line StartPoint="9,2.5" EndPoint="9,8" Stroke="#15803D" StrokeThickness="2.4" StrokeLineCap="Round"/>
+                                        <Line StartPoint="15,2.5" EndPoint="15,8" Stroke="#15803D" StrokeThickness="2.4" StrokeLineCap="Round"/>
+                                        <Rectangle Canvas.Left="6" Canvas.Top="8" Width="12" Height="9" RadiusX="3" RadiusY="3" Stroke="#15803D" StrokeThickness="2.4"/>
+                                        <Path Data="M13.6,10.3 L10.4,14.5 L12.8,14.5 L11.2,18.2 L15.2,13.2 L12.6,13.2 Z" Fill="#15803D"/>
                                     </Canvas>
                                 </Viewbox>
                             </Border>
@@ -158,12 +157,13 @@
                             <!-- 인버터 -->
                             <Border Grid.Column="2" Classes="icon-chip charge">
                                 <Viewbox Margin="20">
-                                    <Canvas Width="40" Height="24">
-                                        <Rectangle Canvas.Left="1" Canvas.Top="1" Width="38" Height="22" RadiusX="6" RadiusY="6" Stroke="#15803D" StrokeThickness="1.7"/>
-                                        <Path Data="M6,15 Q9,7 12,15 T18,15" Stroke="#15803D" StrokeThickness="1.7" StrokeLineCap="Round"/>
-                                        <Line StartPoint="25,7" EndPoint="25,17" Stroke="#15803D" StrokeThickness="1.7" StrokeLineCap="Round"/>
-                                        <Line StartPoint="30,7" EndPoint="30,17" Stroke="#15803D" StrokeThickness="1.7" StrokeLineCap="Round"/>
-                                        <Line StartPoint="35,7" EndPoint="35,17" Stroke="#15803D" StrokeThickness="1.7" StrokeLineCap="Round"/>
+                                    <Canvas Width="40" Height="40">
+                                        <Rectangle Canvas.Left="2" Canvas.Top="2" Width="36" Height="36" RadiusX="10" RadiusY="10" Stroke="#15803D" StrokeThickness="2.4"/>
+                                        <Path Data="M6.5,13 Q10.5,7 14.5,13 T22.5,13" Stroke="#15803D" StrokeThickness="2.4" StrokeLineCap="Round"/>
+                                        <Line StartPoint="33,7" EndPoint="7,33" Stroke="#15803D" StrokeThickness="2.4" StrokeLineCap="Round"/>
+                                        <Line StartPoint="22,27" EndPoint="34,27" Stroke="#15803D" StrokeThickness="3" StrokeLineCap="Round"/>
+                                        <Line StartPoint="22,32" EndPoint="27,32" Stroke="#15803D" StrokeThickness="3" StrokeLineCap="Round"/>
+                                        <Line StartPoint="29,32" EndPoint="34,32" Stroke="#15803D" StrokeThickness="3" StrokeLineCap="Round"/>
                                     </Canvas>
                                 </Viewbox>
                             </Border>
@@ -177,10 +177,10 @@
                             <!-- 배터리 -->
                             <Border Grid.Column="4" Classes="icon-chip charge">
                                 <Viewbox Margin="24">
-                                    <Canvas Width="32" Height="22">
-                                        <Rectangle Canvas.Left="1" Canvas.Top="2" Width="26" Height="18" RadiusX="3" RadiusY="3" Stroke="#15803D" StrokeThickness="1.8"/>
-                                        <Rectangle Canvas.Left="28.5" Canvas.Top="8" Width="3" Height="6" RadiusX="1" RadiusY="1" Fill="#15803D"/>
-                                        <Rectangle Canvas.Left="5" Canvas.Top="6" Width="18" Height="10" Fill="#15803D"/>
+                                    <Canvas Width="24" Height="28">
+                                        <Rectangle Canvas.Left="7" Canvas.Top="2" Width="10" Height="4" RadiusX="1.5" RadiusY="1.5" Fill="#15803D"/>
+                                        <Rectangle Canvas.Left="3" Canvas.Top="6" Width="18" Height="20" RadiusX="4" RadiusY="4" Fill="#15803D"/>
+                                        <Rectangle Canvas.Left="6" Canvas.Top="9" Width="12" Height="14" RadiusX="2" RadiusY="2" Fill="#D1FAE5"/>
                                     </Canvas>
                                 </Viewbox>
                             </Border>
@@ -210,10 +210,10 @@
                             <!-- 배터리 -->
                             <Border Grid.Column="0" Classes="icon-chip output">
                                 <Viewbox Margin="24">
-                                    <Canvas Width="32" Height="22">
-                                        <Rectangle Canvas.Left="1" Canvas.Top="2" Width="26" Height="18" RadiusX="3" RadiusY="3" Stroke="#1D4ED8" StrokeThickness="1.8"/>
-                                        <Rectangle Canvas.Left="28.5" Canvas.Top="8" Width="3" Height="6" RadiusX="1" RadiusY="1" Fill="#1D4ED8"/>
-                                        <Rectangle Canvas.Left="5" Canvas.Top="6" Width="18" Height="10" Fill="#1D4ED8"/>
+                                    <Canvas Width="24" Height="28">
+                                        <Rectangle Canvas.Left="7" Canvas.Top="2" Width="10" Height="4" RadiusX="1.5" RadiusY="1.5" Fill="#1D4ED8"/>
+                                        <Rectangle Canvas.Left="3" Canvas.Top="6" Width="18" Height="20" RadiusX="4" RadiusY="4" Fill="#1D4ED8"/>
+                                        <Rectangle Canvas.Left="6" Canvas.Top="9" Width="12" Height="14" RadiusX="2" RadiusY="2" Fill="#DBEAFE"/>
                                     </Canvas>
                                 </Viewbox>
                             </Border>
@@ -227,12 +227,13 @@
                             <!-- 인버터 -->
                             <Border Grid.Column="2" Classes="icon-chip output">
                                 <Viewbox Margin="20">
-                                    <Canvas Width="40" Height="24">
-                                        <Rectangle Canvas.Left="1" Canvas.Top="1" Width="38" Height="22" RadiusX="6" RadiusY="6" Stroke="#1D4ED8" StrokeThickness="1.7"/>
-                                        <Path Data="M6,15 Q9,7 12,15 T18,15" Stroke="#1D4ED8" StrokeThickness="1.7" StrokeLineCap="Round"/>
-                                        <Line StartPoint="25,7" EndPoint="25,17" Stroke="#1D4ED8" StrokeThickness="1.7" StrokeLineCap="Round"/>
-                                        <Line StartPoint="30,7" EndPoint="30,17" Stroke="#1D4ED8" StrokeThickness="1.7" StrokeLineCap="Round"/>
-                                        <Line StartPoint="35,7" EndPoint="35,17" Stroke="#1D4ED8" StrokeThickness="1.7" StrokeLineCap="Round"/>
+                                    <Canvas Width="40" Height="40">
+                                        <Rectangle Canvas.Left="2" Canvas.Top="2" Width="36" Height="36" RadiusX="10" RadiusY="10" Stroke="#1D4ED8" StrokeThickness="2.4"/>
+                                        <Path Data="M6.5,13 Q10.5,7 14.5,13 T22.5,13" Stroke="#1D4ED8" StrokeThickness="2.4" StrokeLineCap="Round"/>
+                                        <Line StartPoint="33,7" EndPoint="7,33" Stroke="#1D4ED8" StrokeThickness="2.4" StrokeLineCap="Round"/>
+                                        <Line StartPoint="22,27" EndPoint="34,27" Stroke="#1D4ED8" StrokeThickness="3" StrokeLineCap="Round"/>
+                                        <Line StartPoint="22,32" EndPoint="27,32" Stroke="#1D4ED8" StrokeThickness="3" StrokeLineCap="Round"/>
+                                        <Line StartPoint="29,32" EndPoint="34,32" Stroke="#1D4ED8" StrokeThickness="3" StrokeLineCap="Round"/>
                                     </Canvas>
                                 </Viewbox>
                             </Border>
@@ -247,11 +248,10 @@
                             <Border Grid.Column="4" Classes="icon-chip output">
                                 <Viewbox Margin="24">
                                     <Canvas Width="24" Height="24">
-                                        <Rectangle Canvas.Left="5" Canvas.Top="9" Width="14" Height="12" RadiusX="2.5" RadiusY="2.5" Stroke="#1D4ED8" StrokeThickness="1.8"/>
-                                        <Ellipse Canvas.Left="8.1" Canvas.Top="13.9" Width="2.2" Height="2.2" Fill="#1D4ED8"/>
-                                        <Ellipse Canvas.Left="13.7" Canvas.Top="13.9" Width="2.2" Height="2.2" Fill="#1D4ED8"/>
-                                        <Line StartPoint="9,4" EndPoint="9,9" Stroke="#1D4ED8" StrokeThickness="1.8" StrokeLineCap="Round"/>
-                                        <Line StartPoint="15,4" EndPoint="15,9" Stroke="#1D4ED8" StrokeThickness="1.8" StrokeLineCap="Round"/>
+                                        <Line StartPoint="9,2.5" EndPoint="9,8" Stroke="#1D4ED8" StrokeThickness="2.4" StrokeLineCap="Round"/>
+                                        <Line StartPoint="15,2.5" EndPoint="15,8" Stroke="#1D4ED8" StrokeThickness="2.4" StrokeLineCap="Round"/>
+                                        <Rectangle Canvas.Left="6" Canvas.Top="8" Width="12" Height="9" RadiusX="3" RadiusY="3" Stroke="#1D4ED8" StrokeThickness="2.4"/>
+                                        <Path Data="M13.6,10.3 L10.4,14.5 L12.8,14.5 L11.2,18.2 L15.2,13.2 L12.6,13.2 Z" Fill="#1D4ED8"/>
                                     </Canvas>
                                 </Viewbox>
                             </Border>
@@ -281,10 +281,10 @@
                             <!-- 배터리 -->
                             <Border Grid.Column="0" Classes="icon-chip discharge">
                                 <Viewbox Margin="24">
-                                    <Canvas Width="32" Height="22">
-                                        <Rectangle Canvas.Left="1" Canvas.Top="2" Width="26" Height="18" RadiusX="3" RadiusY="3" Stroke="#C2410C" StrokeThickness="1.8"/>
-                                        <Rectangle Canvas.Left="28.5" Canvas.Top="8" Width="3" Height="6" RadiusX="1" RadiusY="1" Fill="#C2410C"/>
-                                        <Rectangle Canvas.Left="5" Canvas.Top="6" Width="18" Height="10" Fill="#C2410C"/>
+                                    <Canvas Width="24" Height="28">
+                                        <Rectangle Canvas.Left="7" Canvas.Top="2" Width="10" Height="4" RadiusX="1.5" RadiusY="1.5" Fill="#C2410C"/>
+                                        <Rectangle Canvas.Left="3" Canvas.Top="6" Width="18" Height="20" RadiusX="4" RadiusY="4" Fill="#C2410C"/>
+                                        <Rectangle Canvas.Left="6" Canvas.Top="9" Width="12" Height="14" RadiusX="2" RadiusY="2" Fill="#FFEDD5"/>
                                     </Canvas>
                                 </Viewbox>
                             </Border>
@@ -298,12 +298,13 @@
                             <!-- 인버터 -->
                             <Border Grid.Column="2" Classes="icon-chip discharge">
                                 <Viewbox Margin="20">
-                                    <Canvas Width="40" Height="24">
-                                        <Rectangle Canvas.Left="1" Canvas.Top="1" Width="38" Height="22" RadiusX="6" RadiusY="6" Stroke="#C2410C" StrokeThickness="1.7"/>
-                                        <Path Data="M6,15 Q9,7 12,15 T18,15" Stroke="#C2410C" StrokeThickness="1.7" StrokeLineCap="Round"/>
-                                        <Line StartPoint="25,7" EndPoint="25,17" Stroke="#C2410C" StrokeThickness="1.7" StrokeLineCap="Round"/>
-                                        <Line StartPoint="30,7" EndPoint="30,17" Stroke="#C2410C" StrokeThickness="1.7" StrokeLineCap="Round"/>
-                                        <Line StartPoint="35,7" EndPoint="35,17" Stroke="#C2410C" StrokeThickness="1.7" StrokeLineCap="Round"/>
+                                    <Canvas Width="40" Height="40">
+                                        <Rectangle Canvas.Left="2" Canvas.Top="2" Width="36" Height="36" RadiusX="10" RadiusY="10" Stroke="#C2410C" StrokeThickness="2.4"/>
+                                        <Path Data="M6.5,13 Q10.5,7 14.5,13 T22.5,13" Stroke="#C2410C" StrokeThickness="2.4" StrokeLineCap="Round"/>
+                                        <Line StartPoint="33,7" EndPoint="7,33" Stroke="#C2410C" StrokeThickness="2.4" StrokeLineCap="Round"/>
+                                        <Line StartPoint="22,27" EndPoint="34,27" Stroke="#C2410C" StrokeThickness="3" StrokeLineCap="Round"/>
+                                        <Line StartPoint="22,32" EndPoint="27,32" Stroke="#C2410C" StrokeThickness="3" StrokeLineCap="Round"/>
+                                        <Line StartPoint="29,32" EndPoint="34,32" Stroke="#C2410C" StrokeThickness="3" StrokeLineCap="Round"/>
                                     </Canvas>
                                 </Viewbox>
                             </Border>
@@ -317,14 +318,22 @@
                             <!-- 계통 (송전탑) -->
                             <Border Grid.Column="4" Classes="icon-chip discharge">
                                 <Viewbox Margin="24">
-                                    <Canvas Width="24" Height="28">
-                                        <Line StartPoint="12,2" EndPoint="4,10" Stroke="#C2410C" StrokeThickness="1.6" StrokeLineCap="Round"/>
-                                        <Line StartPoint="12,2" EndPoint="20,10" Stroke="#C2410C" StrokeThickness="1.6" StrokeLineCap="Round"/>
-                                        <Line StartPoint="6,10" EndPoint="18,10" Stroke="#C2410C" StrokeThickness="1.6" StrokeLineCap="Round"/>
-                                        <Line StartPoint="8,10" EndPoint="4,26" Stroke="#C2410C" StrokeThickness="1.6" StrokeLineCap="Round"/>
-                                        <Line StartPoint="16,10" EndPoint="20,26" Stroke="#C2410C" StrokeThickness="1.6" StrokeLineCap="Round"/>
-                                        <Line StartPoint="4,26" EndPoint="20,26" Stroke="#C2410C" StrokeThickness="1.6" StrokeLineCap="Round"/>
-                                        <Line StartPoint="9,16" EndPoint="15,16" Stroke="#C2410C" StrokeThickness="1.6" StrokeLineCap="Round"/>
+                                    <Canvas Width="32" Height="40">
+                                        <Line StartPoint="16,3" EndPoint="6,15" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
+                                        <Line StartPoint="16,3" EndPoint="26,15" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
+                                        <Line StartPoint="6,15" EndPoint="26,15" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
+                                        <Line StartPoint="6,15" EndPoint="3,26" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
+                                        <Line StartPoint="26,15" EndPoint="29,26" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
+                                        <Line StartPoint="3,26" EndPoint="29,26" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
+                                        <Line StartPoint="6,15" EndPoint="29,26" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
+                                        <Line StartPoint="26,15" EndPoint="3,26" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
+                                        <Line StartPoint="3,26" EndPoint="2,36" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
+                                        <Line StartPoint="29,26" EndPoint="30,36" Stroke="#C2410C" StrokeThickness="2.2" StrokeLineCap="Round"/>
+                                        <Rectangle Canvas.Left="1" Canvas.Top="36" Width="30" Height="3" RadiusX="1" RadiusY="1" Fill="#C2410C"/>
+                                        <Rectangle Canvas.Left="4" Canvas.Top="13.5" Width="4" Height="3" Fill="#C2410C"/>
+                                        <Rectangle Canvas.Left="24" Canvas.Top="13.5" Width="4" Height="3" Fill="#C2410C"/>
+                                        <Rectangle Canvas.Left="1" Canvas.Top="24.5" Width="4" Height="3" Fill="#C2410C"/>
+                                        <Rectangle Canvas.Left="27" Canvas.Top="24.5" Width="4" Height="3" Fill="#C2410C"/>
                                     </Canvas>
                                 </Viewbox>
                             </Border>
