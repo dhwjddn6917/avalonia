@@ -360,10 +360,10 @@
 
                     <Button.Flyout>
                         <Flyout Placement="BottomEdgeAlignedRight">
-                            <Border Padding="20"
-                                    MinWidth="380"
-                                    MaxWidth="420">
-                                <StackPanel Spacing="14">
+                            <Border Padding="26"
+                                    MinWidth="520"
+                                    MaxWidth="620">
+                                <StackPanel Spacing="16">
 
                                     <TextBlock Text="출력 설정"
                                                FontSize="22"
