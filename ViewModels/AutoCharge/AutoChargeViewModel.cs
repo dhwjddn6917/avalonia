@@ -85,6 +85,39 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
     private double? systemCurrent;
 
     [ObservableProperty]
+    private string threePhaseVoltageText = "-- / -- / -- V";
+
+    [ObservableProperty]
+    private double? inverter1PowerKw;
+
+    [ObservableProperty]
+    private double? inverter1AcVoltage;
+
+    [ObservableProperty]
+    private double? inverter1DcVoltage;
+
+    [ObservableProperty]
+    private double? inverter1DcCurrent;
+
+    [ObservableProperty]
+    private double? inverter1Frequency;
+
+    [ObservableProperty]
+    private double? inverter2PowerKw;
+
+    [ObservableProperty]
+    private double? inverter2AcVoltage;
+
+    [ObservableProperty]
+    private double? inverter2DcVoltage;
+
+    [ObservableProperty]
+    private double? inverter2DcCurrent;
+
+    [ObservableProperty]
+    private double? inverter2Frequency;
+
+    [ObservableProperty]
     private string operatingModeText = "대기";
 
     [ObservableProperty]
@@ -350,6 +383,40 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             ? $"{CurrentSoc.Value:0.0}%"
             : "-- %";
 
+    public string Inverter1PowerText =>
+        Inverter1PowerKw.HasValue
+            ? $"{Inverter1PowerKw.Value:0.00} kW"
+            : "-- kW";
+
+    public string Inverter1AcDcText =>
+        Inverter1AcVoltage.HasValue &&
+        Inverter1DcVoltage.HasValue &&
+        Inverter1DcCurrent.HasValue
+            ? $"AC {Inverter1AcVoltage.Value:0.0} V  ·  DC {Inverter1DcVoltage.Value:0.0} V / {Inverter1DcCurrent.Value:0.0} A"
+            : "AC -- V  ·  DC -- V / -- A";
+
+    public string Inverter1FrequencyText =>
+        Inverter1Frequency.HasValue
+            ? $"{Inverter1Frequency.Value:0.00} Hz"
+            : "-- Hz";
+
+    public string Inverter2PowerText =>
+        Inverter2PowerKw.HasValue
+            ? $"{Inverter2PowerKw.Value:0.00} kW"
+            : "-- kW";
+
+    public string Inverter2AcDcText =>
+        Inverter2AcVoltage.HasValue &&
+        Inverter2DcVoltage.HasValue &&
+        Inverter2DcCurrent.HasValue
+            ? $"AC {Inverter2AcVoltage.Value:0.0} V  ·  DC {Inverter2DcVoltage.Value:0.0} V / {Inverter2DcCurrent.Value:0.0} A"
+            : "AC -- V  ·  DC -- V / -- A";
+
+    public string Inverter2FrequencyText =>
+        Inverter2Frequency.HasValue
+            ? $"{Inverter2Frequency.Value:0.00} Hz"
+            : "-- Hz";
+
     partial void OnSystemVoltageChanged(double? value)
     {
         OnPropertyChanged(nameof(SystemVoltageCurrentText));
@@ -358,6 +425,56 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
     partial void OnSystemCurrentChanged(double? value)
     {
         OnPropertyChanged(nameof(SystemVoltageCurrentText));
+    }
+
+    partial void OnInverter1PowerKwChanged(double? value)
+    {
+        OnPropertyChanged(nameof(Inverter1PowerText));
+    }
+
+    partial void OnInverter1AcVoltageChanged(double? value)
+    {
+        OnPropertyChanged(nameof(Inverter1AcDcText));
+    }
+
+    partial void OnInverter1DcVoltageChanged(double? value)
+    {
+        OnPropertyChanged(nameof(Inverter1AcDcText));
+    }
+
+    partial void OnInverter1DcCurrentChanged(double? value)
+    {
+        OnPropertyChanged(nameof(Inverter1AcDcText));
+    }
+
+    partial void OnInverter1FrequencyChanged(double? value)
+    {
+        OnPropertyChanged(nameof(Inverter1FrequencyText));
+    }
+
+    partial void OnInverter2PowerKwChanged(double? value)
+    {
+        OnPropertyChanged(nameof(Inverter2PowerText));
+    }
+
+    partial void OnInverter2AcVoltageChanged(double? value)
+    {
+        OnPropertyChanged(nameof(Inverter2AcDcText));
+    }
+
+    partial void OnInverter2DcVoltageChanged(double? value)
+    {
+        OnPropertyChanged(nameof(Inverter2AcDcText));
+    }
+
+    partial void OnInverter2DcCurrentChanged(double? value)
+    {
+        OnPropertyChanged(nameof(Inverter2AcDcText));
+    }
+
+    partial void OnInverter2FrequencyChanged(double? value)
+    {
+        OnPropertyChanged(nameof(Inverter2FrequencyText));
     }
 
     partial void OnCurrentChargePowerKwChanged(double? value)
@@ -416,6 +533,57 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         NotifyChargeFlowVisualChanged();
     }
 
+    private void ClearInverterPanelValues()
+    {
+        Inverter1PowerKw = null;
+        Inverter1AcVoltage = null;
+        Inverter1DcVoltage = null;
+        Inverter1DcCurrent = null;
+        Inverter1Frequency = null;
+
+        Inverter2PowerKw = null;
+        Inverter2AcVoltage = null;
+        Inverter2DcVoltage = null;
+        Inverter2DcCurrent = null;
+        Inverter2Frequency = null;
+
+        ThreePhaseVoltageText = "-- / -- / -- V";
+    }
+
+    private static double GetRepresentativeValue(
+        double inverter1Value,
+        double inverter2Value)
+    {
+        const double minimumValidMagnitude = 0.001;
+
+        bool inverter1HasValue =
+            !double.IsNaN(inverter1Value) &&
+            !double.IsInfinity(inverter1Value) &&
+            Math.Abs(inverter1Value) > minimumValidMagnitude;
+
+        bool inverter2HasValue =
+            !double.IsNaN(inverter2Value) &&
+            !double.IsInfinity(inverter2Value) &&
+            Math.Abs(inverter2Value) > minimumValidMagnitude;
+
+        if (inverter1HasValue && inverter2HasValue)
+        {
+            return (inverter1Value + inverter2Value) / 2.0;
+        }
+
+        if (inverter1HasValue)
+        {
+            return inverter1Value;
+        }
+
+        if (inverter2HasValue)
+        {
+            return inverter2Value;
+        }
+
+        return 0.0;
+    }
+
     private static double NormalizeChargeCurrent(double value)
     {
         double clampedValue = Math.Max(
@@ -472,6 +640,8 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             SystemVoltage = null;
             SystemCurrent = null;
 
+            ClearInverterPanelValues();
+
             IsRunning = false;
             ChargeState = ChargeFlowState.Disconnected;
 
@@ -508,6 +678,23 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             SystemCurrent =
                 status.BatteryCurrent;
 
+            Inverter1PowerKw = status.Inverter1PowerKw;
+            Inverter1AcVoltage = status.Inverter1Voltage;
+            Inverter1DcVoltage = status.Inverter1DcVoltage;
+            Inverter1DcCurrent = status.Inverter1DcCurrent;
+            Inverter1Frequency = status.Inverter1Frequency;
+
+            Inverter2PowerKw = status.Inverter2PowerKw;
+            Inverter2AcVoltage = status.Inverter2Voltage;
+            Inverter2DcVoltage = status.Inverter2DcVoltage;
+            Inverter2DcCurrent = status.Inverter2DcCurrent;
+            Inverter2Frequency = status.Inverter2Frequency;
+
+            ThreePhaseVoltageText =
+                $"{GetRepresentativeValue(status.Inverter1Voltage, status.Inverter2Voltage):0.0} / " +
+                $"{GetRepresentativeValue(status.Inverter1BcVoltage, status.Inverter2BcVoltage):0.0} / " +
+                $"{GetRepresentativeValue(status.Inverter1CaVoltage, status.Inverter2CaVoltage):0.0} V";
+
             UpdateChargeState(
                 status.SystemStatus1,
                 status.SystemStatus2,
@@ -519,6 +706,8 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             CurrentChargePowerKw = null;
             SystemVoltage = null;
             SystemCurrent = null;
+
+            ClearInverterPanelValues();
 
             IsRunning = false;
             ChargeState = ChargeFlowState.Fault;
