@@ -366,182 +366,136 @@
 
                     <Button.Flyout>
                         <Flyout Placement="BottomEdgeAlignedRight">
-                            <Border Padding="32"
+                            <Border Padding="24"
                                     Width="{Binding $parent[Window].Bounds.Width, Converter={StaticResource WidthFractionConverter}, ConverterParameter=0.7}"
                                     MinWidth="640"
                                     MaxWidth="1360">
-                                <StackPanel Spacing="20">
+                                <StackPanel Spacing="12">
 
                                     <TextBlock Text="출력 설정"
-                                               FontSize="26"
+                                               FontSize="20"
                                                FontWeight="Bold"
                                                Foreground="#0F172A"/>
 
-                                    <Grid ColumnDefinitions="*,*"
-                                          ColumnSpacing="20">
+                                    <Grid ColumnDefinitions="*,*,*,*"
+                                          ColumnSpacing="12">
 
-                                    <!-- 최저 SOC -->
-                                    <Border Grid.Column="0"
-                                            IsEnabled="{Binding CanEditSettings}"
-                                            Background="#F8FAFC"
-                                            BorderBrush="#E2E8F0"
-                                            BorderThickness="1"
-                                            CornerRadius="18"
-                                            Padding="14">
-                                        <StackPanel Spacing="10">
-
-                                            <TextBlock Text="최저 SOC"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="#64748B"
-                                                       HorizontalAlignment="Center"/>
-
-                                            <Border Background="#ECFDF5"
-                                                    BorderBrush="#BBF7D0"
-                                                    BorderThickness="1"
-                                                    CornerRadius="18"
-                                                    Padding="10">
-                                                <TextBlock Text="{Binding MinSocText}"
-                                                           FontSize="44"
-                                                           FontWeight="Bold"
-                                                           Foreground="#16A34A"
-                                                           HorizontalAlignment="Center"/>
-                                            </Border>
-
-                                            <Grid RowDefinitions="Auto,Auto"
-                                                  RowSpacing="8">
-
-                                                <Slider Grid.Row="0"
-                                                        Minimum="10"
-                                                        Maximum="90"
-                                                        Value="{Binding MinSoc, Mode=TwoWay}"
-                                                        Height="42"
-                                                        MinHeight="42"
-                                                        TickFrequency="5"
-                                                        IsSnapToTickEnabled="True"
-                                                        HorizontalAlignment="Stretch"
-                                                        VerticalAlignment="Center"/>
-
-                                                <Grid Grid.Row="1"
-                                                      ColumnDefinitions="Auto,*,Auto">
-                                                    <TextBlock Grid.Column="0"
-                                                               Text="10%"
-                                                               Foreground="#94A3B8"
-                                                               FontSize="12"
-                                                               FontWeight="Bold"/>
-
-                                                    <TextBlock Grid.Column="2"
-                                                               Text="90%"
-                                                               Foreground="#94A3B8"
-                                                               FontSize="12"
-                                                               FontWeight="Bold"/>
-                                                </Grid>
-                                            </Grid>
-
-                                            <Grid ColumnDefinitions="*,*"
-                                                  ColumnSpacing="22">
-                                                <Button Grid.Column="0"
-                                                        Classes="stepButton minusButton"
-                                                        Content="−"
-                                                        Command="{Binding DecreaseMinSocCommand}"/>
-
-                                                <Button Grid.Column="1"
-                                                        Classes="stepButton socPlusButton"
-                                                        Content="+"
-                                                        Command="{Binding IncreaseMinSocCommand}"/>
-                                            </Grid>
-                                        </StackPanel>
-                                    </Border>
-
-                                    <!-- 출력 제한전력 -->
-                                    <Border Grid.Column="1"
-                                            IsEnabled="{Binding CanEditSettings}"
-                                            Background="#F8FAFC"
-                                            BorderBrush="#E2E8F0"
-                                            BorderThickness="1"
-                                            CornerRadius="18"
-                                            Padding="14">
-                                        <StackPanel Spacing="10">
-
-                                            <TextBlock Text="출력 제한전력"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="#64748B"
-                                                       HorizontalAlignment="Center"/>
-
-                                            <Border Background="#FFF7ED"
-                                                    BorderBrush="#FED7AA"
-                                                    BorderThickness="1"
-                                                    CornerRadius="18"
-                                                    Padding="10">
-                                                <TextBlock Text="{Binding OutputLimitText}"
-                                                           FontSize="42"
-                                                           FontWeight="Bold"
-                                                           Foreground="#EA580C"
-                                                           HorizontalAlignment="Center"/>
-                                            </Border>
-
-                                            <Grid RowDefinitions="Auto,Auto"
-                                                  RowSpacing="8">
-
-                                                <Slider Grid.Row="0"
-                                                        Minimum="1"
-                                                        Maximum="40"
-                                                        Value="{Binding OutputLimitKw, Mode=TwoWay}"
-                                                        Height="42"
-                                                        MinHeight="42"
-                                                        TickFrequency="1"
-                                                        IsSnapToTickEnabled="True"
-                                                        HorizontalAlignment="Stretch"
-                                                        VerticalAlignment="Center"/>
-
-                                                <Grid Grid.Row="1"
-                                                      ColumnDefinitions="Auto,*,Auto">
-                                                    <TextBlock Grid.Column="0"
-                                                               Text="1 kW"
-                                                               Foreground="#94A3B8"
-                                                               FontSize="12"
-                                                               FontWeight="Bold"/>
-
-                                                    <TextBlock Grid.Column="2"
-                                                               Text="40 kW"
-                                                               Foreground="#94A3B8"
-                                                               FontSize="12"
-                                                               FontWeight="Bold"/>
-                                                </Grid>
-                                            </Grid>
-
-                                            <Grid ColumnDefinitions="*,*"
-                                                  ColumnSpacing="14">
-                                                <Button Grid.Column="0"
-                                                        Classes="stepButton minusButton"
-                                                        Content="−"
-                                                        Command="{Binding DecreaseOutputLimitCommand}"/>
-
-                                                <Button Grid.Column="1"
-                                                        Classes="stepButton powerPlusButton"
-                                                        Content="+"
-                                                        Command="{Binding IncreaseOutputLimitCommand}"/>
-                                            </Grid>
-                                        </StackPanel>
-                                    </Border>
-                                    </Grid>
-
-                                    <!-- 상전압 / 주파수 -->
-                                    <Grid ColumnDefinitions="*,*"
-                                          ColumnSpacing="20">
-
+                                        <!-- 최저 SOC -->
                                         <Border Grid.Column="0"
                                                 IsEnabled="{Binding CanEditSettings}"
                                                 Background="#F8FAFC"
                                                 BorderBrush="#E2E8F0"
                                                 BorderThickness="1"
-                                                CornerRadius="18"
-                                                Padding="12">
-                                            <StackPanel Spacing="8">
+                                                CornerRadius="16"
+                                                Padding="10">
+                                            <StackPanel Spacing="6">
+
+                                                <TextBlock Text="최저 SOC"
+                                                           FontSize="12"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#64748B"
+                                                           HorizontalAlignment="Center"/>
+
+                                                <Border Background="#ECFDF5"
+                                                        BorderBrush="#BBF7D0"
+                                                        BorderThickness="1"
+                                                        CornerRadius="14"
+                                                        Padding="6">
+                                                    <TextBlock Text="{Binding MinSocText}"
+                                                               FontSize="24"
+                                                               FontWeight="Bold"
+                                                               Foreground="#16A34A"
+                                                               HorizontalAlignment="Center"/>
+                                                </Border>
+
+                                                <Slider Minimum="10"
+                                                        Maximum="90"
+                                                        Value="{Binding MinSoc, Mode=TwoWay}"
+                                                        Height="34"
+                                                        MinHeight="34"
+                                                        TickFrequency="5"
+                                                        IsSnapToTickEnabled="True"
+                                                        HorizontalAlignment="Stretch"/>
+
+                                                <Grid ColumnDefinitions="*,*"
+                                                      ColumnSpacing="8">
+                                                    <Button Grid.Column="0"
+                                                            Classes="stepButton minusButton"
+                                                            Content="−"
+                                                            Command="{Binding DecreaseMinSocCommand}"/>
+
+                                                    <Button Grid.Column="1"
+                                                            Classes="stepButton socPlusButton"
+                                                            Content="+"
+                                                            Command="{Binding IncreaseMinSocCommand}"/>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- 출력 제한전력 -->
+                                        <Border Grid.Column="1"
+                                                IsEnabled="{Binding CanEditSettings}"
+                                                Background="#F8FAFC"
+                                                BorderBrush="#E2E8F0"
+                                                BorderThickness="1"
+                                                CornerRadius="16"
+                                                Padding="10">
+                                            <StackPanel Spacing="6">
+
+                                                <TextBlock Text="출력 제한전력"
+                                                           FontSize="12"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#64748B"
+                                                           HorizontalAlignment="Center"/>
+
+                                                <Border Background="#FFF7ED"
+                                                        BorderBrush="#FED7AA"
+                                                        BorderThickness="1"
+                                                        CornerRadius="14"
+                                                        Padding="6">
+                                                    <TextBlock Text="{Binding OutputLimitText}"
+                                                               FontSize="24"
+                                                               FontWeight="Bold"
+                                                               Foreground="#EA580C"
+                                                               HorizontalAlignment="Center"/>
+                                                </Border>
+
+                                                <Slider Minimum="1"
+                                                        Maximum="40"
+                                                        Value="{Binding OutputLimitKw, Mode=TwoWay}"
+                                                        Height="34"
+                                                        MinHeight="34"
+                                                        TickFrequency="1"
+                                                        IsSnapToTickEnabled="True"
+                                                        HorizontalAlignment="Stretch"/>
+
+                                                <Grid ColumnDefinitions="*,*"
+                                                      ColumnSpacing="8">
+                                                    <Button Grid.Column="0"
+                                                            Classes="stepButton minusButton"
+                                                            Content="−"
+                                                            Command="{Binding DecreaseOutputLimitCommand}"/>
+
+                                                    <Button Grid.Column="1"
+                                                            Classes="stepButton powerPlusButton"
+                                                            Content="+"
+                                                            Command="{Binding IncreaseOutputLimitCommand}"/>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- 상전압 -->
+                                        <Border Grid.Column="2"
+                                                IsEnabled="{Binding CanEditSettings}"
+                                                Background="#F8FAFC"
+                                                BorderBrush="#E2E8F0"
+                                                BorderThickness="1"
+                                                CornerRadius="16"
+                                                Padding="10">
+                                            <StackPanel Spacing="6">
 
                                                 <TextBlock Text="상전압"
-                                                           FontSize="13"
+                                                           FontSize="12"
                                                            FontWeight="SemiBold"
                                                            Foreground="#64748B"
                                                            HorizontalAlignment="Center"/>
@@ -549,10 +503,10 @@
                                                 <Border Background="#EFF6FF"
                                                         BorderBrush="#BFDBFE"
                                                         BorderThickness="1"
-                                                        CornerRadius="16"
-                                                        Padding="8">
+                                                        CornerRadius="14"
+                                                        Padding="6">
                                                     <TextBlock Text="{Binding PhaseVoltageText}"
-                                                               FontSize="26"
+                                                               FontSize="24"
                                                                FontWeight="Bold"
                                                                Foreground="#1D4ED8"
                                                                HorizontalAlignment="Center"/>
@@ -561,25 +515,11 @@
                                                 <Slider Minimum="200"
                                                         Maximum="240"
                                                         Value="{Binding PhaseVoltage, Mode=TwoWay}"
-                                                        Height="38"
-                                                        MinHeight="38"
+                                                        Height="34"
+                                                        MinHeight="34"
                                                         TickFrequency="5"
                                                         IsSnapToTickEnabled="True"
                                                         HorizontalAlignment="Stretch"/>
-
-                                                <Grid ColumnDefinitions="Auto,*,Auto">
-                                                    <TextBlock Grid.Column="0"
-                                                               Text="200V"
-                                                               Foreground="#94A3B8"
-                                                               FontSize="11"
-                                                               FontWeight="Bold"/>
-
-                                                    <TextBlock Grid.Column="2"
-                                                               Text="240V"
-                                                               Foreground="#94A3B8"
-                                                               FontSize="11"
-                                                               FontWeight="Bold"/>
-                                                </Grid>
 
                                                 <Grid ColumnDefinitions="*,*"
                                                       ColumnSpacing="8">
@@ -595,23 +535,24 @@
                                                 </Grid>
 
                                                 <TextBlock Text="EMS 30014"
-                                                           FontSize="10"
+                                                           FontSize="9"
                                                            Foreground="#CBD5E1"
                                                            HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
 
-                                        <Border Grid.Column="1"
+                                        <!-- 주파수 -->
+                                        <Border Grid.Column="3"
                                                 IsEnabled="{Binding CanEditSettings}"
                                                 Background="#F8FAFC"
                                                 BorderBrush="#E2E8F0"
                                                 BorderThickness="1"
-                                                CornerRadius="18"
-                                                Padding="12">
-                                            <StackPanel Spacing="8">
+                                                CornerRadius="16"
+                                                Padding="10">
+                                            <StackPanel Spacing="6">
 
                                                 <TextBlock Text="주파수"
-                                                           FontSize="13"
+                                                           FontSize="12"
                                                            FontWeight="SemiBold"
                                                            Foreground="#64748B"
                                                            HorizontalAlignment="Center"/>
@@ -619,10 +560,10 @@
                                                 <Border Background="#EFF6FF"
                                                         BorderBrush="#BFDBFE"
                                                         BorderThickness="1"
-                                                        CornerRadius="16"
-                                                        Padding="8">
+                                                        CornerRadius="14"
+                                                        Padding="6">
                                                     <TextBlock Text="{Binding FrequencyHzText}"
-                                                               FontSize="26"
+                                                               FontSize="24"
                                                                FontWeight="Bold"
                                                                Foreground="#1D4ED8"
                                                                HorizontalAlignment="Center"/>
@@ -631,25 +572,11 @@
                                                 <Slider Minimum="45"
                                                         Maximum="65"
                                                         Value="{Binding FrequencyHz, Mode=TwoWay}"
-                                                        Height="38"
-                                                        MinHeight="38"
+                                                        Height="34"
+                                                        MinHeight="34"
                                                         TickFrequency="0.5"
                                                         IsSnapToTickEnabled="True"
                                                         HorizontalAlignment="Stretch"/>
-
-                                                <Grid ColumnDefinitions="Auto,*,Auto">
-                                                    <TextBlock Grid.Column="0"
-                                                               Text="45Hz"
-                                                               Foreground="#94A3B8"
-                                                               FontSize="11"
-                                                               FontWeight="Bold"/>
-
-                                                    <TextBlock Grid.Column="2"
-                                                               Text="65Hz"
-                                                               Foreground="#94A3B8"
-                                                               FontSize="11"
-                                                               FontWeight="Bold"/>
-                                                </Grid>
 
                                                 <Grid ColumnDefinitions="*,*"
                                                       ColumnSpacing="8">
@@ -665,46 +592,22 @@
                                                 </Grid>
 
                                                 <TextBlock Text="EMS 30016"
-                                                           FontSize="10"
+                                                           FontSize="9"
                                                            Foreground="#CBD5E1"
                                                            HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
                                     </Grid>
 
-                                    <!-- 시작/정지 -->
-                                    <Grid ColumnDefinitions="2*,1*"
-                                          ColumnSpacing="14">
-                                        <Button Grid.Column="0"
-                                                Content="출력 시작"
-                                                Command="{Binding StartOutputCommand}"
-                                                Height="50"
-                                                Background="#EA580C"
-                                                Foreground="White"
-                                                BorderBrush="#C2410C"
-                                                FontSize="18"
-                                                FontWeight="Bold"/>
-
-                                        <Button Grid.Column="1"
-                                                Content="정지"
-                                                Command="{Binding StopOutputCommand}"
-                                                Height="50"
-                                                Background="#111827"
-                                                Foreground="White"
-                                                BorderBrush="#111827"
-                                                FontSize="18"
-                                                FontWeight="Bold"/>
-                                    </Grid>
-
                                     <!-- 그래프 표시 구간 -->
                                     <Border Background="#F8FAFC"
                                             BorderBrush="#E2E8F0"
                                             BorderThickness="1"
-                                            CornerRadius="18"
-                                            Padding="14">
-                                        <StackPanel Spacing="10">
+                                            CornerRadius="16"
+                                            Padding="12">
+                                        <StackPanel Spacing="6">
                                             <TextBlock Text="그래프 표시 구간"
-                                                       FontSize="14"
+                                                       FontSize="13"
                                                        FontWeight="SemiBold"
                                                        Foreground="#64748B"/>
 
@@ -748,15 +651,39 @@
                                         </StackPanel>
                                     </Border>
 
+                                    <!-- 시작/정지 -->
+                                    <Grid ColumnDefinitions="2*,1*"
+                                          ColumnSpacing="14">
+                                        <Button Grid.Column="0"
+                                                Content="출력 시작"
+                                                Command="{Binding StartOutputCommand}"
+                                                Height="44"
+                                                Background="#EA580C"
+                                                Foreground="White"
+                                                BorderBrush="#C2410C"
+                                                FontSize="16"
+                                                FontWeight="Bold"/>
+
+                                        <Button Grid.Column="1"
+                                                Content="정지"
+                                                Command="{Binding StopOutputCommand}"
+                                                Height="44"
+                                                Background="#111827"
+                                                Foreground="White"
+                                                BorderBrush="#111827"
+                                                FontSize="16"
+                                                FontWeight="Bold"/>
+                                    </Grid>
+
                                     <!-- 상태 설명 -->
                                     <Border Background="#FFF7ED"
                                             BorderBrush="#FED7AA"
                                             BorderThickness="1"
-                                            CornerRadius="16"
-                                            Padding="14">
+                                            CornerRadius="14"
+                                            Padding="10">
                                         <TextBlock Text="{Binding RequestStatus}"
                                                    Foreground="#9A3412"
-                                                   FontSize="13"
+                                                   FontSize="12"
                                                    FontWeight="SemiBold"
                                                    TextWrapping="Wrap"/>
                                     </Border>
