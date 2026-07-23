@@ -16,7 +16,7 @@ public static class AdminBitFieldDecoder
     // =====================================================
 
     /// <summary>
-    /// 31037 - System Status1
+    /// 31022 - System Status1
     /// </summary>
     public static string DecodeSystemStatus1(ushort raw)
     {
@@ -30,21 +30,19 @@ public static class AdminBitFieldDecoder
             FormatRemarkLine("Pack2_HvConSts", GetBitRemark(raw, 7, "Off", "On")),
             FormatRemarkLine("Bms1Menable", GetBitRemark(raw, 8, "Off", "On")),
             FormatRemarkLine("Bms2Menable", GetBitRemark(raw, 9, "Off", "On")),
-            FormatRemarkLine("Pack1_PreChgSts", GetBitRemark(raw, 10, "Off", "On")),
-            FormatRemarkLine("Pack2_PreChgSts", GetBitRemark(raw, 11, "Off", "On")),
             FormatRemarkLine("LampAlarm", GetBitRemark(raw, 12, "Off", "On")),
             FormatRemarkLine("LampFault", GetBitRemark(raw, 13, "Off", "On")),
-            FormatRemarkLine("AlarmBuzzer", GetBitRemark(raw, 14, "Off", "On")),
-            FormatRemarkLine("AcMc1_Status", GetBitRemark(raw, 15, "Off", "On")));
+            FormatRemarkLine("LampOutput", GetBitRemark(raw, 14, "Off", "On")));
     }
 
     /// <summary>
-    /// 31038 - System Status2
+    /// 31023 - System Status2
     /// </summary>
     public static string DecodeSystemStatus2(ushort raw)
     {
         return JoinLines(
-            FormatRemarkLine("AcMc1_NStatus", GetBitRemark(raw, 0, "Off", "On")),
+            FormatRemarkLine("AcMc1_Status", GetBitRemark(raw, 0, "Off", "On")),
+            FormatRemarkLine("AcMc1_Nstatus", GetBitRemark(raw, 1, "Off", "On")),
             FormatRemarkLine("DcQchgHvPConSts", GetBitRemark(raw, 2, "Off", "On")),
             FormatRemarkLine("DcQchgHvNConSts", GetBitRemark(raw, 3, "Off", "On")),
             FormatRemarkLine("DcDchgHvPConSts", GetBitRemark(raw, 4, "Off", "On")),
@@ -55,6 +53,7 @@ public static class AdminBitFieldDecoder
             FormatRemarkLine("DcDc2Sts", GetBitRemark(raw, 9, "Off", "On")),
             FormatRemarkLine("EmStopSwitchSts", GetBitRemark(raw, 10, "Off", "On")),
             FormatRemarkLine("PowerSwitchSts", GetBitRemark(raw, 11, "Off", "On")),
+            FormatRemarkLine("System ReadyEn", GetBitRemark(raw, 12, "Disable", "Enable")),
             FormatRemarkLine("System RunStop", GetBitRemark(raw, 13, "Stop", "Run")),
             FormatRemarkLine("System OffEn", GetBitRemark(raw, 14, "Disable", "Enable")),
             FormatRemarkLine("System_ResetStatus", GetBitRemark(raw, 15, "Standby", "Resetting")));
@@ -65,7 +64,7 @@ public static class AdminBitFieldDecoder
     // =====================================================
 
     /// <summary>
-    /// 31039 - System Alarms 1
+    /// 31024 - System Alarms 1
     /// </summary>
     public static string DecodeSystemAlarm1(ushort raw)
     {
@@ -84,7 +83,7 @@ public static class AdminBitFieldDecoder
     }
 
     /// <summary>
-    /// 31040 - System Alarms 2
+    /// 31025 - System Alarms 2
     /// </summary>
     public static string DecodeSystemAlarm2(ushort raw)
     {
@@ -100,7 +99,7 @@ public static class AdminBitFieldDecoder
             FormatRemarkLine("DcDchgHvPConFault", GetBitRemark(raw, 8, "Normal", "Fault")),
             FormatRemarkLine("DcDchgHvNConFault", GetBitRemark(raw, 9, "Normal", "Fault")),
             FormatRemarkLine("EmStopFault", GetBitRemark(raw, 10, "Normal", "Fault")),
-            FormatRemarkLine("Fault_Reserved1", GetBitRemark(raw, 11, "Normal", "Fault")),
+            FormatRemarkLine("Fault_OffGrid_OutputVoltageDet", GetBitRemark(raw, 11, "Normal", "Fault")),
             FormatRemarkLine("Fault_Reserved2", GetBitRemark(raw, 12, "Normal", "Fault")),
             FormatRemarkLine("Fault_Reserved3", GetBitRemark(raw, 13, "Normal", "Fault")),
             FormatRemarkLine("Fault_Reserved4", GetBitRemark(raw, 14, "Normal", "Fault")),
@@ -109,7 +108,7 @@ public static class AdminBitFieldDecoder
 
     // =====================================================
     // Battery Pack Alarms
-    // Pack 1: 31041~31043, Pack 2: 31044~31046
+    // Pack 1: 31026~31028, Pack 2: 31029~31031
     // 두 Pack은 같은 규칙을 사용합니다.
     // =====================================================
 
@@ -119,7 +118,7 @@ public static class AdminBitFieldDecoder
     public static string DecodePack1Alarm1(ushort raw)
     {
         return JoinLines(
-            FormatRemarkLine("Iso Fault Level", GetFaultLevelRemark(GetBits(raw, 0, 3))),
+            FormatRemarkLine("Iso Fault Level", GetIsoFaultLevelRemark(GetBits(raw, 0, 3))),
             FormatRemarkLine("PreChgFault", GetBitRemark(raw, 3, "Normal", "Fault")),
             FormatRemarkLine("PosRlyFault", GetBitRemark(raw, 4, "Normal", "Fault")),
             FormatRemarkLine("NegRlyFault", GetBitRemark(raw, 5, "Normal", "Fault")),
@@ -171,7 +170,7 @@ public static class AdminBitFieldDecoder
 
     // =====================================================
     // Battery Pack Status
-    // Pack 1: 31047 / 31048, Pack 2: 31049 / 31050
+    // Pack 1: 31032 / 31033, Pack 2: 31034 / 31035
     // =====================================================
 
     /// <summary>
@@ -308,6 +307,19 @@ public static class AdminBitFieldDecoder
         };
     }
 
+    private static string GetIsoFaultLevelRemark(int value)
+    {
+        return value switch
+        {
+            0 => "Normal",
+            1 => "Warning",
+            2 => "Fault",
+            3 => "Protect",
+            4 => "Emergency",
+            _ => "Reserved"
+        };
+    }
+
     private static string GetOperatingModeRemark(int value)
     {
         return value switch
@@ -365,9 +377,9 @@ public static class AdminBitFieldDecoder
         return value switch
         {
             0 => "LiFePo4",
-            1 => "Li-ion",
-            2 => "Li-Polymer",
-            3 => "Reserved",
+            1 => "Li-ion(LMO)",
+            2 => "Li-ion(NCA)",
+            3 => "Li-ion(NCM)",
             _ => "Reserved"
         };
     }
