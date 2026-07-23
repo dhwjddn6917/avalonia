@@ -826,6 +826,90 @@
                             </StackPanel>
                         </Border>
 
+                        <!-- 3상 선간전압 추이 -->
+                        <Border Background="#F8FAFC"
+                                BorderBrush="#E2E8F0"
+                                BorderThickness="1"
+                                CornerRadius="18"
+                                Padding="14">
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0"
+                                               Text="3상 선간전압 추이 (AB/BC/CA)"
+                                               Foreground="#64748B"
+                                               FontSize="13"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding ThreePhaseVoltageText}"
+                                               Foreground="#0F172A"
+                                               FontSize="14"
+                                               FontWeight="Bold"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <Viewbox Height="70"
+                                         Stretch="Fill"
+                                         HorizontalAlignment="Stretch">
+                                    <Canvas Width="280"
+                                            Height="70">
+                                        <Polyline Points="{Binding AbVoltageGraphPoints}"
+                                                  Stroke="#7E22CE"
+                                                  StrokeThickness="3"
+                                                  StrokeLineCap="Round"
+                                                  StrokeJoin="Round"/>
+                                        <Polyline Points="{Binding BcVoltageGraphPoints}"
+                                                  Stroke="#0EA5E9"
+                                                  StrokeThickness="3"
+                                                  StrokeLineCap="Round"
+                                                  StrokeJoin="Round"/>
+                                        <Polyline Points="{Binding CaVoltageGraphPoints}"
+                                                  Stroke="#F59E0B"
+                                                  StrokeThickness="3"
+                                                  StrokeLineCap="Round"
+                                                  StrokeJoin="Round"/>
+                                    </Canvas>
+                                </Viewbox>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Spacing="16">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="6">
+                                        <Border Width="10"
+                                                Height="10"
+                                                CornerRadius="5"
+                                                Background="#7E22CE"/>
+                                        <TextBlock Text="AB"
+                                                   Foreground="#64748B"
+                                                   FontSize="12"
+                                                   FontWeight="Bold"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="6">
+                                        <Border Width="10"
+                                                Height="10"
+                                                CornerRadius="5"
+                                                Background="#0EA5E9"/>
+                                        <TextBlock Text="BC"
+                                                   Foreground="#64748B"
+                                                   FontSize="12"
+                                                   FontWeight="Bold"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="6">
+                                        <Border Width="10"
+                                                Height="10"
+                                                CornerRadius="5"
+                                                Background="#F59E0B"/>
+                                        <TextBlock Text="CA"
+                                                   Foreground="#64748B"
+                                                   FontSize="12"
+                                                   FontWeight="Bold"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
                         <Border Background="#EEF6FF"
                                 BorderBrush="#BFDBFE"
                                 BorderThickness="1"

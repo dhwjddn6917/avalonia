@@ -34,6 +34,9 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
     private readonly EmsService? _emsService;
     private readonly DispatcherTimer? _refreshTimer;
     private readonly List<double> _outputHistoryKwh = new();
+    private readonly List<double> _abVoltageHistory = new();
+    private readonly List<double> _bcVoltageHistory = new();
+    private readonly List<double> _caVoltageHistory = new();
 
     private bool _isRefreshing;
     private bool _disposed;
@@ -42,8 +45,14 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
     private DateTime? _lastEnergySampleUtc;
     private DateTime? _lastGraphSampleUtc;
     private double _cumulativeChargeEnergyKwh;
+    private double _currentAbVoltage;
+    private double _currentBcVoltage;
+    private double _currentCaVoltage;
 
     public Points ChargeOutputGraphPoints { get; } = new();
+    public Points AbVoltageGraphPoints { get; } = new();
+    public Points BcVoltageGraphPoints { get; } = new();
+    public Points CaVoltageGraphPoints { get; } = new();
 
     public AutoChargeViewModel()
     {
@@ -619,6 +628,13 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             _cumulativeChargeEnergyKwh = 0;
             _outputHistoryKwh.Clear();
             ChargeOutputGraphPoints.Clear();
+
+            _abVoltageHistory.Clear();
+            _bcVoltageHistory.Clear();
+            _caVoltageHistory.Clear();
+            AbVoltageGraphPoints.Clear();
+            BcVoltageGraphPoints.Clear();
+            CaVoltageGraphPoints.Clear();
         }
 
         double elapsedHours =
@@ -646,6 +662,7 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         {
             _lastGraphSampleUtc = now;
             AppendGraphSample(_cumulativeChargeEnergyKwh);
+            AppendVoltageGraphSample(_currentAbVoltage, _currentBcVoltage, _currentCaVoltage);
         }
     }
 
@@ -657,6 +674,13 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         _cumulativeChargeEnergyKwh = 0;
         _outputHistoryKwh.Clear();
         ChargeOutputGraphPoints.Clear();
+
+        _abVoltageHistory.Clear();
+        _bcVoltageHistory.Clear();
+        _caVoltageHistory.Clear();
+        AbVoltageGraphPoints.Clear();
+        BcVoltageGraphPoints.Clear();
+        CaVoltageGraphPoints.Clear();
 
         ChargeElapsedText = "--:--:--";
         EstimatedRemainingText = "-- ";
@@ -751,6 +775,86 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             double y = GraphHeight - (normalized * GraphHeight);
 
             ChargeOutputGraphPoints.Add(new Point(x, y));
+        }
+    }
+
+    private void AppendVoltageGraphSample(
+        double abVoltage,
+        double bcVoltage,
+        double caVoltage)
+    {
+        _abVoltageHistory.Add(abVoltage);
+        _bcVoltageHistory.Add(bcVoltage);
+        _caVoltageHistory.Add(caVoltage);
+
+        if (_abVoltageHistory.Count > GraphMaxSamples)
+        {
+            _abVoltageHistory.RemoveAt(0);
+            _bcVoltageHistory.RemoveAt(0);
+            _caVoltageHistory.RemoveAt(0);
+        }
+
+        RebuildVoltageGraphPoints();
+    }
+
+    private void RebuildVoltageGraphPoints()
+    {
+        AbVoltageGraphPoints.Clear();
+        BcVoltageGraphPoints.Clear();
+        CaVoltageGraphPoints.Clear();
+
+        int count = _abVoltageHistory.Count;
+
+        if (count < 2)
+        {
+            return;
+        }
+
+        double min = double.MaxValue;
+        double max = double.MinValue;
+
+        foreach (List<double> series in new[] { _abVoltageHistory, _bcVoltageHistory, _caVoltageHistory })
+        {
+            foreach (double value in series)
+            {
+                if (value < min)
+                {
+                    min = value;
+                }
+
+                if (value > max)
+                {
+                    max = value;
+                }
+            }
+        }
+
+        double range = max - min;
+
+        if (range < 1)
+        {
+            range = 1;
+        }
+
+        FillVoltageGraphPoints(_abVoltageHistory, AbVoltageGraphPoints, min, range, count);
+        FillVoltageGraphPoints(_bcVoltageHistory, BcVoltageGraphPoints, min, range, count);
+        FillVoltageGraphPoints(_caVoltageHistory, CaVoltageGraphPoints, min, range, count);
+    }
+
+    private static void FillVoltageGraphPoints(
+        List<double> history,
+        Points target,
+        double min,
+        double range,
+        int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            double x = GraphWidth * i / (count - 1);
+            double normalized = (history[i] - min) / range;
+            double y = GraphHeight - (normalized * GraphHeight);
+
+            target.Add(new Point(x, y));
         }
     }
 
@@ -895,10 +999,17 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             Inverter2DcCurrent = status.Inverter2DcCurrent;
             Inverter2Frequency = status.Inverter2Frequency;
 
+            _currentAbVoltage =
+                GetRepresentativeValue(status.Inverter1Voltage, status.Inverter2Voltage);
+
+            _currentBcVoltage =
+                GetRepresentativeValue(status.Inverter1BcVoltage, status.Inverter2BcVoltage);
+
+            _currentCaVoltage =
+                GetRepresentativeValue(status.Inverter1CaVoltage, status.Inverter2CaVoltage);
+
             ThreePhaseVoltageText =
-                $"{GetRepresentativeValue(status.Inverter1Voltage, status.Inverter2Voltage):0.0} / " +
-                $"{GetRepresentativeValue(status.Inverter1BcVoltage, status.Inverter2BcVoltage):0.0} / " +
-                $"{GetRepresentativeValue(status.Inverter1CaVoltage, status.Inverter2CaVoltage):0.0} V";
+                $"{_currentAbVoltage:0.0} / {_currentBcVoltage:0.0} / {_currentCaVoltage:0.0} V";
 
             UpdateChargeState(
                 status.SystemStatus1,
