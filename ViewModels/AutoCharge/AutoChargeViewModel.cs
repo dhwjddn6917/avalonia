@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Media;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -5,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using MobileEssControl.Services.Dialogs;
 using MobileEssControl.Services.Ems;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MobileEssControl.ViewModels.AutoCharge;
@@ -23,11 +25,25 @@ public enum ChargeFlowState
 
 public partial class AutoChargeViewModel : ViewModelBase, IDisposable
 {
+    private const double BatteryCapacityKwh = 77.4;
+    private const int GraphSampleIntervalSeconds = 5;
+    private const int GraphMaxSamples = 180;
+    private const double GraphWidth = 280;
+    private const double GraphHeight = 70;
+
     private readonly EmsService? _emsService;
     private readonly DispatcherTimer? _refreshTimer;
+    private readonly List<double> _outputHistoryKwh = new();
 
     private bool _isRefreshing;
     private bool _disposed;
+
+    private DateTime? _chargeStartedAtUtc;
+    private DateTime? _lastEnergySampleUtc;
+    private DateTime? _lastGraphSampleUtc;
+    private double _cumulativeChargeEnergyKwh;
+
+    public Points ChargeOutputGraphPoints { get; } = new();
 
     public AutoChargeViewModel()
     {
@@ -132,6 +148,12 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private string alarmSummaryText =
         "세부 알람은 알람 화면에서 확인";
+
+    [ObservableProperty]
+    private string chargeElapsedText = "--:--:--";
+
+    [ObservableProperty]
+    private string estimatedRemainingText = "-- ";
 
     private bool IsChargeFlowActive =>
         ChargeState == ChargeFlowState.Starting ||
@@ -378,6 +400,24 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         ChargeState != ChargeFlowState.Charging &&
         ChargeState != ChargeFlowState.Stopping;
 
+    public bool IsChargingActive =>
+        ChargeState == ChargeFlowState.Charging;
+
+    public bool IsOperatingModeBlinking =>
+        OperatingModeText != "Standby" &&
+        OperatingModeText != "미연결" &&
+        OperatingModeText != "읽기 실패";
+
+    public bool IsStartStopBlinking =>
+        ChargeState == ChargeFlowState.Starting;
+
+    public bool IsFaultBlinking =>
+        FaultLevelText != "정상" &&
+        FaultLevelText != "확인 불가";
+
+    public bool IsCommunicationBlinking =>
+        CommunicationStatusText != "정상";
+
     public string CurrentSocText =>
         CurrentSoc.HasValue
             ? $"{CurrentSoc.Value:0.0}%"
@@ -524,13 +564,26 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(StartButtonText));
         OnPropertyChanged(nameof(StopButtonText));
         OnPropertyChanged(nameof(CanEditSettings));
+        OnPropertyChanged(nameof(IsChargingActive));
+        OnPropertyChanged(nameof(IsStartStopBlinking));
 
         NotifyChargeFlowVisualChanged();
     }
 
     partial void OnCommunicationStatusTextChanged(string value)
     {
+        OnPropertyChanged(nameof(IsCommunicationBlinking));
         NotifyChargeFlowVisualChanged();
+    }
+
+    partial void OnOperatingModeTextChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsOperatingModeBlinking));
+    }
+
+    partial void OnFaultLevelTextChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsFaultBlinking));
     }
 
     private void ClearInverterPanelValues()
@@ -548,6 +601,165 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         Inverter2Frequency = null;
 
         ThreePhaseVoltageText = "-- / -- / -- V";
+    }
+
+    private void UpdateChargeSessionMetrics()
+    {
+        if (ChargeState != ChargeFlowState.Charging)
+        {
+            if (ChargeState == ChargeFlowState.Ready ||
+                ChargeState == ChargeFlowState.Stopped ||
+                ChargeState == ChargeFlowState.Disconnected)
+            {
+                ResetChargeSession();
+            }
+
+            return;
+        }
+
+        DateTime now = DateTime.UtcNow;
+
+        if (_chargeStartedAtUtc is null)
+        {
+            _chargeStartedAtUtc = now;
+            _lastEnergySampleUtc = now;
+            _lastGraphSampleUtc = now;
+            _cumulativeChargeEnergyKwh = 0;
+            _outputHistoryKwh.Clear();
+            ChargeOutputGraphPoints.Clear();
+        }
+
+        double elapsedHours =
+            (now - (_lastEnergySampleUtc ?? now)).TotalHours;
+
+        _lastEnergySampleUtc = now;
+
+        if (CurrentChargePowerKw.HasValue && elapsedHours > 0)
+        {
+            _cumulativeChargeEnergyKwh +=
+                CurrentChargePowerKw.Value * elapsedHours;
+        }
+
+        TimeSpan elapsed = now - _chargeStartedAtUtc.Value;
+
+        ChargeElapsedText =
+            elapsed.TotalHours >= 1
+                ? $"{(int)elapsed.TotalHours:00}:{elapsed.Minutes:00}:{elapsed.Seconds:00}"
+                : $"{elapsed.Minutes:00}:{elapsed.Seconds:00}";
+
+        EstimatedRemainingText = BuildEstimatedRemainingText();
+
+        if (_lastGraphSampleUtc is null ||
+            (now - _lastGraphSampleUtc.Value).TotalSeconds >= GraphSampleIntervalSeconds)
+        {
+            _lastGraphSampleUtc = now;
+            AppendGraphSample(_cumulativeChargeEnergyKwh);
+        }
+    }
+
+    private void ResetChargeSession()
+    {
+        _chargeStartedAtUtc = null;
+        _lastEnergySampleUtc = null;
+        _lastGraphSampleUtc = null;
+        _cumulativeChargeEnergyKwh = 0;
+        _outputHistoryKwh.Clear();
+        ChargeOutputGraphPoints.Clear();
+
+        ChargeElapsedText = "--:--:--";
+        EstimatedRemainingText = "-- ";
+    }
+
+    private string BuildEstimatedRemainingText()
+    {
+        if (!CurrentChargePowerKw.HasValue ||
+            CurrentChargePowerKw.Value <= 0.01 ||
+            !CurrentSoc.HasValue)
+        {
+            return "예상 시간 계산 중...";
+        }
+
+        double remainingSocPercent = TargetSoc - CurrentSoc.Value;
+
+        if (remainingSocPercent <= 0)
+        {
+            return "목표 SOC 도달";
+        }
+
+        double remainingKwh =
+            remainingSocPercent / 100.0 * BatteryCapacityKwh;
+
+        double remainingHours =
+            remainingKwh / CurrentChargePowerKw.Value;
+
+        int hours = (int)remainingHours;
+        int minutes = (int)Math.Round((remainingHours - hours) * 60);
+
+        if (minutes >= 60)
+        {
+            hours += 1;
+            minutes = 0;
+        }
+
+        return hours > 0
+            ? $"약 {hours}시간 {minutes}분"
+            : $"약 {minutes}분";
+    }
+
+    private void AppendGraphSample(double cumulativeKwh)
+    {
+        _outputHistoryKwh.Add(cumulativeKwh);
+
+        if (_outputHistoryKwh.Count > GraphMaxSamples)
+        {
+            _outputHistoryKwh.RemoveAt(0);
+        }
+
+        RebuildGraphPoints();
+    }
+
+    private void RebuildGraphPoints()
+    {
+        ChargeOutputGraphPoints.Clear();
+
+        int count = _outputHistoryKwh.Count;
+
+        if (count < 2)
+        {
+            return;
+        }
+
+        double min = _outputHistoryKwh[0];
+        double max = _outputHistoryKwh[0];
+
+        foreach (double value in _outputHistoryKwh)
+        {
+            if (value < min)
+            {
+                min = value;
+            }
+
+            if (value > max)
+            {
+                max = value;
+            }
+        }
+
+        double range = max - min;
+
+        if (range < 0.01)
+        {
+            range = 0.01;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            double x = GraphWidth * i / (count - 1);
+            double normalized = (_outputHistoryKwh[i] - min) / range;
+            double y = GraphHeight - (normalized * GraphHeight);
+
+            ChargeOutputGraphPoints.Add(new Point(x, y));
+        }
     }
 
     private static double GetRepresentativeValue(
@@ -641,6 +853,7 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             SystemCurrent = null;
 
             ClearInverterPanelValues();
+            ResetChargeSession();
 
             IsRunning = false;
             ChargeState = ChargeFlowState.Disconnected;
@@ -699,6 +912,8 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
                 status.SystemStatus1,
                 status.SystemStatus2,
                 status.AlarmStatus1);
+
+            UpdateChargeSessionMetrics();
         }
         catch (Exception ex)
         {
@@ -708,6 +923,7 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
             SystemCurrent = null;
 
             ClearInverterPanelValues();
+            ResetChargeSession();
 
             IsRunning = false;
             ChargeState = ChargeFlowState.Fault;
@@ -727,6 +943,14 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         {
             _isRefreshing = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task ShowFaultDetail()
+    {
+        await AppDialogService.ShowWarningAsync(
+            "이상 상태 상세",
+            $"이상 상태 : {FaultLevelText}\n\n{AlarmSummaryText}");
     }
 
     [RelayCommand]
