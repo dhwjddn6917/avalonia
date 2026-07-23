@@ -8,7 +8,6 @@
         Width="1920"
         Height="1080"
         WindowState="Maximized"
-        CanResize="False"
         Title="Mobile ESS Control System">
 
     <Grid RowDefinitions="*,128"
