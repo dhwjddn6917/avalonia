@@ -10,6 +10,7 @@
     <UserControl.Resources>
 
         <conv:PowerSegmentBrushConverter x:Key="PowerSegmentBrushConverter"/>
+        <conv:WidthFractionConverter x:Key="WidthFractionConverter"/>
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -379,7 +380,8 @@
                     <Button.Flyout>
                         <Flyout Placement="BottomEdgeAlignedRight">
                             <Border Padding="32"
-                                    MinWidth="1300"
+                                    Width="{Binding $parent[Window].Bounds.Width, Converter={StaticResource WidthFractionConverter}, ConverterParameter=0.7}"
+                                    MinWidth="640"
                                     MaxWidth="1360">
                                 <StackPanel Spacing="20">
 
