@@ -518,11 +518,11 @@
                                             </Grid>
 
                                             <Grid>
-                                                <Viewbox Height="70"
+                                                <Viewbox Height="175"
                                                          Stretch="Fill"
                                                          HorizontalAlignment="Stretch">
                                                     <Canvas Width="280"
-                                                            Height="70">
+                                                            Height="175">
                                                         <Polyline Points="{Binding OutputGraphPoints}"
                                                                   Stroke="{Binding BatteryBrush}"
                                                                   StrokeThickness="3"
@@ -716,11 +716,11 @@
                                         </Grid>
 
                                         <Grid>
-                                            <Viewbox Height="70"
+                                            <Viewbox Height="175"
                                                      Stretch="Fill"
                                                      HorizontalAlignment="Stretch">
                                                 <Canvas Width="280"
-                                                        Height="70">
+                                                        Height="175">
                                                     <Polyline Points="{Binding AbVoltageGraphPoints}"
                                                               Stroke="#7E22CE"
                                                               StrokeThickness="3"
