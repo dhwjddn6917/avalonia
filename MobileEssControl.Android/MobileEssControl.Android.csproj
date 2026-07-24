@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-android</TargetFramework>
+    <TargetFramework>net10.0-android36.0</TargetFramework>
     <RootNamespace>MobileEssControl.Android</RootNamespace>
     <Nullable>enable</Nullable>
     <ApplicationId>com.evkmc.mobileesscontrol</ApplicationId>
