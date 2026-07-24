@@ -124,6 +124,15 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
     private string threePhaseVoltageText = "-- / -- / -- V";
 
     [ObservableProperty]
+    private string abVoltageText = "-- V";
+
+    [ObservableProperty]
+    private string bcVoltageText = "-- V";
+
+    [ObservableProperty]
+    private string caVoltageText = "-- V";
+
+    [ObservableProperty]
     private double? inverter1PowerKw;
 
     [ObservableProperty]
@@ -676,6 +685,9 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
         Inverter2Frequency = null;
 
         ThreePhaseVoltageText = "-- / -- / -- V";
+        AbVoltageText = "-- V";
+        BcVoltageText = "-- V";
+        CaVoltageText = "-- V";
     }
 
     private void UpdateChargeSessionMetrics()
@@ -1137,6 +1149,9 @@ public partial class AutoChargeViewModel : ViewModelBase, IDisposable
 
             ThreePhaseVoltageText =
                 $"{_currentAbVoltage:0.0} / {_currentBcVoltage:0.0} / {_currentCaVoltage:0.0} V";
+            AbVoltageText = $"{_currentAbVoltage:0.0} V";
+            BcVoltageText = $"{_currentBcVoltage:0.0} V";
+            CaVoltageText = $"{_currentCaVoltage:0.0} V";
 
             UpdateChargeState(
                 status.SystemStatus1,

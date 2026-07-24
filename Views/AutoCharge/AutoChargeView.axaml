@@ -406,25 +406,87 @@
                     </Button>
                 </Grid>
 
-                <!-- 상단 요약 카드: 인버터 3상 전압이 가장 중요한 지표라 가장 크게, SOC/출력전력은 비중을 낮춰서 표시 -->
-                <Grid ColumnDefinitions="2.1*,1*,1*"
+                <!-- 상단 요약 카드: 인버터 3상 전압이 가장 중요한 지표라 넓게, SOC/출력전력은 좁게 표시 -->
+                <Grid ColumnDefinitions="3*,0.85*,0.85*"
                       ColumnSpacing="16">
                     <Border Grid.Column="0"
                             Background="White"
                             BorderBrush="#E2E8F0"
                             BorderThickness="1"
                             CornerRadius="20"
-                            Padding="28,24">
-                        <StackPanel Spacing="8"
+                            Padding="24,20">
+                        <StackPanel Spacing="12"
                                     VerticalAlignment="Center">
                             <TextBlock Text="인버터 3상 전압 (AB/BC/CA)"
                                        Foreground="#64748B"
                                        FontSize="17"
                                        FontWeight="Bold"/>
-                            <TextBlock Text="{Binding ThreePhaseVoltageText}"
-                                       Foreground="#7E22CE"
-                                       FontSize="58"
-                                       FontWeight="Bold"/>
+
+                            <Grid ColumnDefinitions="*,*,*"
+                                  ColumnSpacing="12">
+                                <Border Grid.Column="0"
+                                        Background="#FAF5FF"
+                                        BorderBrush="#E9D5FF"
+                                        BorderThickness="1"
+                                        CornerRadius="16"
+                                        Padding="12,10">
+                                    <StackPanel Spacing="4"
+                                                HorizontalAlignment="Center">
+                                        <TextBlock Text="AB"
+                                                   Foreground="#94A3B8"
+                                                   FontSize="13"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding AbVoltageText}"
+                                                   Foreground="#7E22CE"
+                                                   FontSize="30"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="1"
+                                        Background="#F0F9FF"
+                                        BorderBrush="#BAE6FD"
+                                        BorderThickness="1"
+                                        CornerRadius="16"
+                                        Padding="12,10">
+                                    <StackPanel Spacing="4"
+                                                HorizontalAlignment="Center">
+                                        <TextBlock Text="BC"
+                                                   Foreground="#94A3B8"
+                                                   FontSize="13"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding BcVoltageText}"
+                                                   Foreground="#0EA5E9"
+                                                   FontSize="30"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="2"
+                                        Background="#FFFBEB"
+                                        BorderBrush="#FDE68A"
+                                        BorderThickness="1"
+                                        CornerRadius="16"
+                                        Padding="12,10">
+                                    <StackPanel Spacing="4"
+                                                HorizontalAlignment="Center">
+                                        <TextBlock Text="CA"
+                                                   Foreground="#94A3B8"
+                                                   FontSize="13"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding CaVoltageText}"
+                                                   Foreground="#F59E0B"
+                                                   FontSize="30"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
                         </StackPanel>
                     </Border>
 
@@ -433,17 +495,19 @@
                             BorderBrush="#E2E8F0"
                             BorderThickness="1"
                             CornerRadius="20"
-                            Padding="18,18">
+                            Padding="14,18">
                         <StackPanel Spacing="8"
                                     VerticalAlignment="Center">
                             <TextBlock Text="출력전력"
                                        Foreground="#64748B"
                                        FontSize="14"
-                                       FontWeight="Bold"/>
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
                             <TextBlock Text="{Binding CurrentChargePowerText}"
                                        Foreground="#2563EB"
-                                       FontSize="38"
-                                       FontWeight="Bold"/>
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
@@ -452,17 +516,19 @@
                             BorderBrush="#E2E8F0"
                             BorderThickness="1"
                             CornerRadius="20"
-                            Padding="18,18">
+                            Padding="14,18">
                         <StackPanel Spacing="8"
                                     VerticalAlignment="Center">
                             <TextBlock Text="현재 SOC"
                                        Foreground="#64748B"
                                        FontSize="14"
-                                       FontWeight="Bold"/>
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
                             <TextBlock Text="{Binding CurrentSocText}"
                                        Foreground="#16A34A"
-                                       FontSize="38"
-                                       FontWeight="Bold"/>
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                 </Grid>
