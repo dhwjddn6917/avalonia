@@ -25,8 +25,10 @@ public partial class ExternalOutputView : UserControl
                 ? window.Bounds.Width
                 : 1920;
 
+        // 창 밖으로 삐져나가 스크롤이 생기지 않도록, 창 너비를 넘지 않는 선에서
+        // 최대한 크게(여백 40px만 남기고) 잡습니다.
         double flyoutWidth =
-            Math.Clamp(windowWidth * 0.7, 640, 1360);
+            Math.Min(windowWidth - 40, 1800);
 
         SettingsFlyoutRoot.Width = flyoutWidth;
 

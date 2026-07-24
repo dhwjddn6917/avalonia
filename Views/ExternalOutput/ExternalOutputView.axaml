@@ -362,9 +362,7 @@
                     <Button.Flyout>
                         <Flyout Placement="Bottom">
                             <Border x:Name="SettingsFlyoutRoot"
-                                    Padding="24"
-                                    MinWidth="640"
-                                    MaxWidth="1360">
+                                    Padding="24">
                                 <StackPanel Spacing="12">
 
                                     <TextBlock Text="출력 설정"
