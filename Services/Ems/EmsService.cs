@@ -469,12 +469,14 @@ public class EmsService
         CancellationToken cancellationToken = default)
     {
         // EMS Complete ESS Information + ESS Profile Information
-        // Absolute 31001 ~ 31057 / 총 57 Word
+        // Absolute 31001 ~ 31059 / 총 59 Word
+        // 31038/31039(Batt Max Chg/Dchg Power Limit)가 실제 존재하는 레지스터라
+        // ESS Profile Information(Manufacturer Name 이하)이 31040부터 시작합니다.
         ushort[] emsValues = await ReadAdminGroupAsync(
             groupName: "EMS",
             slaveId: SlaveIds.Ems,
             startAddress: 31001,
-            numberOfPoints: 57,
+            numberOfPoints: 59,
             cancellationToken);
 
         // Battery Pack 1 : 32001 ~ 32024
@@ -1576,6 +1578,8 @@ public class EmsService
     public async Task StartExternalOutputAsync(
         double totalOutputPowerKw,
         double minimumSoc,
+        double phaseVoltage = 220,
+        double frequencyHz = 60,
         CancellationToken cancellationToken = default)
     {
         bool operationSequenceStarted = false;
@@ -1617,6 +1621,26 @@ public class EmsService
                         "최저 SOC는 10 ~ 90% 범위여야 합니다.");
                 }
 
+                if (double.IsNaN(phaseVoltage) ||
+                    double.IsInfinity(phaseVoltage) ||
+                    phaseVoltage < 200 ||
+                    phaseVoltage > 240)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(phaseVoltage),
+                        "외부 출력 상전압은 200 ~ 240 V 범위여야 합니다.");
+                }
+
+                if (double.IsNaN(frequencyHz) ||
+                    double.IsInfinity(frequencyHz) ||
+                    frequencyHz < 45 ||
+                    frequencyHz > 65)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(frequencyHz),
+                        "외부 출력 주파수는 45 ~ 65 Hz 범위여야 합니다.");
+                }
+
                 await CheckCanStartOperationAsync(
                     requiredMode:
                         EmsOperationMode.ExternalOutput,
@@ -1647,7 +1671,7 @@ public class EmsService
                 externalOutputModeApplied = true;
 
                 WriteLog(
-                    $"외부출력 시퀀스 1/5 · " +
+                    $"외부출력 시퀀스 1/7 · " +
                     $"Mode=ExternalOutput · SystemRun OFF · " +
                     $"다른 30001 비트 유지 · " +
                     $"30001=0x{appliedCommand:X4}");
@@ -1659,7 +1683,7 @@ public class EmsService
                     cancellationToken);
 
                 WriteLog(
-                    $"외부출력 시퀀스 2/5 · " +
+                    $"외부출력 시퀀스 2/7 · " +
                     $"Run 전 선간전압 0V 확인 완료 · " +
                     $"기준≤{ExternalOutputZeroVoltageMaximumV:0.0}V");
 
@@ -1675,7 +1699,7 @@ public class EmsService
                     cancellationToken);
 
                 WriteLog(
-                    $"외부출력 시퀀스 3/5 · " +
+                    $"외부출력 시퀀스 3/7 · " +
                     $"30009 최저 SOC={minimumSocRaw} " +
                     $"({minimumSoc:0.0}%)");
 
@@ -1695,9 +1719,49 @@ public class EmsService
                     cancellationToken);
 
                 WriteLog(
-                    $"외부출력 시퀀스 4/5 · " +
+                    $"외부출력 시퀀스 4/7 · " +
                     $"30012 출력전력={outputPowerRaw} " +
                     $"({totalOutputPowerKw:0.00}kW)");
+
+                await Task.Delay(
+                    commandDelayMilliseconds,
+                    cancellationToken);
+
+                // 5단계: 사용자가 설정한 출력 상전압을 30014에 씁니다.
+                ushort phaseVoltageRaw =
+                    (ushort)Math.Round(
+                        phaseVoltage * 100.0);
+
+                await WriteAndConfirmOperationSettingAsync(
+                    EmsControlAddresses.AcOutputPhaseVoltage,
+                    phaseVoltageRaw,
+                    "외부출력 상전압",
+                    cancellationToken);
+
+                WriteLog(
+                    $"외부출력 시퀀스 5/7 · " +
+                    $"30014 상전압={phaseVoltageRaw} " +
+                    $"({phaseVoltage:0.0}V)");
+
+                await Task.Delay(
+                    commandDelayMilliseconds,
+                    cancellationToken);
+
+                // 6단계: 사용자가 설정한 출력 주파수를 30016에 씁니다.
+                ushort frequencyRaw =
+                    (ushort)Math.Round(
+                        frequencyHz * 100.0);
+
+                await WriteAndConfirmOperationSettingAsync(
+                    EmsControlAddresses.AcOutputFrequency,
+                    frequencyRaw,
+                    "외부출력 주파수",
+                    cancellationToken);
+
+                WriteLog(
+                    $"외부출력 시퀀스 6/7 · " +
+                    $"30016 주파수={frequencyRaw} " +
+                    $"({frequencyHz:0.00}Hz)");
 
                 await Task.Delay(
                     commandDelayMilliseconds,
@@ -1722,7 +1786,7 @@ public class EmsService
                         $"31023=0x{beforeRunStatus.SystemStatus2:X4}");
                 }
 
-                // 5단계: SystemRun만 ON
+                // 7단계: SystemRun만 ON
                 appliedCommand =
                     await AddControlWord1BitsAsync(
                         EmsControlWord1.SystemRun,
@@ -1740,7 +1804,7 @@ public class EmsService
                 }
 
                 WriteLog(
-                    $"외부출력 시퀀스 5/5 · " +
+                    $"외부출력 시퀀스 7/7 · " +
                     $"SystemRun ON · EMS 내부 시퀀스 시작 요청 · " +
                     $"30001=0x{appliedCommand:X4}");
 
@@ -2216,18 +2280,38 @@ public class EmsService
                         "EMS 통신이 연결되어 있지 않습니다.");
                 }
 
-                // 현재 30001 실제값을 읽은 뒤
-                // Bit0~2 Operating Mode는 Standby(0),
-                // Bit12 SystemRun은 Stop(0)으로 변경합니다.
-                // Pack / Inverter 등 나머지 비트는 그대로 유지합니다.
+                // 릴레이(SystemRun)를 먼저 끊고, 약 3초 뒤에 Operating Mode를
+                // Standby로 전환합니다. Mode와 Run을 한 번에 같이 바꾸면
+                // 릴레이가 너무 빨리 떨어지면서 접점에 무리가 갈 수 있어
+                // 두 단계로 나눴습니다.
+
+                // 1단계 : Bit12 SystemRun만 Stop(0)으로 변경.
+                // Operating Mode(Bit0~2)와 Pack/Inverter 등 나머지 비트는
+                // 그대로 유지합니다.
+                ushort systemRunStoppedWord =
+                    await UpdateControlEssWordAsync(
+                        absoluteAddress: EmsControlAddresses.ControlWord1,
+                        editableMask: EmsControlWord1.SystemRun,
+                        desiredBits: 0,
+                        operationName: "SystemRun B12 Stop",
+                        cancellationToken: cancellationToken);
+
+                WriteLog(
+                    $"운전 정지 1단계 완료 · " +
+                    $"30001=0x{systemRunStoppedWord:X4} · " +
+                    "SystemRun B12=0 · 3초 뒤 Standby 전환 예정");
+
+                // 2단계 : 릴레이가 완전히 끊어질 시간을 두기 위해 약 3초 대기.
+                await Task.Delay(3000, cancellationToken);
+
+                // 3단계 : Bit0~2 Operating Mode를 Standby(0)로 변경.
+                // SystemRun 등 나머지 비트는 그대로 유지합니다.
                 ushort stoppedControlWord =
                     await UpdateControlEssWordAsync(
                         absoluteAddress: EmsControlAddresses.ControlWord1,
-                        editableMask: (ushort)(
-                            EmsControlWord1.ModeMask |
-                            EmsControlWord1.SystemRun),
+                        editableMask: EmsControlWord1.ModeMask,
                         desiredBits: (ushort)EmsOperationMode.Standby,
-                        operationName: "Standby 전환 + SystemRun B12 Stop",
+                        operationName: "Standby 전환",
                         cancellationToken: cancellationToken);
 
                 WriteLog(

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MobileEssControl.Constants;
 using MobileEssControl.Models.Admin;
+using MobileEssControl.Services.Dialogs;
 using MobileEssControl.Services.Ems;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,16 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
     private bool _disposed;
 
     public ObservableCollection<AdminRegisterRow> SystemRows { get; } = new();
+
+    // 엑셀로 모니터링 표(31001~31059)를 다시 불러왔을 때의 상태 문구입니다.
+    [ObservableProperty]
+    private string mapStatusText = "기본 내장 맵 사용 중 · '맵 새로고침'으로 엑셀을 불러올 수 있습니다.";
+
+    [ObservableProperty]
+    private bool isMapLoading;
+
+    // 엑셀에서 불러온 절대주소별 비트필드 디코더입니다. null이면 코드 내장 기본값을 씁니다.
+    private IReadOnlyDictionary<string, Func<ushort, string>>? _loadedBitFieldDecoders;
 
     // Pack 1 / Pack 2는 합산하지 않고 같은 줄에서 비교 표시합니다.
     public ObservableCollection<AdminComparisonRow> BatteryRows { get; } = new();
@@ -2164,10 +2175,83 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         }
     }
 
+    /// <summary>
+    /// 엑셀("Registers" + "BitFields" 시트)을 골라 모니터링 표(31001~31057)를
+    /// 코드 수정 없이 다시 불러옵니다. 30001~30016 쓰기 제어표는 대상이 아닙니다.
+    /// </summary>
+    [RelayCommand]
+    private async Task ReloadMapFromExcel()
+    {
+        if (IsMapLoading)
+        {
+            return;
+        }
+
+        string? filePath =
+            await AppFilePickerService.PickExcelFileAsync("맵 어드레스 엑셀 선택");
+
+        if (string.IsNullOrEmpty(filePath))
+        {
+            return;
+        }
+
+        IsMapLoading = true;
+        MapStatusText = "엑셀에서 비트필드 불러오는 중...";
+
+        try
+        {
+            IReadOnlyDictionary<string, Func<ushort, string>> decoders =
+                await Task.Run(() => AdminMapExcelLoader.LoadBitFieldDecoders(filePath));
+
+            _loadedBitFieldDecoders = decoders;
+
+            SystemRows.Clear();
+            BuildSystemRowEntries();
+
+            MapStatusText =
+                $"엑셀 비트필드 로드 완료 · {System.IO.Path.GetFileName(filePath)} · " +
+                $"레지스터 {decoders.Count}개 · {DateTime.Now:HH:mm:ss}";
+
+            AddLog($"맵 어드레스 엑셀(비트필드) 로드 완료 · {filePath}");
+        }
+        catch (Exception ex)
+        {
+            MapStatusText = $"엑셀 로드 실패 · {ex.Message}";
+
+            AddLog($"맵 어드레스 엑셀 로드 실패 · {ex.Message}");
+
+            await AppDialogService.ShowWarningAsync(
+                "맵 새로고침 실패",
+                $"엑셀 파일을 읽는 중 문제가 발생했습니다.\n\n{ex.Message}\n\n" +
+                "MobileESS_ModBus_AddressMap 원본 형식(마스터 시트 + System Status/" +
+                "System Alarms/Battery Pack Alarms/Battery Pack Status 시트)인지 확인해주세요.");
+        }
+        finally
+        {
+            IsMapLoading = false;
+        }
+    }
+
     private void BuildStatusRows()
     {
+        BuildSystemRowEntries();
+
         // =====================================================
-        // EMS: Absolute 31001 ~ 31049 / Relative 0 ~ 48
+        // 비교 화면: Pack 1 / Pack 2, Inverter 1 / Inverter 2
+        // =====================================================
+
+        BuildBatteryComparisonRows();
+        BuildInverterComparisonRows();
+    }
+
+    /// <summary>
+    /// SystemRows(31001~31059)만 만듭니다. '맵 새로고침'은 이 부분만 다시 실행합니다
+    /// (BatteryRows/InverterRows 비교 화면은 건드리지 않습니다).
+    /// </summary>
+    private void BuildSystemRowEntries()
+    {
+        // =====================================================
+        // EMS: Absolute 31001 ~ 31059 / Relative 0 ~ 58
         // =====================================================
 
         Add(SystemRows, 0, "31001", "ChargingMaxLimitVoltage", "V", "UINT16", 0.01, false, 2);
@@ -2222,44 +2306,49 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         Add(SystemRows, 35, "31036", "Number of Chargeable Pack", "EA", "UINT16", 1.0, false, 0);
         Add(SystemRows, 36, "31037", "Number of Dischargeable Pack", "EA", "UINT16", 1.0, false, 0);
 
+        Add(SystemRows, 37, "31038", "Batt Max Chg Power Limit", "kW", "INT16", 0.01, true, 2);
+        Add(SystemRows, 38, "31039", "Batt Max Dchg Power Limit", "kW", "INT16", 0.01, true, 2);
+
         // =====================================================
-        // ESS Profile Information: 31038 ~ 31057
+        // ESS Profile Information: 31040 ~ 31059
         // 실제 EMS 수신 기준:
         // 문자 1개가 Register 1개에 들어가며,
         // 전체 문자열은 주소 역순으로 조합해야 합니다.
+        // 31038/31039(Batt Max Chg/Dchg Power Limit)가 실제 존재하는 레지스터라
+        // 이 블록 전체가 기존보다 2워드 뒤로 밀립니다.
         // =====================================================
 
         AddText(
             SystemRows,
-            37,
-            "31038 ~ 31045",
+            39,
+            "31040 ~ 31047",
             "Manufacturer Name",
             8,
             FormatReverseAsciiText8);
 
         AddText(
             SystemRows,
-            45,
-            "31046 ~ 31053",
+            47,
+            "31048 ~ 31055",
             "Device Code",
             8,
             FormatReverseAsciiText8);
 
         AddFormatted(
             SystemRows,
-            53,
-            "31054",
+            55,
+            "31056",
             "Manufacturer Date",
             "-",
             "UINT16",
             FormatManufacturerDate);
 
-        Add(SystemRows, 54, "31055", "Serial Number", "-", "UINT16", 1.0, false, 0);
+        Add(SystemRows, 56, "31057", "Serial Number", "-", "UINT16", 1.0, false, 0);
 
         AddFormatted(
             SystemRows,
-            55,
-            "31056",
+            57,
+            "31058",
             "Firmware Version of EMS",
             "Ver",
             "UINT16",
@@ -2267,19 +2356,12 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
 
         AddFormatted(
             SystemRows,
-            56,
-            "31057",
+            58,
+            "31059",
             "Hardware Version of EMS",
             "Ver",
             "UINT16",
             FormatMajorMinorVersion);
-
-        // =====================================================
-        // 비교 화면: Pack 1 / Pack 2, Inverter 1 / Inverter 2
-        // =====================================================
-
-        BuildBatteryComparisonRows();
-        BuildInverterComparisonRows();
     }
 
     private void BuildControlTableRows()
@@ -2304,15 +2386,16 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
 
         AddBitControl(EssControlTableRows, 30002, "BMS1 Manual Enable", "-", 0, 1, "0=Disable, 1=Enable");
         AddBitControl(EssControlTableRows, 30002, "BMS2 Manual Enable", "-", 1, 1, "0=Disable, 1=Enable");
-        AddBitControl(EssControlTableRows, 30002, "ESS Charge N Relay", "-", 2, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "ESS Charge P Relay", "-", 3, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "EV Charge P Relay", "-", 5, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "EV Charge N Relay", "-", 6, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "AC Main Contactor", "-", 7, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "AC Neutral Switch", "-", 8, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "Alarm Lamp", "-", 9, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "Fault Lamp", "-", 10, 1, "0=Off, 1=On");
-        AddBitControl(EssControlTableRows, 30002, "Buzzer", "-", 11, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "DC Quick-Charge HV+ Relay", "-", 2, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "DC Quick-Charge HV- Relay", "-", 3, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "DC Discharge HV+ Relay", "-", 4, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "DC Discharge HV- Relay", "-", 5, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "AC Main Contactor", "-", 6, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "AC Main Contactor N", "-", 7, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "Alarm Lamp", "-", 8, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "Fault Lamp", "-", 9, 1, "0=Off, 1=On");
+        AddBitControl(EssControlTableRows, 30002, "Reserved1", "-", 10, 1, "0=Off, 1=On · 확인 전용 (삭제 검토)", isWriteEnabled: false);
+        AddBitControl(EssControlTableRows, 30002, "Lamp Output", "-", 11, 1, "0=Off, 1=On");
         AddBitControl(EssControlTableRows, 30002, "Reserved2", "-", 12, 1, "0=Off, 1=On · 확인 전용", isWriteEnabled: false);
         AddBitControl(EssControlTableRows, 30002, "Reserved3", "-", 13, 1, "0=Off, 1=On · 확인 전용", isWriteEnabled: false);
         AddBitControl(EssControlTableRows, 30002, "Reserved4", "-", 14, 1, "0=Off, 1=On · 확인 전용", isWriteEnabled: false);
@@ -2328,6 +2411,10 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         AddControl(EssControlTableRows, 30010, "AC Max Charge Power Limit", "kW", "INT16", 0.01, true, 2, "AC 최대 충전 전력");
         AddControl(EssControlTableRows, 30011, "AC Max Discharge Power On Grid", "kW", "INT16", 0.01, true, 2, "계통 방전 최대 전력");
         AddControl(EssControlTableRows, 30012, "AC Max Discharge Power Off Grid", "kW", "INT16", 0.01, true, 2, "외부 출력 최대 전력");
+        AddControl(EssControlTableRows, 30013, "AC Max Output Phase Voltage", "V", "UINT16", 0.01, false, 2, "AC 최대 출력 상전압");
+        AddControl(EssControlTableRows, 30014, "AC Output Phase Voltage", "V", "UINT16", 0.01, false, 2, "AC 출력 상전압");
+        AddControl(EssControlTableRows, 30015, "AC Max Output Frequency", "Hz", "INT16", 0.01, true, 2, "AC 최대 출력 주파수");
+        AddControl(EssControlTableRows, 30016, "AC Output Frequency", "Hz", "INT16", 0.01, true, 2, "AC 출력 주파수");
 
         AddInverterControlSet("INV1", 40000, InverterControlTableRows);
         AddInverterControlSet("INV2", 41000, InverterControlTableRows);
@@ -2480,11 +2567,11 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         AddPair(InverterRows, 7, AddressPair(inverter1Base, inverter2Base, 7), "BC Line voltage", "V", "INT16", 0.1, true, 1, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 8, AddressPair(inverter1Base, inverter2Base, 8), "CA Line voltage", "V", "INT16", 0.1, true, 1, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 9, AddressPair(inverter1Base, inverter2Base, 9), "Phase A active power", "W", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
-        AddPair(InverterRows, 10, AddressPair(inverter1Base, inverter2Base, 10), "Phase A reactive power", "Var", "INT16", 1.0, true, 0, null, "Inverter 1", "Inverter 2");
+        AddPair(InverterRows, 10, AddressPair(inverter1Base, inverter2Base, 10), "Phase A reactive power", "Var", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 11, AddressPair(inverter1Base, inverter2Base, 11), "Phase B active power", "W", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
-        AddPair(InverterRows, 12, AddressPair(inverter1Base, inverter2Base, 12), "Phase B reactive power", "Var", "INT16", 1.0, true, 0, null, "Inverter 1", "Inverter 2");
+        AddPair(InverterRows, 12, AddressPair(inverter1Base, inverter2Base, 12), "Phase B reactive power", "Var", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 13, AddressPair(inverter1Base, inverter2Base, 13), "Phase C active power", "W", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
-        AddPair(InverterRows, 14, AddressPair(inverter1Base, inverter2Base, 14), "Phase C reactive power", "Var", "INT16", 1.0, true, 0, null, "Inverter 1", "Inverter 2");
+        AddPair(InverterRows, 14, AddressPair(inverter1Base, inverter2Base, 14), "Phase C reactive power", "Var", "UINT16", 1.0, false, 0, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 15, AddressPair(inverter1Base, inverter2Base, 15), "AC frequency", "Hz", "INT16", 0.01, true, 2, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 16, AddressPair(inverter1Base, inverter2Base, 16), "module panel (ambient) temperature", "°C", "INT16", 0.1, true, 1, null, "Inverter 1", "Inverter 2");
         AddPair(InverterRows, 17, AddressPair(inverter1Base, inverter2Base, 17), "total active power", "kW", "INT16", 0.01, true, 2, null, "Inverter 1", "Inverter 2");
@@ -2566,13 +2653,23 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         });
     }
 
-    private static void AddBit(
+    /// <summary>
+    /// 엑셀에서 이 절대주소용 비트필드 디코더를 새로 불러왔으면 그걸 쓰고,
+    /// 아니면 코드에 있는 기본 디코더(bitFieldDecoder)를 씁니다.
+    /// </summary>
+    private void AddBit(
         ObservableCollection<AdminRegisterRow> rows,
         ushort relativeAddress,
         string absoluteAddress,
         string name,
         Func<ushort, string> bitFieldDecoder)
     {
+        Func<ushort, string> effectiveDecoder =
+            _loadedBitFieldDecoders is not null &&
+            _loadedBitFieldDecoders.TryGetValue(absoluteAddress, out Func<ushort, string>? loadedDecoder)
+                ? loadedDecoder
+                : bitFieldDecoder;
+
         rows.Add(new AdminRegisterRow
         {
             RelativeAddress = relativeAddress,
@@ -2581,7 +2678,7 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
             Unit = "Bit",
             DataType = "Bit Field",
             IsBitField = true,
-            BitFieldDecoder = bitFieldDecoder,
+            BitFieldDecoder = effectiveDecoder,
             DecimalPlaces = 0
         });
     }
@@ -2685,7 +2782,7 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
 
         // 8개 Register에 한 글자씩 역순 저장됨.
         // 예:
-        // 31038~31045 = D N R C M K V E
+        // 31040~31047 = D N R C M K V E
         // 표시값       = E V K M C R N D
         for (int i = 7; i >= 0; i--)
         {

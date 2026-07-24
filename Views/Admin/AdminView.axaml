@@ -340,7 +340,7 @@
                     </StackPanel>
 
                     <Button Grid.Column="1"
-                            Content="← 오퍼레이션 모드"
+                            Content="← 메인화면"
                             Command="{ReflectionBinding ExitAdminCommand}"
                             Padding="16,8"
                             Background="#E2E8F0"
@@ -365,13 +365,42 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Auto">
                     <StackPanel Margin="18" Spacing="8">
-                        <TextBlock Text="EMS  · 31001 ~ 31057"
+                        <TextBlock Text="EMS  · 31001 ~ 31059"
                                    FontSize="17"
                                    FontWeight="SemiBold"
                                    Foreground="#0F172A"/>
                         <TextBlock Text="상태·알람 Bit Field는 기본 접힘 상태입니다. + 상세 버튼을 누르면 세부 항목을 한 줄씩 확인할 수 있습니다."
                                    FontSize="12"
                                    Foreground="#64748B"/>
+
+                        <!-- 엑셀("Registers" + "BitFields" 시트)로 이 표를 코드 수정 없이 다시 불러옵니다. -->
+                        <Border Background="#F8FAFC"
+                                BorderBrush="#E2E8F0"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12,10">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Button Grid.Column="0"
+                                        Content="맵 새로고침"
+                                        Command="{ReflectionBinding ReloadMapFromExcelCommand}"
+                                        IsEnabled="{ReflectionBinding !IsMapLoading}"
+                                        Background="#0F172A"
+                                        Foreground="White"
+                                        BorderBrush="#0F172A"
+                                        FontWeight="Bold"
+                                        Padding="14,8"
+                                        CornerRadius="8"
+                                        ToolTip.Tip="엑셀(Registers + BitFields 시트)을 골라 이 표를 다시 불러옵니다"/>
+
+                                <TextBlock Grid.Column="1"
+                                           Text="{ReflectionBinding MapStatusText}"
+                                           Foreground="#64748B"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"
+                                           Margin="12,0,0,0"
+                                           TextWrapping="Wrap"/>
+                            </Grid>
+                        </Border>
 
                         <Border Background="#EAF0F6" Padding="12,9" CornerRadius="7">
                             <Grid ColumnDefinitions="120,*,60,200,180,92">
