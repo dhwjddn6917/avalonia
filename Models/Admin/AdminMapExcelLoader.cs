@@ -283,24 +283,30 @@ public static class AdminMapExcelLoader
 
     private static IXLWorksheet FindMasterSheet(XLWorkbook workbook)
     {
+        List<IXLWorksheet> candidates = new();
+
         foreach (IXLWorksheet sheet in workbook.Worksheets)
         {
             IXLRow? headerRow = TryFindHeaderRow(sheet, "Absolute Address");
 
-            if (headerRow is null)
+            if (headerRow is not null && HasColumn(headerRow, "Word Length"))
             {
-                continue;
-            }
-
-            if (HasColumn(headerRow, "Word Length"))
-            {
-                return sheet;
+                candidates.Add(sheet);
             }
         }
 
-        throw new InvalidOperationException(
-            "전체 레지스터 목록 시트를 찾지 못했습니다. " +
-            "'Absolute Address'와 'Word Length' 헤더가 있는 시트가 필요합니다.");
+        if (candidates.Count == 0)
+        {
+            throw new InvalidOperationException(
+                "전체 레지스터 목록 시트를 찾지 못했습니다. " +
+                "'Absolute Address'와 'Word Length' 헤더가 있는 시트가 필요합니다.");
+        }
+
+        // 예전 버전 시트가 함께 남아있는 등, 후보가 여러 개면
+        // 이름에 "V1"이 들어간 시트를 최신 기준으로 우선 선택합니다.
+        return candidates.FirstOrDefault(
+                sheet => sheet.Name.Contains("V1", StringComparison.OrdinalIgnoreCase))
+            ?? candidates[0];
     }
 
     private static IXLWorksheet? FindWorksheetByName(XLWorkbook workbook, string name)
