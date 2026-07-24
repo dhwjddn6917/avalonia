@@ -37,7 +37,7 @@ public partial class AutoChargeView : UserControl
                 : 1920;
 
         double flyoutWidth =
-            Math.Clamp(windowWidth * 0.7, 640, 1360);
+            Math.Clamp(windowWidth * 1, 1360, 1950);
 
         SettingsFlyoutRoot.Width = flyoutWidth;
 
