@@ -415,7 +415,8 @@
                             BorderThickness="1"
                             CornerRadius="20"
                             Padding="28,24">
-                        <StackPanel Spacing="8">
+                        <StackPanel Spacing="8"
+                                    VerticalAlignment="Center">
                             <TextBlock Text="인버터 3상 전압 (AB/BC/CA)"
                                        Foreground="#64748B"
                                        FontSize="17"
@@ -433,14 +434,15 @@
                             BorderThickness="1"
                             CornerRadius="20"
                             Padding="18,18">
-                        <StackPanel Spacing="6">
+                        <StackPanel Spacing="8"
+                                    VerticalAlignment="Center">
                             <TextBlock Text="출력전력"
                                        Foreground="#64748B"
                                        FontSize="14"
                                        FontWeight="Bold"/>
                             <TextBlock Text="{Binding CurrentChargePowerText}"
                                        Foreground="#2563EB"
-                                       FontSize="30"
+                                       FontSize="38"
                                        FontWeight="Bold"/>
                         </StackPanel>
                     </Border>
@@ -451,14 +453,15 @@
                             BorderThickness="1"
                             CornerRadius="20"
                             Padding="18,18">
-                        <StackPanel Spacing="6">
+                        <StackPanel Spacing="8"
+                                    VerticalAlignment="Center">
                             <TextBlock Text="현재 SOC"
                                        Foreground="#64748B"
                                        FontSize="14"
                                        FontWeight="Bold"/>
                             <TextBlock Text="{Binding CurrentSocText}"
                                        Foreground="#16A34A"
-                                       FontSize="30"
+                                       FontSize="38"
                                        FontWeight="Bold"/>
                         </StackPanel>
                     </Border>
