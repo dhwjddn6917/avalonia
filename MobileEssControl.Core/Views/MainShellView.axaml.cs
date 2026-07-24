@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace MobileEssControl.Views;
 
-public partial class AndroidPlaceholderView : UserControl
+public partial class MainShellView : UserControl
 {
-    public AndroidPlaceholderView()
+    public MainShellView()
     {
         InitializeComponent();
     }

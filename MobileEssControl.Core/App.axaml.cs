@@ -80,9 +80,16 @@ public partial class App : Application
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
             {
-                // Android/모바일 첫 단계: 구조 확인용 화면만 띄웁니다.
-                // EMS/Modbus 연동(CAN-over-Bluetooth)은 아직 준비되지 않았습니다.
-                singleView.MainView = new AndroidPlaceholderView();
+                // Android/모바일: 실제 화면 구성을 그대로 띄웁니다.
+                // EMS/Modbus 연동(CAN-over-Bluetooth)은 아직 준비되지 않아
+                // NullModbusService로 항상 미연결 상태로 동작합니다.
+                IModbusService mobileModbusService = new NullModbusService();
+                var mobileEmsService = new EmsService(mobileModbusService);
+
+                singleView.MainView = new MainShellView
+                {
+                    DataContext = new MainWindowViewModel(mobileEmsService)
+                };
 
                 FileAppLogger.Info("APP", "단일 화면(모바일) 초기화 완료 - EMS 연동 대기");
             }
