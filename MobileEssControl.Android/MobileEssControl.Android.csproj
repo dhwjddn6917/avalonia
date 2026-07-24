@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-android36.0</TargetFramework>
+    <RootNamespace>MobileEssControl.Android</RootNamespace>
+    <Nullable>enable</Nullable>
+    <RuntimeIdentifiers>android-arm64;android-arm</RuntimeIdentifiers>
+    <ApplicationId>com.evkmc.mobileesscontrol</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <SupportedOSPlatformVersion>26</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Android" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MobileEssControl.Core\MobileEssControl.Core.csproj" />
+  </ItemGroup>
+</Project>

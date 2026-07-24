@@ -1,0 +1,417 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MobileEssControl.ViewModels.MainModeSelect"
+             x:DataType="vm:MainModeSelectViewModel"
+             x:Class="MobileEssControl.Views.MainModeSelect.MainModeSelectView">
+
+    <UserControl.Styles>
+
+        <!-- 버튼 외곽 그림자 -->
+        <Style Selector="Border.mode-shadow">
+            <Setter Property="CornerRadius" Value="30"/>
+            <Setter Property="Margin" Value="10,0"/>
+            <Setter Property="BoxShadow" Value="0 10 26 -2 #3A000000"/>
+        </Style>
+
+        <Style Selector="Border.mode-shadow:pointerover">
+            <Setter Property="BoxShadow" Value="0 14 30 -2 #4D000000"/>
+        </Style>
+
+        <!-- 운전 모드 버튼 공통 -->
+        <Style Selector="Button.mode-card">
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="30"/>
+            <Setter Property="Padding" Value="14"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        </Style>
+
+        <Style Selector="Button.mode-card:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.97)"/>
+        </Style>
+
+        <!-- 버튼 제목 -->
+        <Style Selector="TextBlock.mode-title">
+            <Setter Property="FontSize" Value="62"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Width" Value="720"/>
+        </Style>
+
+        <!-- 아이콘 흐름 영역 -->
+        <Style Selector="Grid.icon-flow">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- 아이콘 배경 -->
+        <Style Selector="Border.icon-chip">
+            <Setter Property="Width" Value="220"/>
+            <Setter Property="Height" Value="220"/>
+            <Setter Property="CornerRadius" Value="44"/>
+        </Style>
+
+        <Style Selector="Border.icon-chip.charge">
+            <Setter Property="Background" Value="#D1FAE5"/>
+        </Style>
+
+        <Style Selector="Border.icon-chip.output">
+            <Setter Property="Background" Value="#DBEAFE"/>
+        </Style>
+
+        <Style Selector="Border.icon-chip.discharge">
+            <Setter Property="Background" Value="#FFEDD5"/>
+        </Style>
+
+        <!-- 화살표 영역 -->
+        <Style Selector="Grid.arrow-cell">
+            <Setter Property="Height" Value="60"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Line.arrow-track">
+            <Setter Property="Stroke" Value="#CBD5E1"/>
+            <Setter Property="StrokeThickness" Value="7"/>
+            <Setter Property="StrokeLineCap" Value="Round"/>
+        </Style>
+
+        <!-- 움직이는 점선 화살표 -->
+        <Style Selector="Line.arrow-flow">
+            <Setter Property="StrokeThickness" Value="7"/>
+            <Setter Property="StrokeLineCap" Value="Round"/>
+            <Setter Property="StrokeDashArray" Value="9,9"/>
+
+            <Style.Animations>
+                <Animation Duration="0:0:0.9"
+                           IterationCount="INFINITE">
+
+                    <KeyFrame Cue="0%">
+                        <Setter Property="StrokeDashOffset" Value="0"/>
+                    </KeyFrame>
+
+                    <KeyFrame Cue="100%">
+                        <Setter Property="StrokeDashOffset" Value="-36"/>
+                    </KeyFrame>
+
+                </Animation>
+            </Style.Animations>
+        </Style>
+
+        <Style Selector="Line.arrow-flow.charge">
+            <Setter Property="Stroke" Value="#15803D"/>
+        </Style>
+
+        <Style Selector="Line.arrow-flow.output">
+            <Setter Property="Stroke" Value="#1D4ED8"/>
+        </Style>
+
+        <Style Selector="Line.arrow-flow.discharge">
+            <Setter Property="Stroke" Value="#C2410C"/>
+        </Style>
+
+        <!-- 화살촉 -->
+        <Style Selector="Polygon.arrow-head">
+            <Setter Property="Points" Value="0,0 20,10 0,20"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Polygon.arrow-head.charge">
+            <Setter Property="Fill" Value="#15803D"/>
+        </Style>
+
+        <Style Selector="Polygon.arrow-head.output">
+            <Setter Property="Fill" Value="#1D4ED8"/>
+        </Style>
+
+        <Style Selector="Polygon.arrow-head.discharge">
+            <Setter Property="Fill" Value="#C2410C"/>
+        </Style>
+
+    </UserControl.Styles>
+
+    <Grid Background="#F1F5F9"
+          RowDefinitions="Auto,40,*"
+          Margin="48">
+
+        <!-- 회사 로고 -->
+        <Image Grid.Row="0"
+               Source="avares://MobileEssControl/Assets/evkmc-logo.png"
+               Height="230"
+               Stretch="Uniform"
+               HorizontalAlignment="Center"/>
+
+        <!-- 운전 모드 버튼 3개 -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,*,*">
+
+            <!-- 배터리 충전 -->
+            <Border Grid.Column="0"
+                    Classes="mode-shadow">
+
+                <Button Classes="mode-card"
+                        Command="{Binding ShowAutoChargeCommand}"
+                        Background="#ECFDF5"
+                        BorderBrush="#86EFAC">
+
+                    <Viewbox Stretch="Uniform"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch">
+
+                        <Grid RowDefinitions="Auto,*"
+                              Width="760"
+                              Height="620">
+
+                            <TextBlock Grid.Row="0"
+                                       Classes="mode-title"
+                                       Text="배터리 충전"
+                                       Foreground="#15803D"/>
+
+                            <Grid Grid.Row="1"
+                                  Classes="icon-flow"
+                                  ColumnDefinitions="220,50,220,50,220">
+
+                                <!-- 계통 -->
+                                <Border Grid.Column="0"
+                                        Classes="icon-chip charge">
+
+                                    <Image Source="avares://MobileEssControl/Assets/free-pylon-power-14863517.png"
+                                           Margin="14"
+                                           Stretch="Uniform"/>
+                                </Border>
+
+                                <Grid Grid.Column="1"
+                                      Classes="arrow-cell">
+
+                                    <Line Classes="arrow-track"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Line Classes="arrow-flow charge"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Polygon Classes="arrow-head charge"/>
+                                </Grid>
+
+                                <!-- 인버터 -->
+                                <Border Grid.Column="2"
+                                        Classes="icon-chip charge">
+
+                                    <Image Source="avares://MobileEssControl/Assets/free-icon-inverter-11622748.png"
+                                           Margin="12"
+                                           Stretch="Uniform"/>
+                                </Border>
+
+                                <Grid Grid.Column="3"
+                                      Classes="arrow-cell">
+
+                                    <Line Classes="arrow-track"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Line Classes="arrow-flow charge"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Polygon Classes="arrow-head charge"/>
+                                </Grid>
+
+                                <!-- 배터리 -->
+                                <Border Grid.Column="4"
+                                        Classes="icon-chip charge">
+
+                                    <Image Source="avares://MobileEssControl/Assets/free-icon-full-battery-664886.png"
+                                           Margin="18"
+                                           Stretch="Uniform"/>
+                                </Border>
+
+                            </Grid>
+                        </Grid>
+                    </Viewbox>
+                </Button>
+            </Border>
+
+            <!-- 인버터 출력 -->
+            <Border Grid.Column="1"
+                    Classes="mode-shadow">
+
+                <Button Classes="mode-card"
+                        Command="{Binding ShowExternalOutputCommand}"
+                        Background="#EFF6FF"
+                        BorderBrush="#93C5FD">
+
+                    <Viewbox Stretch="Uniform"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch">
+
+                        <Grid RowDefinitions="Auto,*"
+                              Width="760"
+                              Height="620">
+
+                            <TextBlock Grid.Row="0"
+                                       Classes="mode-title"
+                                       Text="인버터 출력"
+                                       Foreground="#1D4ED8"/>
+
+                            <Grid Grid.Row="1"
+                                  Classes="icon-flow"
+                                  ColumnDefinitions="220,50,220,50,220">
+
+                                <!-- 배터리 -->
+                                <Border Grid.Column="0"
+                                        Classes="icon-chip output">
+
+                                    <Image Source="avares://MobileEssControl/Assets/free-icon-full-battery-664886.png"
+                                           Margin="18"
+                                           Stretch="Uniform"/>
+                                </Border>
+
+                                <Grid Grid.Column="1"
+                                      Classes="arrow-cell">
+
+                                    <Line Classes="arrow-track"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Line Classes="arrow-flow output"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Polygon Classes="arrow-head output"/>
+                                </Grid>
+
+                                <!-- 인버터 -->
+                                <Border Grid.Column="2"
+                                        Classes="icon-chip output">
+
+                                    <Image Source="avares://MobileEssControl/Assets/free-icon-inverter-11622748.png"
+                                           Margin="12"
+                                           Stretch="Uniform"/>
+                                </Border>
+
+                                <Grid Grid.Column="3"
+                                      Classes="arrow-cell">
+
+                                    <Line Classes="arrow-track"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Line Classes="arrow-flow output"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Polygon Classes="arrow-head output"/>
+                                </Grid>
+
+                                <!-- 출력 -->
+                                <Border Grid.Column="4"
+                                        Classes="icon-chip output">
+
+                                    <Image Source="avares://MobileEssControl/Assets/free-icon-charging-8259923.png"
+                                           Margin="14"
+                                           Stretch="Uniform"/>
+                                </Border>
+
+                            </Grid>
+                        </Grid>
+                    </Viewbox>
+                </Button>
+            </Border>
+
+            <!-- 인버터 출력(계통) -->
+            <Border Grid.Column="2"
+                    Classes="mode-shadow">
+
+                <Button Classes="mode-card"
+                        Command="{Binding ShowGridDischargeCommand}"
+                        Background="#FFF7ED"
+                        BorderBrush="#FDBA74">
+
+                    <Viewbox Stretch="Uniform"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch">
+
+                        <Grid RowDefinitions="Auto,*"
+                              Width="760"
+                              Height="620">
+
+                            <TextBlock Grid.Row="0"
+                                       Classes="mode-title"
+                                       Text="인버터 출력(계통)"
+                                       Foreground="#C2410C"/>
+
+                            <Grid Grid.Row="1"
+                                  Classes="icon-flow"
+                                  ColumnDefinitions="220,50,220,50,220">
+
+                                <!-- 배터리 -->
+                                <Border Grid.Column="0"
+                                        Classes="icon-chip discharge">
+
+                                    <Image Source="avares://MobileEssControl/Assets/free-icon-full-battery-664886.png"
+                                           Margin="18"
+                                           Stretch="Uniform"/>
+                                </Border>
+
+                                <Grid Grid.Column="1"
+                                      Classes="arrow-cell">
+
+                                    <Line Classes="arrow-track"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Line Classes="arrow-flow discharge"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Polygon Classes="arrow-head discharge"/>
+                                </Grid>
+
+                                <!-- 인버터 -->
+                                <Border Grid.Column="2"
+                                        Classes="icon-chip discharge">
+
+                                    <Image Source="avares://MobileEssControl/Assets/free-icon-inverter-11622748.png"
+                                           Margin="12"
+                                           Stretch="Uniform"/>
+                                </Border>
+
+                                <Grid Grid.Column="3"
+                                      Classes="arrow-cell">
+
+                                    <Line Classes="arrow-track"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Line Classes="arrow-flow discharge"
+                                          StartPoint="2,30"
+                                          EndPoint="44,30"/>
+
+                                    <Polygon Classes="arrow-head discharge"/>
+                                </Grid>
+
+                                <!-- 계통 -->
+                                <Border Grid.Column="4"
+                                        Classes="icon-chip discharge">
+
+                                    <Image Source="avares://MobileEssControl/Assets/free-pylon-power-14863517.png"
+                                           Margin="14"
+                                           Stretch="Uniform"/>
+                                </Border>
+
+                            </Grid>
+                        </Grid>
+                    </Viewbox>
+                </Button>
+            </Border>
+
+        </Grid>
+    </Grid>
+</UserControl>

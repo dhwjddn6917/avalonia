@@ -1,0 +1,15 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MobileEssControl.ViewModels"
+        xmlns:views="using:MobileEssControl.Views"
+        x:DataType="vm:MainWindowViewModel"
+        x:Class="MobileEssControl.Views.MainWindow"
+
+        WindowStartupLocation="CenterScreen"
+        Width="1920"
+        Height="1080"
+        WindowState="Maximized"
+        Title="Mobile ESS Control System">
+
+    <views:MainShellView/>
+</Window>

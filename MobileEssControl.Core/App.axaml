@@ -1,0 +1,83 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MobileEssControl.App"
+             xmlns:local="using:MobileEssControl"
+             RequestedThemeVariant="Light">
+
+    <!--
+        ���α׷� ȭ���� ��ü������ ���� ī���� �׸��� ����մϴ�.
+        Default�� Windows�� ��ũ/����Ʈ ������ ���󰡹Ƿ�,
+        �ٸ� ��Ʈ���� ��ũ �׸����� �⺻ CheckBox / Button / ComboBox��
+        �� ī�� ���� �帮�ų� ������ ���� �� �ֽ��ϴ�.
+        Light�� �����Ͽ� ��� PC���� ���� �⺻ ��Ʈ�� �׸��� ����մϴ�.
+    -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <!-- FluentTheme 기본 FlyoutPresenter는 폭이 좁게(약 456px) 제한되어 있어,
+             설정 플라이아웃을 아무리 넓게 잡아도 그 안에서 잘려 스크롤이 생겼습니다.
+             전역으로 폭/높이 제한을 해제합니다. -->
+        <Style Selector="FlyoutPresenter">
+            <Setter Property="MaxWidth" Value="Infinity"/>
+            <Setter Property="MaxHeight" Value="Infinity"/>
+        </Style>
+
+        <!-- ��ü ���� ��ư: ���� XAML�� Background/Foreground�� �켱 ����˴ϴ�. -->
+        <Style Selector="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="12,7"/>
+            <Setter Property="Background" Value="#E2E8F0"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="#DBEAFE"/>
+            <Setter Property="Foreground" Value="#1D4ED8"/>
+            <Setter Property="BorderBrush" Value="#60A5FA"/>
+        </Style>
+
+        <Style Selector="Button:pressed">
+            <Setter Property="Background" Value="#BFDBFE"/>
+            <Setter Property="BorderBrush" Value="#3B82F6"/>
+        </Style>
+
+        <Style Selector="Button:disabled">
+            <Setter Property="Opacity" Value="0.55"/>
+        </Style>
+
+        <!-- �⺻ �׸��� ������ üũ�ڽ��� ��� ��Ʈ�Ͽ��� ���� ���ڻ����� ǥ���մϴ�. -->
+        <Style Selector="CheckBox">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+
+        <Style Selector="CheckBox:disabled">
+            <Setter Property="Opacity" Value="0.55"/>
+        </Style>
+
+        <!-- �Է� ��Ʈ�� �⺻ ���� ���� -->
+        <Style Selector="ComboBox">
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#94A3B8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#94A3B8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Application.Styles>
+</Application>
