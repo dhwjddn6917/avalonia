@@ -2278,18 +2278,38 @@ public class EmsService
                         "EMS 통신이 연결되어 있지 않습니다.");
                 }
 
-                // 현재 30001 실제값을 읽은 뒤
-                // Bit0~2 Operating Mode는 Standby(0),
-                // Bit12 SystemRun은 Stop(0)으로 변경합니다.
-                // Pack / Inverter 등 나머지 비트는 그대로 유지합니다.
+                // 릴레이(SystemRun)를 먼저 끊고, 약 3초 뒤에 Operating Mode를
+                // Standby로 전환합니다. Mode와 Run을 한 번에 같이 바꾸면
+                // 릴레이가 너무 빨리 떨어지면서 접점에 무리가 갈 수 있어
+                // 두 단계로 나눴습니다.
+
+                // 1단계 : Bit12 SystemRun만 Stop(0)으로 변경.
+                // Operating Mode(Bit0~2)와 Pack/Inverter 등 나머지 비트는
+                // 그대로 유지합니다.
+                ushort systemRunStoppedWord =
+                    await UpdateControlEssWordAsync(
+                        absoluteAddress: EmsControlAddresses.ControlWord1,
+                        editableMask: EmsControlWord1.SystemRun,
+                        desiredBits: 0,
+                        operationName: "SystemRun B12 Stop",
+                        cancellationToken: cancellationToken);
+
+                WriteLog(
+                    $"운전 정지 1단계 완료 · " +
+                    $"30001=0x{systemRunStoppedWord:X4} · " +
+                    "SystemRun B12=0 · 3초 뒤 Standby 전환 예정");
+
+                // 2단계 : 릴레이가 완전히 끊어질 시간을 두기 위해 약 3초 대기.
+                await Task.Delay(3000, cancellationToken);
+
+                // 3단계 : Bit0~2 Operating Mode를 Standby(0)로 변경.
+                // SystemRun 등 나머지 비트는 그대로 유지합니다.
                 ushort stoppedControlWord =
                     await UpdateControlEssWordAsync(
                         absoluteAddress: EmsControlAddresses.ControlWord1,
-                        editableMask: (ushort)(
-                            EmsControlWord1.ModeMask |
-                            EmsControlWord1.SystemRun),
+                        editableMask: EmsControlWord1.ModeMask,
                         desiredBits: (ushort)EmsOperationMode.Standby,
-                        operationName: "Standby 전환 + SystemRun B12 Stop",
+                        operationName: "Standby 전환",
                         cancellationToken: cancellationToken);
 
                 WriteLog(
