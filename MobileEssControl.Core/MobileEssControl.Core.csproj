@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>MobileEssControl</RootNamespace>
+    <AssemblyName>MobileEssControl</AssemblyName>
     <Nullable>enable</Nullable>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
@@ -13,15 +13,9 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="12.0.4" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.0.4" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
-    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.1">
-      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
-      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.9" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
@@ -32,6 +26,15 @@
     <PackageReference Include="Serilog" Version="4.3.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+
+    <!--
+      아래 두 패키지는 Services\Modbus\ModbusService.cs / EmsUsbPortFinder.cs
+      (시리얼포트로 EMS와 직접 통신하는 데스크톱 전용 구현체)에서만 사용합니다.
+      두 클래스 모두 App.axaml.cs의 데스크톱 실행 분기 안에서만 생성되므로
+      Android에서는 실행되지 않지만, 만약 Android 빌드가 이 패키지들 때문에
+      실패하면 ModbusService/EmsUsbPortFinder를 Core 밖(Desktop 전용 프로젝트)으로
+      옮기고 IModbusService 인터페이스로만 참조하도록 바꿔야 합니다.
+    -->
     <PackageReference Include="System.IO.Ports" Version="10.0.9" />
     <PackageReference Include="System.Management" Version="10.0.9" />
   </ItemGroup>

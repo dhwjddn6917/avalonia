@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MobileEssControl.Views.AndroidPlaceholderView">
+
+    <Grid Background="#0F172A">
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="14"
+                    Margin="32">
+
+            <TextBlock Text="Mobile ESS Control System"
+                       Foreground="White"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"/>
+
+            <TextBlock Text="안드로이드 빌드 구조 확인용 화면입니다."
+                       Foreground="#94A3B8"
+                       FontSize="16"
+                       HorizontalAlignment="Center"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"/>
+
+            <TextBlock Text="EMS 통신(CAN-over-Bluetooth)이 아직 연동되지 않아 실제 데이터는 표시되지 않습니다."
+                       Foreground="#64748B"
+                       FontSize="14"
+                       HorizontalAlignment="Center"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       MaxWidth="480"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

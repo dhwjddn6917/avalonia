@@ -24,7 +24,7 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // Avalonia XAML ÇÁ¸®ºä¾î¿¡¼­´Â ½ÇÁ¦ EMS/Modbus ÃÊ±âÈ­¸¦ ÇÏÁö ¾ÊÀ½
+        // Avalonia XAML ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î¿¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ EMS/Modbus ï¿½Ê±ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (Design.IsDesignMode)
         {
             base.OnFrameworkInitializationCompleted();
@@ -37,7 +37,7 @@ public partial class App : Application
         {
             FileAppLogger.Info(
                 "APP",
-                $"ÇÁ·Î±×·¥ ½ÃÀÛ | Version={GetType().Assembly.GetName().Version} | PC={Environment.MachineName}");
+                $"ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ | Version={GetType().Assembly.GetName().Version} | PC={Environment.MachineName}");
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -48,8 +48,8 @@ public partial class App : Application
                     new MobileTelemetryOptions
                     {
                         // =====================================================
-                        // ¿©±â¿¡ IP¸¸ Ç¥½ÃµÇ´Â È¨ÆäÀÌÁöÀÇ Á¤È®ÇÑ ÁÖ¼Ò¸¦ ÀÔ·ÂÇÏ¼¼¿ä.
-                        // ¿¹: "http://example.com/mobile-server-ip"
+                        // ï¿½ï¿½ï¿½â¿¡ IPï¿½ï¿½ Ç¥ï¿½ÃµÇ´ï¿½ È¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ ï¿½Ö¼Ò¸ï¿½ ï¿½Ô·ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.
+                        // ï¿½ï¿½: "http://example.com/mobile-server-ip"
                         // =====================================================
                         IpLookupUrl = "https://evkmc.kr:8091/serverip",
 
@@ -73,17 +73,25 @@ public partial class App : Application
                 {
                     mobileTelemetryService.Dispose();
 
-                    FileAppLogger.Info("APP", "ÇÁ·Î±×·¥ Á¾·á");
+                    FileAppLogger.Info("APP", "ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½");
                 };
 
-                FileAppLogger.Info("APP", "¸ŞÀÎ È­¸é ÃÊ±âÈ­ ¿Ï·á");
+                FileAppLogger.Info("APP", "ï¿½ï¿½ï¿½ï¿½ È­ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½Ï·ï¿½");
+            }
+            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+            {
+                // Android/ëª¨ë°”ì¼ ì²« ë‹¨ê³„: êµ¬ì¡° í™•ì¸ìš© í™”ë©´ë§Œ ë„ì›ë‹ˆë‹¤.
+                // EMS/Modbus ì—°ë™(CAN-over-Bluetooth)ì€ ì•„ì§ ì¤€ë¹„ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.
+                singleView.MainView = new AndroidPlaceholderView();
+
+                FileAppLogger.Info("APP", "ë‹¨ì¼ í™”ë©´(ëª¨ë°”ì¼) ì´ˆê¸°í™” ì™„ë£Œ - EMS ì—°ë™ ëŒ€ê¸°");
             }
         }
         catch (Exception ex)
         {
             FileAppLogger.Error(
                 "APP",
-                "ÇÁ·Î±×·¥ ÃÊ±âÈ­ Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù.",
+                "ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.",
                 ex);
 
             throw;
@@ -100,14 +108,14 @@ public partial class App : Application
             {
                 FileAppLogger.Error(
                     "APP",
-                    "Ã³¸®µÇÁö ¾ÊÀº ÇÁ·Î±×·¥ ¿¹¿Ü°¡ ¹ß»ıÇß½À´Ï´Ù.",
+                    "Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½Ü°ï¿½ ï¿½ß»ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.",
                     exception);
             }
             else
             {
                 FileAppLogger.Error(
                     "APP",
-                    $"Ã³¸®µÇÁö ¾ÊÀº ÇÁ·Î±×·¥ ¿¹¿Ü°¡ ¹ß»ıÇß½À´Ï´Ù. ³»¿ë={eventArgs.ExceptionObject}");
+                    $"Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½Ü°ï¿½ ï¿½ß»ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½={eventArgs.ExceptionObject}");
             }
         };
 
@@ -115,7 +123,7 @@ public partial class App : Application
         {
             FileAppLogger.Error(
                 "APP",
-                "Ã³¸®µÇÁö ¾ÊÀº ºñµ¿±â ÀÛ¾÷ ¿¹¿Ü°¡ ¹ß»ıÇß½À´Ï´Ù.",
+                "Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ñµ¿±ï¿½ ï¿½Û¾ï¿½ ï¿½ï¿½ï¿½Ü°ï¿½ ï¿½ß»ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.",
                 eventArgs.Exception);
 
             eventArgs.SetObserved();
