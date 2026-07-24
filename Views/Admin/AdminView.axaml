@@ -365,7 +365,7 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Auto">
                     <StackPanel Margin="18" Spacing="8">
-                        <TextBlock Text="EMS  · 31001 ~ 31057"
+                        <TextBlock Text="EMS  · 31001 ~ 31059"
                                    FontSize="17"
                                    FontWeight="SemiBold"
                                    Foreground="#0F172A"/>

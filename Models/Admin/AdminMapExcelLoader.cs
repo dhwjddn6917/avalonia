@@ -1,165 +1,112 @@
 using ClosedXML.Excel;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MobileEssControl.Models.Admin;
 
 /// <summary>
-/// 관리자 모드 모니터링 표(31001~31057)를 엑셀("Registers" + "BitFields" 시트)에서
-/// 읽어 <see cref="AdminRegisterRow"/> 목록으로 만듭니다.
-/// 30001~30016 쓰기 제어표는 대상이 아닙니다.
+/// 관리자 모드 EMS 탭의 비트필드 표시를 회사 표준 문서
+/// "MobileESS_ModBus_AddressMap_*.xlsx" 원본에서 바로 읽어옵니다.
+///
+/// 이 문서는 두 종류의 시트로 구성됩니다.
+///   1) 마스터 시트: 모든 레지스터를 한 줄씩 나열 (Absolute Address / Word Length 헤더 보유)
+///   2) 상세 시트(System Status / System Alarms / Battery Pack Alarms / Battery Pack Status 등):
+///      Bit Field 레지스터 하나당 비트별 이름/값 의미를 나열 (Bit Position / Data Length 헤더 보유)
+///
+/// 마스터 시트의 Remark 열에 있는 "Refer to XXX Sheet" 문구로 어느 상세 시트를 볼지 찾고,
+/// 상세 시트가 정의한 비트 패턴 개수보다 대상 레지스터가 더 많으면(Pack1/Pack2처럼 같은 패턴을
+/// 반복 사용하는 경우) 순서대로 돌려가며(cycle) 적용합니다.
+///
+/// 숫자 레지스터의 Scale/Unit(예: "10mV", "0.001")은 표기 관례가 레지스터마다 달라
+/// 자동 해석이 위험하므로 다루지 않습니다. 이 로더는 비트필드 라벨만 갱신합니다.
 /// </summary>
 public static class AdminMapExcelLoader
 {
-    // AdminBitFieldDecoder와 동일한 폭으로 맞춰 ':' 위치가 어긋나지 않게 합니다.
     private const int RemarkNameWidth = 46;
 
-    public static AdminMapDefinition Load(string filePath)
+    private static readonly Regex ReferSheetPattern =
+        new(@"Refer\s+to\s+(.+?)\s+Sheet", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static readonly Regex LabelPairPattern =
+        new(@"(-?\d+)\s*:\s*(.*?)(?=(?:-?\d+\s*:)|$)", RegexOptions.Singleline | RegexOptions.Compiled);
+
+    /// <summary>
+    /// 절대주소 문자열(예: "31022") → 그 레지스터의 비트필드 디코더.
+    /// 대상 레지스터를 찾지 못했거나 상세 시트를 해석할 수 없으면 그 항목은 결과에서 빠집니다
+    /// (호출 쪽에서 코드 내장 기본 디코더를 그대로 씁니다 — 안전하게 실패합니다).
+    /// </summary>
+    public static IReadOnlyDictionary<string, Func<ushort, string>> LoadBitFieldDecoders(string filePath)
     {
         using XLWorkbook workbook = new(filePath);
 
-        if (!workbook.TryGetWorksheet("Registers", out IXLWorksheet? registersSheet))
+        IXLWorksheet masterSheet = FindMasterSheet(workbook);
+
+        List<(int AbsoluteAddress, string DetailSheetName)> bitFieldRegisters =
+            ReadMasterBitFieldRegisters(masterSheet);
+
+        if (bitFieldRegisters.Count == 0)
         {
             throw new InvalidOperationException(
-                "엑셀에 'Registers' 시트가 없습니다.");
+                $"'{masterSheet.Name}' 시트에서 Bit Field 레지스터를 찾지 못했습니다. " +
+                "'Data Type' 열이 'Bit Field'인 행이 있는지 확인해주세요.");
         }
 
-        if (!workbook.TryGetWorksheet("BitFields", out IXLWorksheet? bitFieldsSheet))
+        Dictionary<string, Func<ushort, string>> result = new();
+
+        foreach (IGrouping<string, (int AbsoluteAddress, string DetailSheetName)> group in
+            bitFieldRegisters.GroupBy(r => r.DetailSheetName, StringComparer.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException(
-                "엑셀에 'BitFields' 시트가 없습니다.");
-        }
+            IXLWorksheet? detailSheet = FindWorksheetByName(workbook, group.Key);
 
-        AdminMapDefinition map = new();
-
-        int rowIndex = 0;
-
-        foreach (Dictionary<string, string> row in ReadRowsByHeader(registersSheet))
-        {
-            rowIndex++;
-
-            map.Registers.Add(new AdminMapRegisterDefinition
+            if (detailSheet is null)
             {
-                RelativeAddress = (ushort)GetRequiredInt(row, "RelativeAddress", "Registers", rowIndex),
-                AbsoluteAddress = GetRequiredString(row, "AbsoluteAddress", "Registers", rowIndex),
-                Name = GetRequiredString(row, "Name", "Registers", rowIndex),
-                Unit = GetString(row, "Unit", "-"),
-                DataType = GetString(row, "DataType", "UINT16"),
-                Scale = GetDouble(row, "Scale", 1.0),
-                IsSigned = GetBool(row, "IsSigned"),
-                DecimalPlaces = GetInt(row, "DecimalPlaces", 2),
-                IsBitField = GetBool(row, "IsBitField"),
-                WordLength = GetInt(row, "WordLength", 1),
-                FormatterKind = GetString(row, "FormatterKind", "")
-            });
-        }
-
-        if (map.Registers.Count == 0)
-        {
-            throw new InvalidOperationException(
-                "'Registers' 시트에 데이터가 없습니다.");
-        }
-
-        rowIndex = 0;
-
-        foreach (Dictionary<string, string> row in ReadRowsByHeader(bitFieldsSheet))
-        {
-            rowIndex++;
-
-            map.BitFields.Add(new AdminMapBitFieldDefinition
-            {
-                RegisterKey = GetRequiredString(row, "RegisterKey", "BitFields", rowIndex),
-                FieldName = GetRequiredString(row, "FieldName", "BitFields", rowIndex),
-                BitStart = GetRequiredInt(row, "BitStart", "BitFields", rowIndex),
-                BitWidth = GetInt(row, "BitWidth", 1),
-                Labels = GetRequiredString(row, "Labels", "BitFields", rowIndex)
-            });
-        }
-
-        return map;
-    }
-
-    /// <summary>
-    /// 로드된 정의로 <see cref="AdminRegisterRow"/> 목록을 만듭니다.
-    /// textFormatters/valueFormatters는 FormatterKind 문자열과 매칭되는
-    /// 특수 포맷 함수(예: 역순 아스키 문자열, 제조일자, 버전)를 제공합니다.
-    /// </summary>
-    public static List<AdminRegisterRow> BuildRegisterRows(
-        AdminMapDefinition map,
-        IReadOnlyDictionary<string, Func<ushort[], int, string>> textFormatters,
-        IReadOnlyDictionary<string, Func<ushort, string>> valueFormatters)
-    {
-        Dictionary<string, List<AdminMapBitFieldDefinition>> bitFieldsByRegister =
-            map.BitFields
-                .GroupBy(field => field.RegisterKey, StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(
-                    group => group.Key,
-                    group => group.OrderBy(field => field.BitStart).ToList(),
-                    StringComparer.OrdinalIgnoreCase);
-
-        List<AdminRegisterRow> rows = new();
-
-        foreach (AdminMapRegisterDefinition definition in
-            map.Registers.OrderBy(definition => definition.RelativeAddress))
-        {
-            Func<ushort, string>? bitFieldDecoder = null;
-
-            if (definition.IsBitField &&
-                bitFieldsByRegister.TryGetValue(definition.AbsoluteAddress, out List<AdminMapBitFieldDefinition>? fields))
-            {
-                bitFieldDecoder = BuildBitFieldDecoder(fields);
+                continue;
             }
 
-            Func<ushort[], int, string>? textFormatter = null;
-            Func<ushort, string>? valueFormatter = null;
+            List<List<BitFieldEntry>> blocks = ParseDetailSheetBlocks(detailSheet);
 
-            if (!string.IsNullOrEmpty(definition.FormatterKind))
+            if (blocks.Count == 0)
             {
-                if (textFormatters.TryGetValue(definition.FormatterKind, out Func<ushort[], int, string>? foundTextFormatter))
-                {
-                    textFormatter = foundTextFormatter;
-                }
-                else if (valueFormatters.TryGetValue(definition.FormatterKind, out Func<ushort, string>? foundValueFormatter))
-                {
-                    valueFormatter = foundValueFormatter;
-                }
+                continue;
             }
 
-            rows.Add(new AdminRegisterRow
+            List<(int AbsoluteAddress, string DetailSheetName)> targets = group.ToList();
+
+            for (int i = 0; i < targets.Count; i++)
             {
-                RelativeAddress = definition.RelativeAddress,
-                AbsoluteAddressText = definition.AbsoluteAddress,
-                Name = definition.Name,
-                Unit = definition.Unit,
-                DataType = definition.DataType,
-                Scale = definition.Scale,
-                IsSigned = definition.IsSigned,
-                DecimalPlaces = definition.DecimalPlaces,
-                IsBitField = definition.IsBitField,
-                BitFieldDecoder = bitFieldDecoder,
-                WordLength = definition.WordLength,
-                ValuesFormatter = textFormatter,
-                ValueFormatter = valueFormatter
-            });
+                // 상세 시트가 정의한 패턴보다 대상 레지스터가 더 많으면(Pack1/Pack2 등)
+                // 순서대로 돌려가며 같은 패턴을 재사용합니다.
+                List<BitFieldEntry> block = blocks[i % blocks.Count];
+
+                result[targets[i].AbsoluteAddress.ToString()] = BuildDecoder(block);
+            }
         }
 
-        return rows;
+        if (result.Count == 0)
+        {
+            throw new InvalidOperationException(
+                "Bit Field 레지스터는 찾았지만, 연결된 상세 시트(System Status 등)를 하나도 읽지 못했습니다. " +
+                "시트 이름과 'Refer to ... Sheet' 문구가 일치하는지 확인해주세요.");
+        }
+
+        return result;
     }
 
-    private static Func<ushort, string> BuildBitFieldDecoder(
-        List<AdminMapBitFieldDefinition> fields)
+    private readonly record struct BitFieldEntry(string FieldName, int BitStart, int BitWidth, string Remark);
+
+    private static Func<ushort, string> BuildDecoder(List<BitFieldEntry> fields)
     {
         return raw =>
         {
             List<string> lines = new(fields.Count);
 
-            foreach (AdminMapBitFieldDefinition field in fields)
+            foreach (BitFieldEntry field in fields)
             {
                 int mask = (1 << field.BitWidth) - 1;
                 int value = (raw >> field.BitStart) & mask;
-                string label = LookupLabel(field.Labels, value);
+                string label = LookupLabel(field.Remark, value);
 
                 lines.Add($"{field.FieldName.PadRight(RemarkNameWidth)} : {label}");
             }
@@ -168,147 +115,276 @@ public static class AdminMapExcelLoader
         };
     }
 
-    private static string LookupLabel(string labels, int value)
+    /// <summary>
+    /// "0: Normal\n1: Warning\n2: Fault" / "0: Off / 1: On" / "0: Normal 1: Fault" 등
+    /// 문서마다 다른 구분자 표기를 모두 "숫자 다음에 콜론" 패턴으로 찾아 처리합니다.
+    /// </summary>
+    private static string LookupLabel(string remark, int value)
     {
-        foreach (string pair in labels.Split(';', StringSplitOptions.RemoveEmptyEntries))
+        if (string.IsNullOrWhiteSpace(remark))
         {
-            int equalsIndex = pair.IndexOf('=');
+            return "Reserved";
+        }
 
-            if (equalsIndex <= 0)
+        foreach (Match match in LabelPairPattern.Matches(remark))
+        {
+            if (!int.TryParse(match.Groups[1].Value, out int key))
             {
                 continue;
             }
 
-            string keyText = pair[..equalsIndex].Trim();
-            string labelText = pair[(equalsIndex + 1)..].Trim();
-
-            if (int.TryParse(keyText, out int key) && key == value)
+            if (key != value)
             {
-                return labelText;
+                continue;
             }
+
+            string label = match.Groups[2].Value
+                .Replace("\r", " ")
+                .Replace("\n", " ")
+                .Trim()
+                .TrimEnd('/')
+                .Trim();
+
+            return string.IsNullOrEmpty(label) ? "Reserved" : label;
         }
 
         return "Reserved";
     }
 
-    private static List<Dictionary<string, string>> ReadRowsByHeader(IXLWorksheet worksheet)
+    private static List<(int AbsoluteAddress, string DetailSheetName)> ReadMasterBitFieldRegisters(
+        IXLWorksheet masterSheet)
     {
-        List<Dictionary<string, string>> result = new();
+        IXLRow headerRow = FindHeaderRow(masterSheet, "Absolute Address");
 
-        IXLRow? headerRow = worksheet.RowsUsed().FirstOrDefault();
+        int absoluteAddressCol = FindColumn(headerRow, "Absolute Address");
+        int dataTypeCol = FindColumn(headerRow, "Data Type");
+        int remarkCol = FindColumn(headerRow, "Remark");
 
-        if (headerRow is null)
+        List<(int, string)> results = new();
+        string? currentDetailSheetName = null;
+
+        foreach (IXLRow row in masterSheet.RowsUsed())
         {
-            return result;
-        }
-
-        Dictionary<string, int> columnIndexByHeader = new(StringComparer.OrdinalIgnoreCase);
-
-        foreach (IXLCell cell in headerRow.CellsUsed())
-        {
-            string header = cell.GetString().Trim();
-
-            if (!string.IsNullOrEmpty(header))
-            {
-                columnIndexByHeader[header] = cell.Address.ColumnNumber;
-            }
-        }
-
-        foreach (IXLRow row in worksheet.RowsUsed().Skip(1))
-        {
-            Dictionary<string, string> values = new(StringComparer.OrdinalIgnoreCase);
-
-            foreach (KeyValuePair<string, int> column in columnIndexByHeader)
-            {
-                values[column.Key] = row.Cell(column.Value).GetString().Trim();
-            }
-
-            if (values.Values.All(string.IsNullOrEmpty))
+            if (row.RowNumber() <= headerRow.RowNumber())
             {
                 continue;
             }
 
-            result.Add(values);
+            string remark = row.Cell(remarkCol).GetString();
+            Match referMatch = ReferSheetPattern.Match(remark);
+
+            if (referMatch.Success)
+            {
+                currentDetailSheetName = referMatch.Groups[1].Value.Trim();
+            }
+
+            string dataType = row.Cell(dataTypeCol).GetString().Trim();
+
+            if (!string.Equals(dataType, "Bit Field", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            string addressText = row.Cell(absoluteAddressCol).GetString().Trim();
+
+            if (!int.TryParse(addressText, out int address))
+            {
+                // #REF! 등 깨진 주소는 건너뜁니다.
+                continue;
+            }
+
+            if (currentDetailSheetName is null)
+            {
+                continue;
+            }
+
+            results.Add((address, currentDetailSheetName));
         }
 
-        return result;
+        return results;
     }
 
-    private static string GetString(
-        Dictionary<string, string> row,
-        string column,
-        string defaultValue = "")
+    private static List<List<BitFieldEntry>> ParseDetailSheetBlocks(IXLWorksheet detailSheet)
     {
-        return row.TryGetValue(column, out string? value) && !string.IsNullOrEmpty(value)
-            ? value
-            : defaultValue;
-    }
+        IXLRow? headerRow = TryFindHeaderRow(detailSheet, "Bit Position");
 
-    private static string GetRequiredString(
-        Dictionary<string, string> row,
-        string column,
-        string sheetName,
-        int dataRowIndex)
-    {
-        if (!row.TryGetValue(column, out string? value) || string.IsNullOrEmpty(value))
+        if (headerRow is null)
         {
-            throw new InvalidOperationException(
-                $"'{sheetName}' 시트 데이터 {dataRowIndex}번째 행에 '{column}' 값이 없습니다.");
+            return new List<List<BitFieldEntry>>();
         }
 
-        return value;
-    }
+        List<int> nameColumns = FindAllColumns(headerRow, "Name");
 
-    private static int GetInt(
-        Dictionary<string, string> row,
-        string column,
-        int defaultValue = 0)
-    {
-        string text = GetString(row, column);
-
-        return int.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out int value)
-            ? value
-            : defaultValue;
-    }
-
-    private static int GetRequiredInt(
-        Dictionary<string, string> row,
-        string column,
-        string sheetName,
-        int dataRowIndex)
-    {
-        string text = GetRequiredString(row, column, sheetName, dataRowIndex);
-
-        if (!int.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out int value))
+        if (nameColumns.Count == 0)
         {
-            throw new InvalidOperationException(
-                $"'{sheetName}' 시트 데이터 {dataRowIndex}번째 행의 '{column}' 값 '{text}'을(를) 숫자로 읽을 수 없습니다.");
+            return new List<List<BitFieldEntry>>();
         }
 
-        return value;
+        int registerNameCol = nameColumns.Min();
+        int fieldNameCol = nameColumns.Max();
+        int bitPositionCol = FindColumn(headerRow, "Bit Position");
+        int dataLengthCol = FindColumn(headerRow, "Data Length");
+        int remarkCol = FindColumn(headerRow, "Remark");
+
+        List<List<BitFieldEntry>> blocks = new();
+        List<BitFieldEntry>? currentBlock = null;
+
+        foreach (IXLRow row in detailSheet.RowsUsed())
+        {
+            if (row.RowNumber() <= headerRow.RowNumber())
+            {
+                continue;
+            }
+
+            string bitPositionText = row.Cell(bitPositionCol).GetString().Trim();
+
+            if (string.IsNullOrEmpty(bitPositionText))
+            {
+                continue;
+            }
+
+            if (!int.TryParse(bitPositionText, out int bitStart))
+            {
+                continue;
+            }
+
+            string registerName = row.Cell(registerNameCol).GetString().Trim();
+
+            if (!string.IsNullOrEmpty(registerName))
+            {
+                currentBlock = new List<BitFieldEntry>();
+                blocks.Add(currentBlock);
+            }
+
+            if (currentBlock is null)
+            {
+                continue;
+            }
+
+            string fieldName = row.Cell(fieldNameCol).GetString().Trim();
+
+            if (string.IsNullOrEmpty(fieldName) ||
+                fieldName.Equals("Reserved", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            int bitWidth = int.TryParse(row.Cell(dataLengthCol).GetString().Trim(), out int parsedWidth)
+                ? Math.Max(1, parsedWidth)
+                : 1;
+
+            string remark = row.Cell(remarkCol).GetString();
+
+            currentBlock.Add(new BitFieldEntry(fieldName, bitStart, bitWidth, remark));
+        }
+
+        return blocks;
     }
 
-    private static double GetDouble(
-        Dictionary<string, string> row,
-        string column,
-        double defaultValue = 0)
+    private static IXLWorksheet FindMasterSheet(XLWorkbook workbook)
     {
-        string text = GetString(row, column);
+        foreach (IXLWorksheet sheet in workbook.Worksheets)
+        {
+            IXLRow? headerRow = TryFindHeaderRow(sheet, "Absolute Address");
 
-        return double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out double value)
-            ? value
-            : defaultValue;
+            if (headerRow is null)
+            {
+                continue;
+            }
+
+            if (HasColumn(headerRow, "Word Length"))
+            {
+                return sheet;
+            }
+        }
+
+        throw new InvalidOperationException(
+            "전체 레지스터 목록 시트를 찾지 못했습니다. " +
+            "'Absolute Address'와 'Word Length' 헤더가 있는 시트가 필요합니다.");
     }
 
-    private static bool GetBool(
-        Dictionary<string, string> row,
-        string column)
+    private static IXLWorksheet? FindWorksheetByName(XLWorkbook workbook, string name)
     {
-        string text = GetString(row, column).Trim();
+        foreach (IXLWorksheet sheet in workbook.Worksheets)
+        {
+            if (string.Equals(sheet.Name.Trim(), name, StringComparison.OrdinalIgnoreCase))
+            {
+                return sheet;
+            }
+        }
 
-        return text.Equals("TRUE", StringComparison.OrdinalIgnoreCase) ||
-               text.Equals("1", StringComparison.Ordinal) ||
-               text.Equals("Y", StringComparison.OrdinalIgnoreCase) ||
-               text.Equals("YES", StringComparison.OrdinalIgnoreCase);
+        // 정확히 일치하는 시트가 없으면 이름이 포함된 시트로 한 번 더 시도합니다.
+        foreach (IXLWorksheet sheet in workbook.Worksheets)
+        {
+            if (sheet.Name.Contains(name, StringComparison.OrdinalIgnoreCase) ||
+                name.Contains(sheet.Name.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                return sheet;
+            }
+        }
+
+        return null;
+    }
+
+    private static IXLRow FindHeaderRow(IXLWorksheet sheet, string requiredHeaderText)
+    {
+        return TryFindHeaderRow(sheet, requiredHeaderText)
+            ?? throw new InvalidOperationException(
+                $"'{sheet.Name}' 시트에서 '{requiredHeaderText}' 헤더를 찾지 못했습니다.");
+    }
+
+    private static IXLRow? TryFindHeaderRow(IXLWorksheet sheet, string requiredHeaderText)
+    {
+        foreach (IXLRow row in sheet.RowsUsed().Take(10))
+        {
+            if (HasColumn(row, requiredHeaderText))
+            {
+                return row;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool HasColumn(IXLRow headerRow, string headerText)
+    {
+        foreach (IXLCell cell in headerRow.CellsUsed())
+        {
+            if (string.Equals(cell.GetString().Trim(), headerText, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static int FindColumn(IXLRow headerRow, string headerText)
+    {
+        foreach (IXLCell cell in headerRow.CellsUsed())
+        {
+            if (string.Equals(cell.GetString().Trim(), headerText, StringComparison.OrdinalIgnoreCase))
+            {
+                return cell.Address.ColumnNumber;
+            }
+        }
+
+        throw new InvalidOperationException(
+            $"'{headerRow.Worksheet.Name}' 시트 헤더 행에서 '{headerText}' 열을 찾지 못했습니다.");
+    }
+
+    private static List<int> FindAllColumns(IXLRow headerRow, string headerText)
+    {
+        List<int> columns = new();
+
+        foreach (IXLCell cell in headerRow.CellsUsed())
+        {
+            if (string.Equals(cell.GetString().Trim(), headerText, StringComparison.OrdinalIgnoreCase))
+            {
+                columns.Add(cell.Address.ColumnNumber);
+            }
+        }
+
+        return columns;
     }
 }

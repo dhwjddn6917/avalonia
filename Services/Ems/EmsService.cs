@@ -469,12 +469,14 @@ public class EmsService
         CancellationToken cancellationToken = default)
     {
         // EMS Complete ESS Information + ESS Profile Information
-        // Absolute 31001 ~ 31057 / 총 57 Word
+        // Absolute 31001 ~ 31059 / 총 59 Word
+        // 31038/31039(Batt Max Chg/Dchg Power Limit)가 실제 존재하는 레지스터라
+        // ESS Profile Information(Manufacturer Name 이하)이 31040부터 시작합니다.
         ushort[] emsValues = await ReadAdminGroupAsync(
             groupName: "EMS",
             slaveId: SlaveIds.Ems,
             startAddress: 31001,
-            numberOfPoints: 57,
+            numberOfPoints: 59,
             cancellationToken);
 
         // Battery Pack 1 : 32001 ~ 32024

@@ -37,12 +37,15 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
 
     public ObservableCollection<AdminRegisterRow> SystemRows { get; } = new();
 
-    // 엑셀로 모니터링 표(31001~31057)를 다시 불러왔을 때의 상태 문구입니다.
+    // 엑셀로 모니터링 표(31001~31059)를 다시 불러왔을 때의 상태 문구입니다.
     [ObservableProperty]
     private string mapStatusText = "기본 내장 맵 사용 중 · '맵 새로고침'으로 엑셀을 불러올 수 있습니다.";
 
     [ObservableProperty]
     private bool isMapLoading;
+
+    // 엑셀에서 불러온 절대주소별 비트필드 디코더입니다. null이면 코드 내장 기본값을 씁니다.
+    private IReadOnlyDictionary<string, Func<ushort, string>>? _loadedBitFieldDecoders;
 
     // Pack 1 / Pack 2는 합산하지 않고 같은 줄에서 비교 표시합니다.
     public ObservableCollection<AdminComparisonRow> BatteryRows { get; } = new();
@@ -2193,43 +2196,23 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         }
 
         IsMapLoading = true;
-        MapStatusText = "엑셀 맵 불러오는 중...";
+        MapStatusText = "엑셀에서 비트필드 불러오는 중...";
 
         try
         {
-            AdminMapDefinition map =
-                await Task.Run(() => AdminMapExcelLoader.Load(filePath));
+            IReadOnlyDictionary<string, Func<ushort, string>> decoders =
+                await Task.Run(() => AdminMapExcelLoader.LoadBitFieldDecoders(filePath));
 
-            Dictionary<string, Func<ushort[], int, string>> textFormatters = new()
-            {
-                ["ReverseAscii8"] = FormatReverseAsciiText8
-            };
-
-            Dictionary<string, Func<ushort, string>> valueFormatters = new()
-            {
-                ["ManufacturerDate"] = FormatManufacturerDate,
-                ["MajorMinorVersion"] = FormatMajorMinorVersion
-            };
-
-            List<AdminRegisterRow> loadedRows =
-                AdminMapExcelLoader.BuildRegisterRows(
-                    map,
-                    textFormatters,
-                    valueFormatters);
+            _loadedBitFieldDecoders = decoders;
 
             SystemRows.Clear();
-
-            foreach (AdminRegisterRow row in loadedRows)
-            {
-                SystemRows.Add(row);
-            }
+            BuildSystemRowEntries();
 
             MapStatusText =
-                $"엑셀 맵 로드 완료 · {System.IO.Path.GetFileName(filePath)} · " +
-                $"레지스터 {map.Registers.Count}개, 비트필드 {map.BitFields.Count}개 · " +
-                $"{DateTime.Now:HH:mm:ss}";
+                $"엑셀 비트필드 로드 완료 · {System.IO.Path.GetFileName(filePath)} · " +
+                $"레지스터 {decoders.Count}개 · {DateTime.Now:HH:mm:ss}";
 
-            AddLog($"맵 어드레스 엑셀 로드 완료 · {filePath}");
+            AddLog($"맵 어드레스 엑셀(비트필드) 로드 완료 · {filePath}");
         }
         catch (Exception ex)
         {
@@ -2240,7 +2223,8 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
             await AppDialogService.ShowWarningAsync(
                 "맵 새로고침 실패",
                 $"엑셀 파일을 읽는 중 문제가 발생했습니다.\n\n{ex.Message}\n\n" +
-                "'Registers'와 'BitFields' 시트, 헤더 이름을 확인해주세요.");
+                "MobileESS_ModBus_AddressMap 원본 형식(마스터 시트 + System Status/" +
+                "System Alarms/Battery Pack Alarms/Battery Pack Status 시트)인지 확인해주세요.");
         }
         finally
         {
@@ -2250,8 +2234,24 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
 
     private void BuildStatusRows()
     {
+        BuildSystemRowEntries();
+
         // =====================================================
-        // EMS: Absolute 31001 ~ 31049 / Relative 0 ~ 48
+        // 비교 화면: Pack 1 / Pack 2, Inverter 1 / Inverter 2
+        // =====================================================
+
+        BuildBatteryComparisonRows();
+        BuildInverterComparisonRows();
+    }
+
+    /// <summary>
+    /// SystemRows(31001~31059)만 만듭니다. '맵 새로고침'은 이 부분만 다시 실행합니다
+    /// (BatteryRows/InverterRows 비교 화면은 건드리지 않습니다).
+    /// </summary>
+    private void BuildSystemRowEntries()
+    {
+        // =====================================================
+        // EMS: Absolute 31001 ~ 31059 / Relative 0 ~ 58
         // =====================================================
 
         Add(SystemRows, 0, "31001", "ChargingMaxLimitVoltage", "V", "UINT16", 0.01, false, 2);
@@ -2306,44 +2306,49 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         Add(SystemRows, 35, "31036", "Number of Chargeable Pack", "EA", "UINT16", 1.0, false, 0);
         Add(SystemRows, 36, "31037", "Number of Dischargeable Pack", "EA", "UINT16", 1.0, false, 0);
 
+        Add(SystemRows, 37, "31038", "Batt Max Chg Power Limit", "kW", "INT16", 0.01, true, 2);
+        Add(SystemRows, 38, "31039", "Batt Max Dchg Power Limit", "kW", "INT16", 0.01, true, 2);
+
         // =====================================================
-        // ESS Profile Information: 31038 ~ 31057
+        // ESS Profile Information: 31040 ~ 31059
         // 실제 EMS 수신 기준:
         // 문자 1개가 Register 1개에 들어가며,
         // 전체 문자열은 주소 역순으로 조합해야 합니다.
+        // 31038/31039(Batt Max Chg/Dchg Power Limit)가 실제 존재하는 레지스터라
+        // 이 블록 전체가 기존보다 2워드 뒤로 밀립니다.
         // =====================================================
 
         AddText(
             SystemRows,
-            37,
-            "31038 ~ 31045",
+            39,
+            "31040 ~ 31047",
             "Manufacturer Name",
             8,
             FormatReverseAsciiText8);
 
         AddText(
             SystemRows,
-            45,
-            "31046 ~ 31053",
+            47,
+            "31048 ~ 31055",
             "Device Code",
             8,
             FormatReverseAsciiText8);
 
         AddFormatted(
             SystemRows,
-            53,
-            "31054",
+            55,
+            "31056",
             "Manufacturer Date",
             "-",
             "UINT16",
             FormatManufacturerDate);
 
-        Add(SystemRows, 54, "31055", "Serial Number", "-", "UINT16", 1.0, false, 0);
+        Add(SystemRows, 56, "31057", "Serial Number", "-", "UINT16", 1.0, false, 0);
 
         AddFormatted(
             SystemRows,
-            55,
-            "31056",
+            57,
+            "31058",
             "Firmware Version of EMS",
             "Ver",
             "UINT16",
@@ -2351,19 +2356,12 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
 
         AddFormatted(
             SystemRows,
-            56,
-            "31057",
+            58,
+            "31059",
             "Hardware Version of EMS",
             "Ver",
             "UINT16",
             FormatMajorMinorVersion);
-
-        // =====================================================
-        // 비교 화면: Pack 1 / Pack 2, Inverter 1 / Inverter 2
-        // =====================================================
-
-        BuildBatteryComparisonRows();
-        BuildInverterComparisonRows();
     }
 
     private void BuildControlTableRows()
@@ -2655,13 +2653,23 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         });
     }
 
-    private static void AddBit(
+    /// <summary>
+    /// 엑셀에서 이 절대주소용 비트필드 디코더를 새로 불러왔으면 그걸 쓰고,
+    /// 아니면 코드에 있는 기본 디코더(bitFieldDecoder)를 씁니다.
+    /// </summary>
+    private void AddBit(
         ObservableCollection<AdminRegisterRow> rows,
         ushort relativeAddress,
         string absoluteAddress,
         string name,
         Func<ushort, string> bitFieldDecoder)
     {
+        Func<ushort, string> effectiveDecoder =
+            _loadedBitFieldDecoders is not null &&
+            _loadedBitFieldDecoders.TryGetValue(absoluteAddress, out Func<ushort, string>? loadedDecoder)
+                ? loadedDecoder
+                : bitFieldDecoder;
+
         rows.Add(new AdminRegisterRow
         {
             RelativeAddress = relativeAddress,
@@ -2670,7 +2678,7 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
             Unit = "Bit",
             DataType = "Bit Field",
             IsBitField = true,
-            BitFieldDecoder = bitFieldDecoder,
+            BitFieldDecoder = effectiveDecoder,
             DecimalPlaces = 0
         });
     }
@@ -2774,7 +2782,7 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
 
         // 8개 Register에 한 글자씩 역순 저장됨.
         // 예:
-        // 31038~31045 = D N R C M K V E
+        // 31040~31047 = D N R C M K V E
         // 표시값       = E V K M C R N D
         for (int i = 7; i >= 0; i--)
         {
