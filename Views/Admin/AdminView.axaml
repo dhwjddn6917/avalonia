@@ -373,6 +373,35 @@
                                    FontSize="12"
                                    Foreground="#64748B"/>
 
+                        <!-- 엑셀("Registers" + "BitFields" 시트)로 이 표를 코드 수정 없이 다시 불러옵니다. -->
+                        <Border Background="#F8FAFC"
+                                BorderBrush="#E2E8F0"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12,10">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Button Grid.Column="0"
+                                        Content="맵 새로고침"
+                                        Command="{ReflectionBinding ReloadMapFromExcelCommand}"
+                                        IsEnabled="{ReflectionBinding !IsMapLoading}"
+                                        Background="#0F172A"
+                                        Foreground="White"
+                                        BorderBrush="#0F172A"
+                                        FontWeight="Bold"
+                                        Padding="14,8"
+                                        CornerRadius="8"
+                                        ToolTip.Tip="엑셀(Registers + BitFields 시트)을 골라 이 표를 다시 불러옵니다"/>
+
+                                <TextBlock Grid.Column="1"
+                                           Text="{ReflectionBinding MapStatusText}"
+                                           Foreground="#64748B"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"
+                                           Margin="12,0,0,0"
+                                           TextWrapping="Wrap"/>
+                            </Grid>
+                        </Border>
+
                         <Border Background="#EAF0F6" Padding="12,9" CornerRadius="7">
                             <Grid ColumnDefinitions="120,*,60,200,180,92">
                                 <TextBlock Text="Address" FontWeight="Bold" Foreground="#334155"/>

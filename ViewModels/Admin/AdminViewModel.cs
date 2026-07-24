@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MobileEssControl.Constants;
 using MobileEssControl.Models.Admin;
+using MobileEssControl.Services.Dialogs;
 using MobileEssControl.Services.Ems;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,13 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
     private bool _disposed;
 
     public ObservableCollection<AdminRegisterRow> SystemRows { get; } = new();
+
+    // 엑셀로 모니터링 표(31001~31057)를 다시 불러왔을 때의 상태 문구입니다.
+    [ObservableProperty]
+    private string mapStatusText = "기본 내장 맵 사용 중 · '맵 새로고침'으로 엑셀을 불러올 수 있습니다.";
+
+    [ObservableProperty]
+    private bool isMapLoading;
 
     // Pack 1 / Pack 2는 합산하지 않고 같은 줄에서 비교 표시합니다.
     public ObservableCollection<AdminComparisonRow> BatteryRows { get; } = new();
@@ -2161,6 +2169,82 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
             {
                 row.Update(leftValues[index], rightValues[index]);
             }
+        }
+    }
+
+    /// <summary>
+    /// 엑셀("Registers" + "BitFields" 시트)을 골라 모니터링 표(31001~31057)를
+    /// 코드 수정 없이 다시 불러옵니다. 30001~30016 쓰기 제어표는 대상이 아닙니다.
+    /// </summary>
+    [RelayCommand]
+    private async Task ReloadMapFromExcel()
+    {
+        if (IsMapLoading)
+        {
+            return;
+        }
+
+        string? filePath =
+            await AppFilePickerService.PickExcelFileAsync("맵 어드레스 엑셀 선택");
+
+        if (string.IsNullOrEmpty(filePath))
+        {
+            return;
+        }
+
+        IsMapLoading = true;
+        MapStatusText = "엑셀 맵 불러오는 중...";
+
+        try
+        {
+            AdminMapDefinition map =
+                await Task.Run(() => AdminMapExcelLoader.Load(filePath));
+
+            Dictionary<string, Func<ushort[], int, string>> textFormatters = new()
+            {
+                ["ReverseAscii8"] = FormatReverseAsciiText8
+            };
+
+            Dictionary<string, Func<ushort, string>> valueFormatters = new()
+            {
+                ["ManufacturerDate"] = FormatManufacturerDate,
+                ["MajorMinorVersion"] = FormatMajorMinorVersion
+            };
+
+            List<AdminRegisterRow> loadedRows =
+                AdminMapExcelLoader.BuildRegisterRows(
+                    map,
+                    textFormatters,
+                    valueFormatters);
+
+            SystemRows.Clear();
+
+            foreach (AdminRegisterRow row in loadedRows)
+            {
+                SystemRows.Add(row);
+            }
+
+            MapStatusText =
+                $"엑셀 맵 로드 완료 · {System.IO.Path.GetFileName(filePath)} · " +
+                $"레지스터 {map.Registers.Count}개, 비트필드 {map.BitFields.Count}개 · " +
+                $"{DateTime.Now:HH:mm:ss}";
+
+            AddLog($"맵 어드레스 엑셀 로드 완료 · {filePath}");
+        }
+        catch (Exception ex)
+        {
+            MapStatusText = $"엑셀 로드 실패 · {ex.Message}";
+
+            AddLog($"맵 어드레스 엑셀 로드 실패 · {ex.Message}");
+
+            await AppDialogService.ShowWarningAsync(
+                "맵 새로고침 실패",
+                $"엑셀 파일을 읽는 중 문제가 발생했습니다.\n\n{ex.Message}\n\n" +
+                "'Registers'와 'BitFields' 시트, 헤더 이름을 확인해주세요.");
+        }
+        finally
+        {
+            IsMapLoading = false;
         }
     }
 
