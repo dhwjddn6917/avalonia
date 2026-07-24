@@ -16,13 +16,13 @@
 
         <!-- 공통 큰 +/- 버튼 -->
         <Style Selector="Button.stepButton">
-            <Setter Property="Width" Value="72"/>
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="CornerRadius" Value="16"/>
-            <Setter Property="FontSize" Value="23"/>
+            <Setter Property="Width" Value="110"/>
+            <Setter Property="Height" Value="68"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="FontSize" Value="32"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
@@ -160,9 +160,9 @@
 
         <!-- 그래프 표시 구간 토글 버튼 -->
         <Style Selector="Button.graphWindowButton">
-            <Setter Property="Padding" Value="0,10"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="0,18"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Background" Value="#F1F5F9"/>
             <Setter Property="Foreground" Value="#334155"/>
@@ -265,15 +265,15 @@
 
         <!-- 설정 오버레이 닫기(X) 버튼 -->
         <Style Selector="Button.overlayCloseButton">
-            <Setter Property="Width" Value="36"/>
-            <Setter Property="Height" Value="36"/>
-            <Setter Property="CornerRadius" Value="18"/>
+            <Setter Property="Width" Value="48"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="CornerRadius" Value="24"/>
             <Setter Property="Background" Value="#F1F5F9"/>
             <Setter Property="Foreground" Value="#0F172A"/>
             <Setter Property="BorderBrush" Value="#E2E8F0"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="0"/>
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontSize" Value="20"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -847,13 +847,14 @@
 
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                               VerticalScrollBarVisibility="Auto">
-                    <StackPanel Spacing="12"
-                                Margin="28">
+                    <StackPanel Spacing="24"
+                                Margin="48"
+                                VerticalAlignment="Center">
 
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Grid.Column="0"
                                        Text="충전 설정"
-                                       FontSize="20"
+                                       FontSize="32"
                                        FontWeight="Bold"
                                        Foreground="#0F172A"/>
 
@@ -865,7 +866,7 @@
                         </Grid>
 
                         <Grid ColumnDefinitions="*,*"
-                              ColumnSpacing="16">
+                              ColumnSpacing="24">
 
                             <!-- 목표 SOC -->
                             <Border Grid.Column="0"
@@ -873,25 +874,25 @@
                                     Background="#F8FAFC"
                                     BorderBrush="#E2E8F0"
                                     BorderThickness="1"
-                                    CornerRadius="16"
-                                    Padding="12">
-                                <StackPanel Spacing="6">
+                                    CornerRadius="20"
+                                    Padding="24">
+                                <StackPanel Spacing="16">
 
                                     <TextBlock Text="목표 SOC"
-                                               FontSize="13"
+                                               FontSize="19"
                                                FontWeight="SemiBold"
                                                Foreground="#64748B"
                                                HorizontalAlignment="Center"/>
 
-                                    <StackPanel Spacing="6">
+                                    <StackPanel Spacing="12">
 
                                         <Border Background="#ECFDF5"
                                                 BorderBrush="#BBF7D0"
                                                 BorderThickness="1"
-                                                CornerRadius="14"
-                                                Padding="6">
+                                                CornerRadius="18"
+                                                Padding="14">
                                             <TextBlock Text="{Binding TargetSocText}"
-                                                       FontSize="30"
+                                                       FontSize="48"
                                                        FontWeight="Bold"
                                                        Foreground="#16A34A"
                                                        HorizontalAlignment="Center"/>
@@ -900,15 +901,15 @@
                                         <Slider Minimum="10"
                                                 Maximum="100"
                                                 Value="{Binding TargetSoc, Mode=TwoWay}"
-                                                Height="34"
-                                                MinHeight="34"
+                                                Height="50"
+                                                MinHeight="50"
                                                 TickFrequency="5"
                                                 IsSnapToTickEnabled="True"
                                                 HorizontalAlignment="Stretch"/>
                                     </StackPanel>
 
                                     <Grid ColumnDefinitions="*,*"
-                                          ColumnSpacing="16">
+                                          ColumnSpacing="20">
                                         <Button Grid.Column="0"
                                                 Classes="stepButton socMinusButton"
                                                 Content="−"
@@ -928,25 +929,25 @@
                                     Background="#F8FAFC"
                                     BorderBrush="#E2E8F0"
                                     BorderThickness="1"
-                                    CornerRadius="16"
-                                    Padding="12">
-                                <StackPanel Spacing="6">
+                                    CornerRadius="20"
+                                    Padding="24">
+                                <StackPanel Spacing="16">
 
                                     <TextBlock Text="충전 전류"
-                                               FontSize="13"
+                                               FontSize="19"
                                                FontWeight="SemiBold"
                                                Foreground="#64748B"
                                                HorizontalAlignment="Center"/>
 
-                                    <StackPanel Spacing="6">
+                                    <StackPanel Spacing="12">
 
                                         <Border Background="#EFF6FF"
                                                 BorderBrush="#BFDBFE"
                                                 BorderThickness="1"
-                                                CornerRadius="14"
-                                                Padding="6">
+                                                CornerRadius="18"
+                                                Padding="14">
                                             <TextBlock Text="{Binding ChargeCurrentText}"
-                                                       FontSize="30"
+                                                       FontSize="48"
                                                        FontWeight="Bold"
                                                        Foreground="#2563EB"
                                                        HorizontalAlignment="Center"/>
@@ -955,15 +956,15 @@
                                         <Slider Minimum="0"
                                                 Maximum="120"
                                                 Value="{Binding ChargeCurrentA, Mode=TwoWay}"
-                                                Height="34"
-                                                MinHeight="34"
+                                                Height="50"
+                                                MinHeight="50"
                                                 TickFrequency="1"
                                                 IsSnapToTickEnabled="True"
                                                 HorizontalAlignment="Stretch"/>
                                     </StackPanel>
 
                                     <Grid ColumnDefinitions="*,*"
-                                          ColumnSpacing="16">
+                                          ColumnSpacing="20">
                                         <Button Grid.Column="0"
                                                 Classes="stepButton powerMinusButton"
                                                 Content="−"
@@ -982,16 +983,16 @@
                         <Border Background="#F8FAFC"
                                 BorderBrush="#E2E8F0"
                                 BorderThickness="1"
-                                CornerRadius="16"
-                                Padding="12">
-                            <StackPanel Spacing="6">
+                                CornerRadius="20"
+                                Padding="20">
+                            <StackPanel Spacing="12">
                                 <TextBlock Text="그래프 표시 구간"
-                                           FontSize="13"
+                                           FontSize="17"
                                            FontWeight="SemiBold"
                                            Foreground="#64748B"/>
 
                                 <Grid ColumnDefinitions="*,*,*,*,*"
-                                      ColumnSpacing="6">
+                                      ColumnSpacing="10">
                                     <Button Grid.Column="0"
                                             Classes="graphWindowButton"
                                             Classes.active="{Binding IsGraphWindow15Selected}"
@@ -1032,25 +1033,27 @@
 
                         <!-- 시작/정지 -->
                         <Grid ColumnDefinitions="2*,1*"
-                              ColumnSpacing="14">
+                              ColumnSpacing="20">
                             <Button Grid.Column="0"
                                     Content="충전 시작"
                                     Command="{Binding StartChargeCommand}"
-                                    Height="44"
+                                    Height="72"
+                                    CornerRadius="18"
                                     Background="#16A34A"
                                     Foreground="White"
                                     BorderBrush="#16A34A"
-                                    FontSize="16"
+                                    FontSize="24"
                                     FontWeight="Bold"/>
 
                             <Button Grid.Column="1"
                                     Content="정지"
                                     Command="{Binding StopChargeCommand}"
-                                    Height="44"
+                                    Height="72"
+                                    CornerRadius="18"
                                     Background="#111827"
                                     Foreground="White"
                                     BorderBrush="#111827"
-                                    FontSize="16"
+                                    FontSize="24"
                                     FontWeight="Bold"/>
                         </Grid>
 
@@ -1058,11 +1061,11 @@
                         <Border Background="#EEF6FF"
                                 BorderBrush="#BFDBFE"
                                 BorderThickness="1"
-                                CornerRadius="14"
-                                Padding="10">
+                                CornerRadius="16"
+                                Padding="16">
                             <TextBlock Text="{Binding RequestStatus}"
                                        Foreground="#1E3A8A"
-                                       FontSize="12"
+                                       FontSize="16"
                                        FontWeight="SemiBold"
                                        TextWrapping="Wrap"/>
                         </Border>
