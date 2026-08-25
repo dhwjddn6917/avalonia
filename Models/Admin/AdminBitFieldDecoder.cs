@@ -74,7 +74,7 @@ public static class AdminBitFieldDecoder
             FormatRemarkLine("Pack2 Fault Level", GetFaultLevelRemark(GetBits(raw, 2, 2))),
             FormatRemarkLine("Inverter 1 Fault Level", GetFaultLevelRemark(GetBits(raw, 4, 2))),
             FormatRemarkLine("Inverter 2 Fault Level", GetFaultLevelRemark(GetBits(raw, 6, 2))),
-            FormatRemarkLine("DcDc 1 Fault Level", GetFaultLevelRemark(GetBits(raw, 8, 2))),
+            FormatRemarkLine("Inverter 3 Fault Level", GetFaultLevelRemark(GetBits(raw, 8, 2))),
             FormatRemarkLine("DcDc 2 Fault Level", GetFaultLevelRemark(GetBits(raw, 10, 2))),
             FormatRemarkLine("Pack1 CAN Com Fault", GetBitRemark(raw, 12, "Normal", "Fault")),
             FormatRemarkLine("Pack2 CAN Com Fault", GetBitRemark(raw, 13, "Normal", "Fault")),
