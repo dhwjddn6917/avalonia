@@ -65,7 +65,7 @@ public static class AdminBitFieldDecoder
     // =====================================================
 
     /// <summary>
-    /// 31039 - System Alarms 1
+    /// 31024 - System Alarms 1
     /// </summary>
     public static string DecodeSystemAlarm1(ushort raw)
     {
@@ -84,14 +84,14 @@ public static class AdminBitFieldDecoder
     }
 
     /// <summary>
-    /// 31040 - System Alarms 2
+    /// 31025 - System Alarms 2
     /// </summary>
     public static string DecodeSystemAlarm2(ushort raw)
     {
         return JoinLines(
-            FormatRemarkLine("DcDc 1 CAN Com Fault", GetBitRemark(raw, 0, "Normal", "Fault")),
-            FormatRemarkLine("DcDc 2 CAN Com Fault", GetBitRemark(raw, 1, "Normal", "Fault")),
-            FormatRemarkLine("EVCC CAN Com Fault", GetBitRemark(raw, 2, "Normal", "Fault")),
+            FormatRemarkLine("Inverter3 CAN Com Fault", GetBitRemark(raw, 0, "Normal", "Fault")),
+            FormatRemarkLine("UnderTargetDchgSoc Alarm", GetBitRemark(raw, 1, "Normal", "Alarm")),
+            FormatRemarkLine("DchgPowerOverLoad Alarm", GetBitRemark(raw, 2, "Normal", "Alarm")),
             FormatRemarkLine("EMU Com Fault", GetBitRemark(raw, 3, "Normal", "Fault")),
             FormatRemarkLine("AcMc1_Ctrl Fault", GetBitRemark(raw, 4, "Normal", "Fault")),
             FormatRemarkLine("AcMc1_N_Ctrl Fault", GetBitRemark(raw, 5, "Normal", "Fault")),
@@ -100,16 +100,16 @@ public static class AdminBitFieldDecoder
             FormatRemarkLine("DcDchgHvPConFault", GetBitRemark(raw, 8, "Normal", "Fault")),
             FormatRemarkLine("DcDchgHvNConFault", GetBitRemark(raw, 9, "Normal", "Fault")),
             FormatRemarkLine("EmStopFault", GetBitRemark(raw, 10, "Normal", "Fault")),
-            FormatRemarkLine("Fault_Reserved1", GetBitRemark(raw, 11, "Normal", "Fault")),
-            FormatRemarkLine("Fault_Reserved2", GetBitRemark(raw, 12, "Normal", "Fault")),
-            FormatRemarkLine("Fault_Reserved3", GetBitRemark(raw, 13, "Normal", "Fault")),
-            FormatRemarkLine("Fault_Reserved4", GetBitRemark(raw, 14, "Normal", "Fault")),
-            FormatRemarkLine("Fault_Reserved5", GetBitRemark(raw, 15, "Normal", "Fault")));
+            FormatRemarkLine("Fault_OffGrid_OutputVoltageDet", GetBitRemark(raw, 11, "Normal", "Fault")),
+            FormatRemarkLine("Fault_Rectifier_InputVoltageXDet", GetBitRemark(raw, 12, "Normal", "Fault")),
+            FormatRemarkLine("CanDio CAN Com Fault", GetBitRemark(raw, 13, "Normal", "Fault")),
+            FormatRemarkLine("DcDc 1 CAN Com Fault", GetBitRemark(raw, 14, "Normal", "Fault")),
+            FormatRemarkLine("EVCC CAN Com Fault", GetBitRemark(raw, 15, "Normal", "Fault")));
     }
 
     // =====================================================
     // Battery Pack Alarms
-    // Pack 1: 31041~31043, Pack 2: 31044~31046
+    // Pack 1: 31026~31028, Pack 2: 31029~31031
     // 두 Pack은 같은 규칙을 사용합니다.
     // =====================================================
 
@@ -171,7 +171,7 @@ public static class AdminBitFieldDecoder
 
     // =====================================================
     // Battery Pack Status
-    // Pack 1: 31047 / 31048, Pack 2: 31049 / 31050
+    // Pack 1: 31032 / 31033, Pack 2: 31034 / 31035
     // =====================================================
 
     /// <summary>
