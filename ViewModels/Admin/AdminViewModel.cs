@@ -2223,43 +2223,42 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
         Add(SystemRows, 36, "31037", "Number of Dischargeable Pack", "EA", "UINT16", 1.0, false, 0);
 
         // =====================================================
-        // ESS Profile Information: 31038 ~ 31057
-        // 실제 EMS 수신 기준:
-        // 문자 1개가 Register 1개에 들어가며,
-        // 전체 문자열은 주소 역순으로 조합해야 합니다.
+        // ESS Profile Information: 31050 ~ 31061
+        // 문자열은 Register 1개당 2글자(상/하위 Byte)씩 담기고,
+        // 전체 문자열은 Register 주소 역순으로 조합해야 합니다.
         // =====================================================
 
         AddText(
             SystemRows,
-            37,
-            "31038 ~ 31045",
+            49,
+            "31050 ~ 31053",
             "Manufacturer Name",
-            8,
-            FormatReverseAsciiText8);
+            4,
+            FormatAsciiText);
 
         AddText(
             SystemRows,
-            45,
-            "31046 ~ 31053",
+            53,
+            "31054 ~ 31057",
             "Device Code",
-            8,
-            FormatReverseAsciiText8);
+            4,
+            FormatAsciiText);
 
         AddFormatted(
             SystemRows,
-            53,
-            "31054",
-            "Manufacturer Date",
+            57,
+            "31058",
+            "Manufacturer Year, Month",
             "-",
             "UINT16",
             FormatManufacturerDate);
 
-        Add(SystemRows, 54, "31055", "Serial Number", "-", "UINT16", 1.0, false, 0);
+        Add(SystemRows, 58, "31059", "Serial Number", "-", "UINT16", 1.0, false, 0);
 
         AddFormatted(
             SystemRows,
-            55,
-            "31056",
+            59,
+            "31060",
             "Firmware Version of EMS",
             "Ver",
             "UINT16",
@@ -2267,8 +2266,8 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
 
         AddFormatted(
             SystemRows,
-            56,
-            "31057",
+            60,
+            "31061",
             "Hardware Version of EMS",
             "Ver",
             "UINT16",
@@ -2645,8 +2644,8 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
     {
         var builder = new StringBuilder();
 
-        // EMS Profile 문자열은 4개 Word가 역순으로 저장되어 있고,
-        // 각 Word 내부 바이트도 반대 순서로 들어온다.
+        // EMS Profile 문자열(예: Manufacturer Name 31050~31053)은
+        // 4개 Word가 역순으로 저장되어 있고, 각 Word 내부 바이트도 반대 순서로 들어온다.
         // 예:
         // 현재 수신값 : DN RC MK VE
         // 실제 표시값 : EV KM CR ND
@@ -2677,47 +2676,18 @@ public partial class AdminViewModel : ViewModelBase, IDisposable
 
         return builder.ToString().Trim();
     }
-    private static string FormatReverseAsciiText8(
-    ushort[] values,
-    int startIndex)
-    {
-        var builder = new StringBuilder();
-
-        // 8개 Register에 한 글자씩 역순 저장됨.
-        // 예:
-        // 31038~31045 = D N R C M K V E
-        // 표시값       = E V K M C R N D
-        for (int i = 7; i >= 0; i--)
-        {
-            int index = startIndex + i;
-
-            if (index < 0 || index >= values.Length)
-            {
-                continue;
-            }
-
-            char character = (char)(values[index] & 0x00FF);
-
-            if (character != '\0' && !char.IsControl(character))
-            {
-                builder.Append(character);
-            }
-        }
-
-        return builder.ToString().Trim();
-    }
     private static string FormatManufacturerDate(ushort raw)
     {
-        int year = 2000 + (raw / 512);
-        int month = (raw % 512) / 32;
-        int day = raw % 32;
+        // "Manufacturer Year, Month" 예: 2608 -> Year 2026, Month 08
+        int year = 2000 + (raw / 100);
+        int month = raw % 100;
 
-        if (month is < 1 or > 12 || day is < 1 or > 31)
+        if (month is < 1 or > 12)
         {
             return $"Invalid date raw ({raw})";
         }
 
-        return $"{year:D4}-{month:D2}-{day:D2}";
+        return $"{year:D4}-{month:D2}";
     }
 
     private static string FormatMajorMinorVersion(ushort raw)

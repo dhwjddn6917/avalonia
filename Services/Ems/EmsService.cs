@@ -469,12 +469,12 @@ public class EmsService
         CancellationToken cancellationToken = default)
     {
         // EMS Complete ESS Information + ESS Profile Information
-        // Absolute 31001 ~ 31057 / 총 57 Word
+        // Absolute 31001 ~ 31061 / 총 61 Word
         ushort[] emsValues = await ReadAdminGroupAsync(
             groupName: "EMS",
             slaveId: SlaveIds.Ems,
             startAddress: 31001,
-            numberOfPoints: 57,
+            numberOfPoints: 61,
             cancellationToken);
 
         // Battery Pack 1 : 32001 ~ 32024
